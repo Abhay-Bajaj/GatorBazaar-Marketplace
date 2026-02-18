@@ -1,0 +1,72 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0eded;
+}
+
+nav {
+    background-color: #474747;
+    color: rgb(243, 243, 243);
+    padding: 20px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.banner {
+    background-color: #ffffff;
+    padding: 20px;
+    text-align: center;
+    margin: 20px ;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.team-members {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around; 
+    width: 100%;
+    max-width: 1980px;
+    margin: 20px auto;
+    padding: 20px auto;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.team-members h1{
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.member {
+    margin-bottom: 15px;
+    padding: 10px;
+}
+
+.member-photo {
+    max-width: 150px;
+    max-height: 150px;
+    margin-bottom: 10px;
+}
+
+.member-profile {
+    display: flex;
+    align-items: center;
+    padding: 150px;
+}
+
+.member-info {
+    display: flex;
+    flex-direction: column;
+    margin: 10%;
+}
+
+.profile-picture {
+    width: 300px;
+    height: 300px;
+    margin-bottom: 29px;
+}
