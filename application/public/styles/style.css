@@ -91,3 +91,17 @@ nav {
     height: 300px;
     margin-bottom: 29px;
 }
+
+.about-me {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 16px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #333;
+}
+
+.about-me h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
