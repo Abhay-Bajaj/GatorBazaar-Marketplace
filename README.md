@@ -21,6 +21,6 @@
 | Kenny Camarra       | kcamarra@sfsu.edu    | Kenn-E-C        |
 | Abhay Bajaj         | abajaj@sfsu.edu      | Abhay-Bajaj     |
 | Diego Rivera-Soto   | driverasoto@sfsu.edu | DRivera2004     |
-| Sebastian Cervantez | scervantez@sfsu.edu  | sebasincali     |
+| Sebastian Cervantez | scervantez@mail.sfsu.edu  | sebasincali     |
 
 ## NO code needs to be stored in the root of your repository. You may rename the application folder if you like to your team's application name. But all source code related to your team's application should be stored inside the application folder.
