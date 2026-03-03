@@ -62,8 +62,8 @@ export const teamMembers = [
     ],
   },
   {
-    slug: 'sebastian-cervantes',
-    name: 'Sebastian Cervantes',
+    slug: 'sebastian-cervantez',
+    name: 'Sebastian Cervantez',
     role: 'Back-End Lead',
     image: '/images/profile-placeholder.png',
     bio: [
