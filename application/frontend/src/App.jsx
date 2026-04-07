@@ -1,6 +1,7 @@
 import { Link, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import './App.css'
 import { teamMembers } from './data/teamMembers'
+import VPPage from './VPPage'
 
 function Home() {
   return (
@@ -67,6 +68,7 @@ function MemberProfile() {
 function App() {
   const location = useLocation()
   const isHome = location.pathname === '/'
+  const isVP = location.pathname.startsWith('/vp')
 
   return (
     <div className="page">
@@ -82,12 +84,21 @@ function App() {
           For Demonstration Only
         </h1>
         <p>Section 01, Team 07</p>
+        {isHome && (
+          <Link className="vp-nav-link" to="/vp">
+            🔍 Vertical Prototype
+          </Link>
+        )}
+        {isVP && (
+          <p className="vp-nav-subtitle">Vertical Prototype — Search Demo</p>
+        )}
       </nav>
 
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/team/:slug" element={<MemberProfile />} />
+          <Route path="/vp" element={<VPPage />} />
         </Routes>
       </main>
     </div>
