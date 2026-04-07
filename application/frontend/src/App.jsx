@@ -1,7 +1,8 @@
 import { Link, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import './App.css'
 import { teamMembers } from './data/teamMembers'
-import VPPage from './VPPage'
+import SearchPage from './SearchPage'
+import ItemPage from './ItemPage'
 
 function Home() {
   return (
@@ -68,7 +69,7 @@ function MemberProfile() {
 function App() {
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const isVP = location.pathname.startsWith('/vp')
+  const isSearch = location.pathname.startsWith('/search') || location.pathname.startsWith('/items')
 
   return (
     <div className="page">
@@ -85,12 +86,12 @@ function App() {
         </h1>
         <p>Section 01, Team 07</p>
         {isHome && (
-          <Link className="vp-nav-link" to="/vp">
-            🔍 Vertical Prototype
+          <Link className="vp-nav-link" to="/search">
+            🔍 Browse &amp; Search
           </Link>
         )}
-        {isVP && (
-          <p className="vp-nav-subtitle">Vertical Prototype — Search Demo</p>
+        {isSearch && (
+          <p className="vp-nav-subtitle">Browse &amp; Search</p>
         )}
       </nav>
 
@@ -98,7 +99,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/team/:slug" element={<MemberProfile />} />
-          <Route path="/vp" element={<VPPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/items/:id" element={<ItemPage />} />
         </Routes>
       </main>
     </div>
