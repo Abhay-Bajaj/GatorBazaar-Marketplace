@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { mockItems } from './data/mockItems'
 
@@ -48,6 +48,7 @@ function ItemCard({ item }) {
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const searchInputRef = useRef(null)
 
   // Form fields — initialized from URL so args persist after search
   const [category, setCategory] = useState(searchParams.get('category') ?? '')
@@ -101,6 +102,12 @@ export default function SearchPage() {
     if (category) params.category = category
     if (query.trim()) params.q = query.trim()
     setSearchParams(params)
+    searchInputRef.current?.focus()
+  }
+
+  function handleCategoryChange(e) {
+    setCategory(e.target.value)
+    searchInputRef.current?.focus()
   }
 
   return (
@@ -110,7 +117,7 @@ export default function SearchPage() {
         <select
           className="search-category"
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          onChange={handleCategoryChange}
           aria-label="Category"
         >
           {CATEGORIES.map((c) => (
@@ -121,6 +128,7 @@ export default function SearchPage() {
         </select>
 
         <input
+          ref={searchInputRef}
           className="search-input"
           type="text"
           placeholder="Search items…"
