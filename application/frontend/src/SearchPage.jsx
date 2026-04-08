@@ -68,6 +68,7 @@ export default function SearchPage() {
     fetchResults(urlCategory, urlQuery)
   }, [searchParams])
 
+  // if the API request fails, it resorts to the mock data
   async function fetchResults(cat, q) {
     setLoading(true)
     setError(null)
