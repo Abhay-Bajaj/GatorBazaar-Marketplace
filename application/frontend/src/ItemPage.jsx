@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { mockItems } from './data/mockItems'
 
 export default function ItemPage() {
   const { id } = useParams()
@@ -13,8 +14,13 @@ export default function ItemPage() {
         const res = await fetch(`/api/items/${id}`)
         if (!res.ok) throw new Error(`Item not found (${res.status})`)
         setItem(await res.json())
-      } catch (err) {
-        setError(err.message)
+      } catch {
+        const localItem = mockItems.find((entry) => String(entry.id) === String(id))
+        if (localItem) {
+          setItem(localItem)
+        } else {
+          setError('Item not found')
+        }
       } finally {
         setLoading(false)
       }

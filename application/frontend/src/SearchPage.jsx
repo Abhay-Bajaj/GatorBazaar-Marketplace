@@ -1,12 +1,32 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { mockItems } from './data/mockItems'
 
 const CATEGORIES = [
   { value: '', label: 'All Categories' },
   { value: 'electronics', label: 'Electronics' },
   { value: 'books', label: 'Books' },
   { value: 'furniture', label: 'Furniture' },
+  { value: 'clothing', label: 'Clothing' },
+  { value: 'dorm-essentials', label: 'Dorm Essentials' },
+  { value: 'sationary', label: 'Sationary' },
+  { value: 'room-rent', label: 'Room/Rent' },
 ]
+
+function searchMockItems(items, cat, q) {
+  const normalizedQuery = q.trim().toLowerCase()
+  const terms = normalizedQuery ? normalizedQuery.split(/\s+/) : []
+
+  return items.filter((item) => {
+    const categoryMatch = !cat || item.category === cat
+    if (!categoryMatch) return false
+
+    if (terms.length === 0) return true
+
+    const haystack = `${item.title} ${item.description} ${item.category}`.toLowerCase()
+    return terms.every((term) => haystack.includes(term))
+  })
+}
 
 function ItemCard({ item }) {
   return (
@@ -51,6 +71,13 @@ export default function SearchPage() {
   async function fetchResults(cat, q) {
     setLoading(true)
     setError(null)
+
+    const applyMockResults = () => {
+      const filteredItems = searchMockItems(mockItems, cat, q)
+      setResults(filteredItems)
+      setTotalFound(filteredItems.length)
+    }
+
     try {
       const params = new URLSearchParams()
       if (cat) params.set('category', cat)
@@ -60,10 +87,8 @@ export default function SearchPage() {
       const data = await res.json()
       setResults(data.items ?? [])
       setTotalFound(data.total ?? (data.items ?? []).length)
-    } catch (err) {
-      setError(err.message)
-      setResults([])
-      setTotalFound(0)
+    } catch {
+      applyMockResults()
     } finally {
       setLoading(false)
     }
