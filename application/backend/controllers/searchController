@@ -2,16 +2,20 @@ const searchModel = require('../models/searchModel')
 
 async function getAllListings(req, res) {
   try {
+    console.log('GET /api/search hit')
+
     const listings = await searchModel.getAllListings()
 
+    console.log('rows returned:', listings.length)
+
     res.json({
-      items: listings
+      items: listings,
+      total: listings.length
     })
-    
   } catch (err) {
     console.error('Error fetching listings:', err)
     res.status(500).json({
-      error: 'Internal server error'
+      error: err.message
     })
   }
 }

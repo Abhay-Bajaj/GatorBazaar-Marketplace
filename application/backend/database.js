@@ -9,13 +9,16 @@ const pool = mysql.createPool({
   port: process.env.DB_PORT,
 });
 
-async function test() {
+async function testConnection() {
   try {
-    const [rows] = await pool.query('SELECT 1 + 1 AS solution');
-    console.log('Connected! Test query result:', rows[0].solution);
+    const connection = await pool.getConnection()
+    console.log('Database connected successfully!')
+    connection.release()
   } catch (err) {
-    console.error('DB connection failed:', err);
+    console.error('Database connection failed:', err.message)
   }
 }
 
-test();
+testConnection()
+
+module.exports = pool

@@ -30,7 +30,7 @@ function searchMockItems(items, cat, q) {
 
 function ItemCard({ item }) {
   return (
-    <Link to={`/items/${item.id}`} className="item-card">
+    <Link to={`/items/${item.listing_id}`} className="item-card">
       <img
         className="item-card-image"
         src={item.image_url || '/images/item-placeholder.png'}
@@ -66,11 +66,33 @@ export default function SearchPage() {
 
     setCategory(urlCategory)
     setQuery(urlQuery)
-    fetchResults(urlCategory, urlQuery)
+    //fetchResults(urlCategory, urlQuery)
+    fetchResults()
   }, [searchParams])
 
+  async function fetchResults() {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const res = await fetch('/api/search')
+
+      const data = await res.json()
+
+      if (!res.ok) throw new Error(data.error || `Server error (${res.status})`)
+
+      setResults(data.items ?? [])
+      setTotalFound(data.total ?? 0)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    } 
+  }
+
+
   // if the API request fails, it resorts to the mock data
-  async function fetchResults(cat, q) {
+  /*async function fetchResults(cat, q) {
     setLoading(true)
     setError(null)
 
@@ -94,7 +116,7 @@ export default function SearchPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }*/
 
   function handleSearch(e) {
     e.preventDefault()
@@ -167,7 +189,7 @@ export default function SearchPage() {
           {results.length > 0 && (
             <ul className="results-grid">
               {results.map((item) => (
-                <li key={item.id}>
+                <li key={item.listing_id}>
                   <ItemCard item={item} />
                 </li>
               ))}

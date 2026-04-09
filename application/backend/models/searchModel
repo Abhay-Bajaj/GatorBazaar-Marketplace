@@ -1,4 +1,4 @@
-const pool = require('../db/database')
+const pool = require('../database')
 
 async function getAllListings() {
     const [rows] = await pool.query('SELECT * FROM listings WHERE active = 1')

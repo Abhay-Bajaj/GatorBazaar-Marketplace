@@ -24,6 +24,7 @@ app.listen(PORT, () => {
 const express = require('express')
 const cors = require('cors')
 const path = require('path')
+const searchRoute = require('./routes/searchRoute')
 
 const app = express()
 const PORT = process.env.PORT || 3000;
@@ -35,6 +36,8 @@ app.use(express.json())
 app.get('/api/hello', (req, res) => {
   res.json({ message: "Hello from backend!" })
 })
+
+app.use('/api/search', searchRoute)
 
 //  SERVE REACT BUILD 
 app.use(express.static(path.join(__dirname, '../frontend/dist')))
