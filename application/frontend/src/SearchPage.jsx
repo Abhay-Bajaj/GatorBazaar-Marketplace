@@ -4,26 +4,22 @@ import { mockItems } from './data/mockItems'
 
 const CATEGORIES = [
   { value: '', label: 'All Categories' },
-  { value: 'electronics', label: 'Electronics' },
-  { value: 'books', label: 'Books' },
-  { value: 'furniture', label: 'Furniture' },
-  { value: 'clothing', label: 'Clothing' },
-  { value: 'dorm-essentials', label: 'Dorm Essentials' },
-  { value: 'sationary', label: 'Sationary' },
-  { value: 'room-rent', label: 'Room/Rent' },
+  { value: 'Class Material', label: 'Class Material' },
+  { value: 'Electronics', label: 'Electronics' },
+  { value: 'Furniture', label: 'Furniture' },
 ]
 
-function searchMockItems(items, cat, q) {
+function searchItems(items, cat, q) {
   const normalizedQuery = q.trim().toLowerCase()
   const terms = normalizedQuery ? normalizedQuery.split(/\s+/) : []
 
   return items.filter((item) => {
-    const categoryMatch = !cat || item.category === cat
+    const categoryMatch = !cat || item.category_name === cat
     if (!categoryMatch) return false
 
     if (terms.length === 0) return true
 
-    const haystack = `${item.title} ${item.description} ${item.category}`.toLowerCase()
+    const haystack = `${item.title} ${item.description} ${item.category_name}`.toLowerCase()
     return terms.every((term) => haystack.includes(term))
   })
 }
@@ -37,7 +33,7 @@ function ItemCard({ item }) {
         alt={item.title}
       />
       <div className="item-card-body">
-        <span className="item-card-category">{item.category}</span>
+        <span className="item-card-category">{item.category_name}</span>
         <h3 className="item-card-title">{item.title}</h3>
         <p className="item-card-description">{item.description}</p>
         <p className="item-card-price">${Number(item.price || 0).toFixed(2)}</p>
@@ -66,29 +62,43 @@ export default function SearchPage() {
 
     setCategory(urlCategory)
     setQuery(urlQuery)
-    //fetchResults(urlCategory, urlQuery)
-    fetchResults()
+    fetchResults(urlCategory, urlQuery)
   }, [searchParams])
 
-  async function fetchResults() {
-    setLoading(true)
-    setError(null)
+async function fetchResults(cat = '', q = '') {
+  setLoading(true)
+  setError(null)
 
-    try {
-      const res = await fetch('/api/search')
-
-      const data = await res.json()
-
-      if (!res.ok) throw new Error(data.error || `Server error (${res.status})`)
-
-      setResults(data.items ?? [])
-      setTotalFound(data.total ?? 0)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    } 
+  const applyResults = () => {
+    const filteredItems = searchItems(items, cat, q)
+    setResults(filteredItems)
+    setTotalFound(filteredItems.length)
   }
+
+  try {
+    const params = new URLSearchParams()
+    if (cat) params.set('category', cat)
+    if (q) params.set('keyword', q)
+
+    const res = await fetch(`/api/search?${params.toString()}`)
+    const data = await res.json()
+
+    if (!res.ok) throw new Error(data.error || `Server error (${res.status})`)
+
+    const items = Array.isArray(data) ? data : (data.items ?? [])
+    const total = Array.isArray(data) ? data.length : (data.total ?? items.length)
+
+    console.log('returned data:', data)
+
+    setResults(items)
+    setTotalFound(total)
+  } catch (err) {
+    console.error(err)
+    applyResults()
+  } finally {
+    setLoading(false)
+  }
+}
 
 
   // if the API request fails, it resorts to the mock data
@@ -117,6 +127,7 @@ export default function SearchPage() {
       setLoading(false)
     }
   }*/
+
 
   function handleSearch(e) {
     e.preventDefault()

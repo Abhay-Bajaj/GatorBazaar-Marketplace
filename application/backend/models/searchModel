@@ -1,16 +1,43 @@
 const pool = require('../database')
 
-async function getAllListings() {
-    const [rows] = await pool.query('SELECT * FROM listings WHERE active = 1')
+async function getListings({ keyword = '', category = '', sort = '' }) {
+    let sql = 
+        `SELECT 
+            l.listing_id,
+            l.title,
+            l.description,
+            l.price,
+            c.category_name
+        FROM listings l
+        JOIN Categories c ON l.category = c.category_id
+        WHERE l.active = 1`
+    
+
+    const params = []
+
+
+    if (keyword) {
+        sql += ' AND (l.title LIKE ? OR l.description LIKE ?)'
+        params.push(`%${keyword}%`, `%${keyword}%`)
+    }
+
+    if (category) {
+        sql += ' AND LOWER(c.category_name) = LOWER(?)'
+        params.push(category.trim())
+    }
+
+    if (sort === 'price_low') {
+        sql += ' ORDER BY l.price ASC'
+    } else if (sort === 'price_high') {
+        sql += ' ORDER BY l.price DESC'
+    } else if (sort === 'newest') {
+        sql += ' ORDER BY l.created_at DESC'
+    }
+
+    const [rows] = await pool.query(sql, params)
     return rows
 }
 
-/*async function getListingsByCategory(category) {
-    const [rows] = await pool.query('SELECT * FROM listings WHERE category = ( SELECT category_id FROM Categories WHERE category_name = ?)', [category])
-    return rows
-}*/
-
 module.exports = {
-    getAllListings,
-    //getListingsByCategory,
+    getListings,
 }

@@ -1,25 +1,25 @@
-const searchModel = require('../models/searchModel')
+const { getListings } = require('../models/searchModel')
 
-async function getAllListings(req, res) {
+async function searchListings(req, res) {
   try {
-    console.log('GET /api/search hit')
+    const { keyword, category, sort } = req.query
 
-    const listings = await searchModel.getAllListings()
-
-    console.log('rows returned:', listings.length)
+    const listings = await getListings({
+      keyword,
+      category,
+      sort,
+    })
 
     res.json({
       items: listings,
-      total: listings.length
+      total: listings.length,
     })
   } catch (err) {
-    console.error('Error fetching listings:', err)
-    res.status(500).json({
-      error: err.message
-    })
+    console.error(err)
+    res.status(500).json({ error: err.message })
   }
 }
 
 module.exports = {
-  getAllListings
+  searchListings,
 }
