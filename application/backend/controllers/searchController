@@ -1,0 +1,21 @@
+const searchModel = require('../models/searchModel')
+
+async function getAllListings(req, res) {
+  try {
+    const listings = await searchModel.getAllListings()
+
+    res.json({
+      items: listings
+    })
+    
+  } catch (err) {
+    console.error('Error fetching listings:', err)
+    res.status(500).json({
+      error: 'Internal server error'
+    })
+  }
+}
+
+module.exports = {
+  getAllListings
+}

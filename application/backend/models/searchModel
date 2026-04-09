@@ -1,0 +1,16 @@
+const pool = require('../db/database')
+
+async function getAllListings() {
+    const [rows] = await pool.query('SELECT * FROM listings WHERE active = 1')
+    return rows
+}
+
+/*async function getListingsByCategory(category) {
+    const [rows] = await pool.query('SELECT * FROM listings WHERE category = ( SELECT category_id FROM Categories WHERE category_name = ?)', [category])
+    return rows
+}*/
+
+module.exports = {
+    getAllListings,
+    //getListingsByCategory,
+}
