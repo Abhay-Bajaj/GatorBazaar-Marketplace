@@ -1,6 +1,8 @@
 import { Link, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import './App.css'
 import { teamMembers } from './data/teamMembers'
+import SearchPage from './SearchPage'
+import ItemPage from './ItemPage'
 
 function Home() {
   return (
@@ -67,6 +69,7 @@ function MemberProfile() {
 function App() {
   const location = useLocation()
   const isHome = location.pathname === '/'
+  const isSearch = location.pathname.startsWith('/search') || location.pathname.startsWith('/items')
 
   return (
     <div className="page">
@@ -82,12 +85,22 @@ function App() {
           For Demonstration Only
         </h1>
         <p>Section 01, Team 07</p>
+        {isHome && (
+          <Link className="vp-nav-link" to="/search">
+            🔍 Browse &amp; Search
+          </Link>
+        )}
+        {isSearch && (
+          <p className="vp-nav-subtitle">Browse &amp; Search</p>
+        )}
       </nav>
 
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/team/:slug" element={<MemberProfile />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/items/:id" element={<ItemPage />} />
         </Routes>
       </main>
     </div>
