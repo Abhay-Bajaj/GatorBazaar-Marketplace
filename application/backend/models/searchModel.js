@@ -2,18 +2,21 @@ const pool = require('../database')
 
 async function getListings({ keyword = '', category = '', sort = '' }) {
     let sql = 
-    `SELECT 
-          l.listing_id,
-          l.title,
-          l.description,
-        l.price,
-        c.category_name,
-        MIN(li.image_url) AS image_url
-    FROM listings l
-    JOIN Categories c ON l.category = c.category_id
-    LEFT JOIN listing_images li ON l.listing_id = li.listing_id
-    WHERE l.active = 1
-    GROUP BY l.listing_id`
+        `SELECT 
+            l.listing_id,
+            l.title,
+            l.description,
+            l.price,
+            c.category_name,
+            (
+                SELECT li.image_url
+            FROM listing_images li
+            WHERE li.listing_id = l.listing_id
+            LIMIT 1
+            ) AS image_url
+        FROM listings l
+        JOIN Categories c ON l.category = c.category_id
+        WHERE l.active = 1`
     
 
     const params = []
