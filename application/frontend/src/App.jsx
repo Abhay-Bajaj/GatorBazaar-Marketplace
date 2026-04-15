@@ -68,14 +68,14 @@ function MemberProfile() {
 
 function App() {
   const location = useLocation()
-  const isHome = location.pathname.startsWith('/search') || location.pathname.startsWith('/items')
-  const isTeamMembers = location.pathname === '/'
+  const isHome = location.pathname === '/'
+  const isTeamMembers = location.pathname.startsWith('/teamMembers')
 
   return (
     <div className="page">
       <nav className="site-nav">
         {!isTeamMembers && (
-          <Link className="home-button" to="/">
+          <Link className="home-button" to="/teamMembers">
             ← Team Members
           </Link>
         )}
@@ -86,17 +86,20 @@ function App() {
         </h1>
         <p>Section 01, Team 07</p>
         {isTeamMembers && (
-          <Link className="vp-nav-link" to="/search">
+          <Link className="vp-nav-link" to="/">
             🔍 Browse &amp; Search
           </Link>
+        )}
+        {isHome && (
+          <p className="vp-nav-subtitle"> Browse and Search our Item Catalog</p>
         )}
       </nav>
 
       <main>
         <Routes>
-          <Route path="/" element={<TeamMembers />} />
+          <Route path="/" element={<SearchPage />} />
           <Route path="/team/:slug" element={<MemberProfile />} />
-          <Route path="/search" element={<SearchPage />} />
+          <Route path="/teamMembers" element={<TeamMembers />} />
           <Route path="/items/:id" element={<ItemPage />} />
         </Routes>
       </main>
