@@ -3,6 +3,7 @@ import './App.css'
 import { teamMembers } from './data/teamMembers'
 import SearchPage from './SearchPage'
 import ItemPage from './ItemPage'
+import LoginPage from './LoginPage'
 
 function TeamMembers() {
   return (
@@ -70,6 +71,15 @@ function App() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const isTeamMembers = location.pathname.startsWith('/teamMembers')
+  const isLogin = location.pathname === '/login'
+
+  if (isLogin) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    )
+  }
 
   return (
     <div className="page">
