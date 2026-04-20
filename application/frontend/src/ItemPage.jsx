@@ -2,12 +2,16 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { mockItems } from './data/mockItems'
 
+
 export default function ItemPage() {
   const { id } = useParams()
   const [item, setItem] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
+  const [isFavorited, setIsFavorited] = useState(false)
+  const favoriteImage = isFavorited ? "/images/heart_1.webp" : "/images/heart_2.png"
+  const handleFavorite = () => setIsFavorited(!isFavorited)
+  
   useEffect(() => {
     async function load() {
       try {
@@ -52,7 +56,7 @@ export default function ItemPage() {
 
   return (
     <section className="banner item-detail">
-      <Link className="text-link" to="/search">
+      <Link className="text-link" to="/">
         ← Back to search
       </Link>
 
@@ -64,13 +68,47 @@ export default function ItemPage() {
         />
 
         <div className="item-detail-body">
-          <span className="item-card-category">{item.category}</span>
-          <h2 className="item-detail-title">{item.title}</h2>
+          <span className="item-card-category">{item.category_name}</span>
+          
+          <div className="item-favorite">
+            <h2 className="item-detail-title">{item.title}</h2>
+            <button className="item-favorite-button" onClick={handleFavorite}>
+              <img className="item-favorite-img" src={favoriteImage} alt="Favorite" style={{transform: isFavorited ? 'scale(0.9)' : 'scale(1.20)' }} />
+            </button>
+           
+          </div>
+          
           <p className="item-detail-price">
             ${Number(item.price || 0).toFixed(2)}
           </p>
-          <p className="item-detail-description">{item.description}</p>
+          <p className="item-detail-description">{item.description}</p>                          
         </div>
+        
+        <div className="item-seller-info">
+          <div className="seller-name">
+            <button className="seller-page" onClick={() => {}} >
+              <img className="seller-image" src="/images/item-placeholder.png" alt="Seller" />
+            </button>
+            <h3>Seller Name</h3>
+          </div>
+          
+          <div className="message-seller">
+            Message Seller
+            <input className="chat-message-input"
+              type="text"
+              defaultValue="Is this available?"
+            />
+            <button
+              className="send-message-button"
+              onClick={() => {}}
+              >
+              Send
+            </button>
+          </div>
+        </div>
+
+       
+
       </div>
     </section>
   )
