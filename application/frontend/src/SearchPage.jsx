@@ -70,7 +70,7 @@ async function fetchResults(cat = '', q = '') {
   setError(null)
 
   const applyResults = () => {
-    const filteredItems = searchItems(items, cat, q)
+    const filteredItems = searchItems(mockItems, cat, q)
     setResults(filteredItems)
     setTotalFound(filteredItems.length)
   }
@@ -146,6 +146,11 @@ async function fetchResults(cat = '', q = '') {
   return (
     <section className="banner search-page">
       {/* ── Search bar ── */}
+      <div className="search-header">
+        <Link to="/" className="home-button">
+          Home
+        </Link>
+      </div>
       <form className="search-form" onSubmit={handleSearch} role="search">
         <select
           className="search-category"

@@ -3,6 +3,7 @@ import './App.css'
 import { teamMembers } from './data/teamMembers'
 import SearchPage from './SearchPage'
 import ItemPage from './ItemPage'
+import HomePage from './HomePage'
 
 function TeamMembers() {
   return (
@@ -75,7 +76,7 @@ function App() {
     <div className="page">
       <nav className="site-nav">
         {!isTeamMembers && (
-          <Link className="home-button" to="/teamMembers">
+          <Link className="team-button" to="/teamMembers">
             ← Team Members
           </Link>
         )}
@@ -97,9 +98,10 @@ function App() {
 
       <main>
         <Routes>
-          <Route path="/" element={<SearchPage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/team/:slug" element={<MemberProfile />} />
           <Route path="/teamMembers" element={<TeamMembers />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/items/:id" element={<ItemPage />} />
         </Routes>
       </main>
