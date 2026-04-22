@@ -592,6 +592,12 @@
   align-items: center;
   gap: 24px;
   font-size: 15px;
+  font-family: inherit;
+}
+
+.transaction-header {
+  font-size: 3rem;
+  font-family: inherit;
 }
 
 .back-btn {

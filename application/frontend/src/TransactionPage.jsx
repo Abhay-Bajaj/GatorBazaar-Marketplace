@@ -159,11 +159,9 @@ export default function TransactionPage() {
 
   return (
     <section className="banner transaction-page">
-      {/* Back Button */}
-      <Link to="/transactions" className="back-btn">
-        ← Back to Transactions
-      </Link>
-
+      <div className="transaction-header">
+          Complete Transaction
+      </div>
       {/* Profile Pictures and Names */}
       <div className="transaction-participants">
         <div className="participant">
