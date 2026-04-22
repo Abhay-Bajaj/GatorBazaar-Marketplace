@@ -9,8 +9,11 @@ export default function ItemPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [isFavorited, setIsFavorited] = useState(false)
-  const favoriteImage = isFavorited ? "/images/heart_1.webp" : "/images/heart_2.png"
+  const [messageSent, setMessageSent] = useState(false)
+  const [isSignedIn, setIsSignedIn] = useState(true) // set to false to test non-signed-in state
+  const favoriteImage = isFavorited ? "/images/heart_2.png" : "/images/heart_1.webp"
   const handleFavorite = () => setIsFavorited(!isFavorited)
+  const handleSendMessage = () => setMessageSent(true)
   
   useEffect(() => {
     async function load() {
@@ -73,7 +76,7 @@ export default function ItemPage() {
           <div className="item-favorite">
             <h2 className="item-detail-title">{item.title}</h2>
             <button className="item-favorite-button" onClick={handleFavorite}>
-              <img className="item-favorite-img" src={favoriteImage} alt="Favorite" style={{transform: isFavorited ? 'scale(0.9)' : 'scale(1.20)' }} />
+              <img className="item-favorite-img" src={favoriteImage} alt="Favorite" style={{transform: isFavorited ? 'scale(1.20)' : 'scale(0.90)' }} />
             </button>
            
           </div>
@@ -93,17 +96,47 @@ export default function ItemPage() {
           </div>
           
           <div className="message-seller">
-            Message Seller
-            <input className="chat-message-input"
-              type="text"
-              defaultValue="Is this available?"
-            />
-            <button
-              className="send-message-button"
-              onClick={() => {}}
-              >
-              Send
-            </button>
+            Send a Message to Seller
+            {!isSignedIn ? (
+              <>
+                <p style={{ margin: '10px 0', color: 'white' }}>
+                  To Message Seller, Please Register/Sign-in
+                </p>
+                <button
+                  className="send-message-button"
+                  onClick={() => {}}
+                  style={{ backgroundColor: '#007bff' }}
+                >
+                  Register/Sign in
+                </button>
+              </>
+            ) : messageSent ? (
+              <>
+                <p style={{ margin: '10px 0', color: 'white' }}>
+                  ✓ Message Sent
+                </p>
+                <button
+                  className="send-message-button"
+                  onClick={() => {}}
+                  style={{ backgroundColor: '#28a745' }}
+                >
+                  Go to Chat
+                </button>
+              </>
+            ) : (
+              <>
+                <input className="chat-message-input"
+                  type="text"
+                  defaultValue="Is this available?"
+                />
+                <button
+                  className="send-message-button"
+                  onClick={handleSendMessage}
+                >
+                  Send
+                </button>
+              </>
+            )}
           </div>
         </div>
 
