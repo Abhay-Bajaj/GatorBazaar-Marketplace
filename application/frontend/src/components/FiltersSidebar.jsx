@@ -1,4 +1,4 @@
-const SIDEBAR_CATEGORIES = ['All Listings', 'Furniture', 'Clothing', 'School Supplies']
+const SIDEBAR_CATEGORIES = ['All Listings', 'Clothes', 'Text Books', 'Furniture', 'Electronics', 'School Supplies', 'Room Search']
 const STAR_RATINGS = [5, 4, 3, 2, 1]
 
 export default function FiltersSidebar({ filters, onChange }) {

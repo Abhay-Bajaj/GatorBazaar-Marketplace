@@ -38,10 +38,12 @@ function applyFilters(listings, filters) {
     if (!hasAllListings) {
       const cat = listing.category
       const matches = filters.categories.some((filterCat) => {
+        if (filterCat === 'Clothes') return cat === 'clothes'
+        if (filterCat === 'Text Books') return cat === 'textbooks'
         if (filterCat === 'Furniture') return cat === 'furniture'
-        if (filterCat === 'Clothing') return cat === 'clothing'
-        if (filterCat === 'School Supplies')
-          return ['books', 'sationary', 'class material'].includes(cat)
+        if (filterCat === 'Electronics') return cat === 'electronics'
+        if (filterCat === 'School Supplies') return cat === 'school supplies'
+        if (filterCat === 'Room Search') return cat === 'room search'
         return true
       })
       if (!matches) return false
@@ -80,6 +82,7 @@ export default function SearchPage() {
     fetchResults(urlQuery)
   }, [searchParams])
 
+  /* if API request fails, it resorts to mock data */
   async function fetchResults(q = '') {
     setLoading(true)
     setError(null)
@@ -110,6 +113,8 @@ export default function SearchPage() {
       setLoading(false)
     }
   }
+/* Section above part of Mock Tests */
+
 
   function handleSearch(e) {
     e.preventDefault()
