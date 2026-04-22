@@ -4,6 +4,7 @@ import Header from './components/Header'
 import SubHeader from './components/SubHeader'
 import FiltersSidebar from './components/FiltersSidebar'
 import ListingsGrid from './components/ListingsGrid'
+import LoginModal from './components/LoginModal'
 import { mockItems } from './data/mockItems'
 
 function searchMockItems(items, q) {
@@ -27,6 +28,7 @@ function toListingFormat(items) {
     image: item.image_url || 'placeholder',
     isFavorited: false,
     category: (item.category_name || item.category || '').toLowerCase(),
+    rating: item.rating ?? null,
   }))
 }
 
@@ -54,6 +56,12 @@ function applyFilters(listings, filters) {
     if (filters.priceMin !== '' && price < Number(filters.priceMin)) return false
     if (filters.priceMax !== '' && price > Number(filters.priceMax)) return false
 
+    // Rating filter
+    if (filters.ratings.length > 0) {
+      const rating = Math.floor(listing.rating ?? 0)
+      if (!filters.ratings.includes(rating)) return false
+    }
+
     return true
   })
 }
@@ -63,6 +71,7 @@ export default function SearchPage() {
   const navigate = useNavigate()
 
   const [query, setQuery] = useState(searchParams.get('q') ?? '')
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
 
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(false)
@@ -156,7 +165,7 @@ export default function SearchPage() {
 
   return (
     <div className="search-page">
-      <Header query={query} setQuery={setQuery} onSearch={handleSearch} />
+      <Header query={query} setQuery={setQuery} onSearch={handleSearch} onProfileClick={() => setLoginModalOpen(true)} />
 
       <SubHeader
         query={urlQuery}
@@ -173,6 +182,8 @@ export default function SearchPage() {
           onToggleFavorite={handleToggleFavorite}
         />
       </div>
+
+      {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
     </div>
   )
 }

@@ -6,6 +6,7 @@ export const mockItems = [
     description: '1080p monitor in good condition with HDMI cable included.',
     price: 85,
     image_url: '/images/computer.png',
+    rating: 4,
   },
   {
     id: 102,
@@ -14,6 +15,7 @@ export const mockItems = [
     description: 'Hot-swappable keyboard with tactile switches and RGB backlight.',
     price: 60,
     image_url: '/images/computer.png',
+    rating: 5,
   },
   {
     id: 103,
@@ -22,6 +24,7 @@ export const mockItems = [
     description: 'Used CS textbook with highlighted notes for interview prep.',
     price: 25,
     image_url: '/images/book.png',
+    rating: 3,
   },
   {
     id: 104,
@@ -30,6 +33,7 @@ export const mockItems = [
     description: 'Classic programming book for frontend developers.',
     price: 12,
     image_url: '/images/book.png',
+    rating: 5,
   },
   {
     id: 105,
@@ -38,6 +42,7 @@ export const mockItems = [
     description: 'Compact wooden desk, perfect for dorm rooms and apartments.',
     price: 70,
     image_url: '/images/chair.jpeg',
+    rating: 4,
   },
   {
     id: 106,
@@ -46,6 +51,7 @@ export const mockItems = [
     description: 'Mesh back office chair with adjustable height and lumbar support.',
     price: 95,
     image_url: '/images/chair.jpeg',
+    rating: 5,
   },
   {
     id: 107,
@@ -54,6 +60,7 @@ export const mockItems = [
     description: '64GB iPad with charger, ideal for notes and streaming.',
     price: 220,
     image_url: '/images/computer.png',
+    rating: 4,
   },
   {
     id: 108,
@@ -62,6 +69,7 @@ export const mockItems = [
     description: 'Reference book for algorithms and coding competitions.',
     price: 30,
     image_url: '/images/book.png',
+    rating: 2,
   },
   {
     id: 109,
@@ -70,6 +78,7 @@ export const mockItems = [
     description: '5-tier bookshelf with black metal frame and wood shelves.',
     price: 55,
     image_url: '/images/chair.jpeg',
+    rating: 3,
   },
   {
     id: 110,
@@ -78,6 +87,7 @@ export const mockItems = [
     description: 'Wireless over-ear headphones with 30-hour battery life.',
     price: 140,
     image_url: '/images/computer.png',
+    rating: 5,
   },
   {
     id: 111,
@@ -86,6 +96,7 @@ export const mockItems = [
     description: 'Warm campus hoodie, lightly used and freshly washed.',
     price: 28,
     image_url: '/images/clothes.png',
+    rating: 3,
   },
   {
     id: 112,
@@ -94,6 +105,7 @@ export const mockItems = [
     description: 'Insulated jacket for windy SF mornings, size large.',
     price: 45,
     image_url: '/images/clothes.png',
+    rating: 4,
   },
   {
     id: 113,
@@ -102,6 +114,7 @@ export const mockItems = [
     description: 'Compact refrigerator for dorm use, works perfectly.',
     price: 90,
     image_url: '/images/item-placeholder.png',
+    rating: 2,
   },
   {
     id: 114,
@@ -110,6 +123,7 @@ export const mockItems = [
     description: 'Adjustable LED lamp with built-in USB charging outlet.',
     price: 20,
     image_url: '/images/item-placeholder.png',
+    rating: 4,
   },
   {
     id: 115,
@@ -118,6 +132,7 @@ export const mockItems = [
     description: 'Pack of three notebooks suitable for semester classes.',
     price: 14,
     image_url: '/images/item-placeholder.png',
+    rating: 3,
   },
   {
     id: 116,
@@ -126,6 +141,7 @@ export const mockItems = [
     description: 'Smooth writing pens for notes, journaling, and diagrams.',
     price: 9,
     image_url: '/images/item-placeholder.png',
+    rating: 1,
   },
   {
     id: 117,
@@ -134,6 +150,7 @@ export const mockItems = [
     description: 'Single room in shared apartment, 12-minute walk to SFSU.',
     price: 980,
     image_url: '/images/item-placeholder.png',
+    rating: 4,
   },
   {
     id: 118,
@@ -142,5 +159,6 @@ export const mockItems = [
     description: 'Furnished studio available May to August, utilities included.',
     price: 1450,
     image_url: '/images/item-placeholder.png',
+    rating: 5,
   },
 ]

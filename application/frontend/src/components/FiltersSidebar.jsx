@@ -27,20 +27,19 @@ export default function FiltersSidebar({ filters, onChange }) {
             className="gb-price-input"
             type="number"
             min="0"
-            placeholder="Min"
-            value={filters.priceMin}
-            onChange={(e) => onChange('priceMin', e.target.value)}
-            aria-label="Minimum price"
-          />
-          <span className="gb-price-sep">–</span>
-          <input
-            className="gb-price-input"
-            type="number"
-            min="0"
             placeholder="Max"
             value={filters.priceMax}
             onChange={(e) => onChange('priceMax', e.target.value)}
             aria-label="Maximum price"
+          />
+          <input
+            className="gb-price-input"
+            type="number"
+            min="0"
+            placeholder="Min"
+            value={filters.priceMin}
+            onChange={(e) => onChange('priceMin', e.target.value)}
+            aria-label="Minimum price"
           />
         </div>
       </div>
