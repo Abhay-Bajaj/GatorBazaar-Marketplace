@@ -3,6 +3,7 @@ import './App.css'
 import { teamMembers } from './data/teamMembers'
 import SearchPage from './SearchPage'
 import ItemPage from './ItemPage'
+import TransactionPage from './TransactionPage'
 
 function Home() {
   return (
@@ -101,6 +102,7 @@ function App() {
           <Route path="/team/:slug" element={<MemberProfile />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/items/:id" element={<ItemPage />} />
+          <Route path="/transactions" element={<TransactionPage />} />
         </Routes>
       </main>
     </div>
