@@ -3,8 +3,9 @@ import './App.css'
 import { teamMembers } from './data/teamMembers'
 import SearchPage from './SearchPage'
 import ItemPage from './ItemPage'
+import LoginPage from './LoginPage'
 
-function Home() {
+function TeamMembers() {
   return (
     <section className="banner">
       <header className="banner-header">
@@ -69,14 +70,23 @@ function MemberProfile() {
 function App() {
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const isSearch = location.pathname.startsWith('/search') || location.pathname.startsWith('/items')
+  const isTeamMembers = location.pathname.startsWith('/teamMembers')
+  const isLogin = location.pathname === '/login'
+
+  if (isLogin) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    )
+  }
 
   return (
     <div className="page">
       <nav className="site-nav">
-        {!isHome && (
-          <Link className="home-button" to="/">
-            ← Home
+        {!isTeamMembers && (
+          <Link className="home-button" to="/teamMembers">
+            ← Team Members
           </Link>
         )}
         <h1>
@@ -85,21 +95,21 @@ function App() {
           For Demonstration Only
         </h1>
         <p>Section 01, Team 07</p>
-        {isHome && (
-          <Link className="vp-nav-link" to="/search">
+        {isTeamMembers && (
+          <Link className="vp-nav-link" to="/">
             🔍 Browse &amp; Search
           </Link>
         )}
-        {isSearch && (
-          <p className="vp-nav-subtitle">Browse &amp; Search</p>
+        {isHome && (
+          <p className="vp-nav-subtitle"> Browse and Search our Item Catalog</p>
         )}
       </nav>
 
       <main>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<SearchPage />} />
           <Route path="/team/:slug" element={<MemberProfile />} />
-          <Route path="/search" element={<SearchPage />} />
+          <Route path="/teamMembers" element={<TeamMembers />} />
           <Route path="/items/:id" element={<ItemPage />} />
         </Routes>
       </main>
