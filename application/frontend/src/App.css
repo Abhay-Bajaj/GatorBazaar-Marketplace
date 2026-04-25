@@ -1137,8 +1137,10 @@
 }
 
 /*
-   Additional Tweaks for GatorBazaar (Search/Results)
+   Price Range Dual Slider
  */
+
+
 
 @media (max-width: 900px) {
   .gb-listings-grid {

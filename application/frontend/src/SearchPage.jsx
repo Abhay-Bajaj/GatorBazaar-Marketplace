@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import Header from './components/Header'
+import NavigationSearchBar from './components/NavigationSearchBar'
 import SubHeader from './components/SubHeader'
 import FiltersSidebar from './components/FiltersSidebar'
 import ListingsGrid from './components/ListingsGrid'
@@ -165,7 +165,12 @@ export default function SearchPage() {
 
   return (
     <div className="search-page">
-      <Header query={query} setQuery={setQuery} onSearch={handleSearch} onProfileClick={() => setLoginModalOpen(true)} />
+      <NavigationSearchBar
+        query={query}
+        onQueryChange={setQuery}
+        onSearch={handleSearch}
+        onProfileClick={() => setLoginModalOpen(true)}
+      />
 
       <SubHeader
         query={urlQuery}
