@@ -22,7 +22,7 @@
   overflow: hidden;
 }
 
-.home-button {
+.team-button {
   position: absolute;
   left: 20px;
   top: 50%;
@@ -38,7 +38,7 @@
   z-index: 2;
 }
 
-.home-button:hover {
+.team-button:hover {
   background: #f6f3ee;
   color: #1c2a2e;
   transform: translateY(-50%) translateX(-2px);
