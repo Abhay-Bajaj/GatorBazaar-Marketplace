@@ -4,6 +4,9 @@ import { teamMembers } from './data/teamMembers'
 import SearchPage from './SearchPage'
 import ItemPage from './ItemPage'
 import Inbox from './inbox'
+import HomePage from './HomePage'
+import LoginPage from './LoginPage'
+import Dashboard from './dashboard'
 
 function TeamMembers() {
   return (
@@ -71,12 +74,21 @@ function App() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const isTeamMembers = location.pathname.startsWith('/teamMembers')
+  const isLogin = location.pathname === '/login'
+
+  if (isLogin) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    )
+  }
 
   return (
     <div className="page">
       <nav className="site-nav">
         {!isTeamMembers && (
-          <Link className="home-button" to="/teamMembers">
+          <Link className="team-button" to="/teamMembers">
             ← Team Members
           </Link>
         )}
@@ -87,9 +99,14 @@ function App() {
         </h1>
         <p>Section 01, Team 07</p>
         {isTeamMembers && (
-          <Link className="vp-nav-link" to="/">
-            🔍 Browse &amp; Search
-          </Link>
+          <>
+            <Link className="vp-nav-link" to="/">
+              🔍 Browse &amp; Search
+            </Link>
+            <Link className="vp-nav-link" to="/dashboard">
+              📊 Dashboard
+            </Link>
+          </>
         )}
         {isHome && (
           <p className="vp-nav-subtitle"> Browse and Search our Item Catalog</p>
@@ -98,9 +115,15 @@ function App() {
 
       <main>
         <Routes>
-          <Route path="/" element={<SearchPage />} />
+
+          <Route path="/" element={<HomePage />} />
+
+
+          <Route path="/dashboard" element={<Dashboard />} />
+
           <Route path="/team/:slug" element={<MemberProfile />} />
           <Route path="/teamMembers" element={<TeamMembers />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/items/:id" element={<ItemPage />} />
           <Route path="/inbox" element={<Inbox />} />
         </Routes>
