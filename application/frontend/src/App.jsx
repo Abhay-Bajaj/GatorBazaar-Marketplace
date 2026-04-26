@@ -4,6 +4,7 @@ import { teamMembers } from './data/teamMembers'
 import SearchPage from './SearchPage'
 import ItemPage from './ItemPage'
 import LoginPage from './LoginPage'
+import Dashboard from './dashboard'
 
 function TeamMembers() {
   return (
@@ -96,9 +97,14 @@ function App() {
         </h1>
         <p>Section 01, Team 07</p>
         {isTeamMembers && (
-          <Link className="vp-nav-link" to="/">
-            🔍 Browse &amp; Search
-          </Link>
+          <>
+            <Link className="vp-nav-link" to="/">
+              🔍 Browse &amp; Search
+            </Link>
+            <Link className="vp-nav-link" to="/dashboard">
+              📊 Dashboard
+            </Link>
+          </>
         )}
         {isHome && (
           <p className="vp-nav-subtitle"> Browse and Search our Item Catalog</p>
@@ -108,6 +114,7 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<SearchPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/team/:slug" element={<MemberProfile />} />
           <Route path="/teamMembers" element={<TeamMembers />} />
           <Route path="/items/:id" element={<ItemPage />} />
