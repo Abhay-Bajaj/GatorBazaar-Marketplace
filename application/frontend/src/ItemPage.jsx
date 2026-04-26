@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { mockItems } from './data/mockItems'
 
 
 export default function ItemPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [item, setItem] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -13,7 +14,11 @@ export default function ItemPage() {
   const [isSignedIn, setIsSignedIn] = useState(true) // set to false to test non-signed-in state
   const favoriteImage = isFavorited ? "/images/heart_2.png" : "/images/heart_1.webp"
   const handleFavorite = () => setIsFavorited(!isFavorited)
-  const handleSendMessage = () => setMessageSent(true)
+  const handleSendMessage = () => {
+    setMessageSent(true)
+    setTimeout(() => navigate('/inbox'), 500)
+  }
+  const handleGoToChat = () => navigate('/inbox')
   
   useEffect(() => {
     async function load() {
@@ -117,7 +122,7 @@ export default function ItemPage() {
                 </p>
                 <button
                   className="send-message-button"
-                  onClick={() => {}}
+                  onClick={handleGoToChat}
                   style={{ backgroundColor: '#28a745' }}
                 >
                   Go to Chat
