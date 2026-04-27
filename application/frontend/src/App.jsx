@@ -6,6 +6,7 @@ import ItemPage from './ItemPage'
 import HomePage from './HomePage'
 import LoginPage from './LoginPage'
 import Dashboard from './dashboard'
+import CreateListing from './CreateListing'
 
 function TeamMembers() {
   return (
@@ -118,8 +119,8 @@ function App() {
           <Route path="/" element={<HomePage />} />
 
 
-          <Route path="/dashboard" element={<Dashboard />} />
-
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/team/:slug" element={<MemberProfile />} />
           <Route path="/teamMembers" element={<TeamMembers />} />
           <Route path="/search" element={<SearchPage />} />

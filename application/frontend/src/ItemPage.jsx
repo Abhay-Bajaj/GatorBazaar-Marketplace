@@ -59,7 +59,7 @@ export default function ItemPage() {
 
   return (
     <section className="banner item-detail">
-      <Link className="text-link" to="/">
+      <Link className="text-link" to="/search">
         ← Back to search
       </Link>
 
