@@ -1,10 +1,23 @@
+import { useNavigate } from 'react-router-dom'
+
 export default function ListingCard({ id, title, price, image, isFavorited, onToggleFavorite }) {
+  const navigate = useNavigate()
+
+  const handleCardClick = () => {
+    navigate(`/items/${id}`)
+  }
+
+  const handleFavoriteClick = (e) => {
+    e.stopPropagation()
+    onToggleFavorite(id)
+  }
+
   return (
-    <div className="gb-listing-card">
+    <div className="gb-listing-card" onClick={handleCardClick} style={{ cursor: 'pointer' }}>
       <button
         className={`gb-favorite-btn${isFavorited ? ' favorited' : ''}`}
         type="button"
-        onClick={() => onToggleFavorite(id)}
+        onClick={handleFavoriteClick}
         aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
       >
         {isFavorited ? '♥' : '♡'}
