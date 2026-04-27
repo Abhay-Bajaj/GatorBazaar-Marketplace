@@ -3,7 +3,7 @@ import LogoSection from './LogoSection'
 import Title from './Title'
 import LoginForm from './LoginForm'
 
-export default function LoginModal({ onClose }) {
+export default function LoginModal({ isOpen, onClose }) {
   // Close on Escape key
   useEffect(() => {
     function handleKey(e) {
@@ -12,6 +12,8 @@ export default function LoginModal({ onClose }) {
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
   }, [onClose])
+
+  if (!isOpen) return null
 
   return (
     <div

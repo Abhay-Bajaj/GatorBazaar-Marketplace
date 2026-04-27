@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import NavigationSearchBar from "./components/NavigationSearchBar"
+import LoginModal from "./components/LoginModal"
+import CreateListing from "./CreateListing"
 
 const mockTransactions = [
   {
@@ -84,6 +87,7 @@ function StarRating({ rating, onRatingChange }) {
 
 export default function TransactionPage() {
   const { transaction_id } = useParams()
+  const navigate = useNavigate()
   const [transaction, setTransaction] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -91,6 +95,8 @@ export default function TransactionPage() {
   const [buyerRating, setBuyerRating] = useState(0)
   const [comments, setComments] = useState('')
   const [confirmed, setConfirmed] = useState(false)
+  const [query, setQuery] = useState('')
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
 
   // Mock current user - in real app, this would come from auth context or API
   const currentUser = 'Alice Johnson' // Change this to test different views
@@ -133,6 +139,13 @@ export default function TransactionPage() {
     alert('Transaction completed!')
   }
 
+  function handleSearch(e) {
+    e.preventDefault()
+    if (query.trim()) {
+      navigate(`/search?q=${encodeURIComponent(query.trim())}`)
+    }
+  }
+
   if (loading) {
     return (
       <section className="banner transaction-page">
@@ -158,116 +171,119 @@ export default function TransactionPage() {
   const formattedDate = new Date(transaction.transaction_date).toLocaleString()
 
   return (
-    <section className="banner transaction-page">
+    <div className="transaction-page">
       <NavigationSearchBar
-                          query={query}
-                          onQueryChange={setQuery}
-                          onSearch={handleSearch}
-                          onProfileClick={() => setLoginModalOpen(true)}
-                          onSellClick={() => navigate('/create-listing')}
-                        />
-      <div className="transaction-header">
-          Complete Transaction
-      </div>
-      {/* Profile Pictures and Names */}
-      <div className="transaction-participants">
-        <div className="participant">
-          <img
-            src={transaction.seller_profile_pic}
-            alt={`${transaction.seller_name} profile`}
-            className="profile-pic"
-          />
-          <p className="participant-name">
-            {isSeller ? 'You' : transaction.seller_name} (Seller)
-          </p>
+            query={query}
+            onQueryChange={setQuery}
+            onSearch={handleSearch}
+            onProfileClick={() => setLoginModalOpen(true)}
+            onSellClick={() => navigate('/create-listing')}
+                          />
+      <section className="banner transaction-page">
+        <div className="transaction-header">
+            Complete Transaction
         </div>
-        <div className="arrow">
-          ⇄
-        </div>
-        <div className="participant">
-          <img
-            src={transaction.buyer_profile_pic}
-            alt={`${transaction.buyer_name} profile`}
-            className="profile-pic"
-          />
-          <p className="participant-name">
-            {isBuyer ? 'You' : transaction.buyer_name} (Buyer)
-          </p>
-        </div>
-      </div>
-
-      <div className="item-image">
-        <img
-          src="/images/book.png"
-            alt={`${transaction.item_title} pic`}
-            className="item-pic"
-        />
-      </div>
-      <div className="details-box">
-        {/* Exchange Details */}
-        <div className="exchange-details">
-          <p>Exchanged {transaction.item_title} on {formattedDate}</p>
-        </div>
-
-        {/* Location */}
-        <div className="transaction-location">
-          <p>Location: {transaction.location}</p>
-        </div>
-
-        {/* Rating Section */}
-        <div className="rating-section">
-          <h3>Rate the Other Participant</h3>
-          {isSeller && (
-            <div className="rating-item">
-              <label>Rate Buyer ({transaction.buyer_name}):</label>
-              <StarRating rating={buyerRating} onRatingChange={setBuyerRating} />
-            </div>
-          )}
-          {isBuyer && (
-            <div className="rating-item">
-              <label>Rate Seller ({transaction.seller_name}):</label>
-              <StarRating rating={sellerRating} onRatingChange={setSellerRating} />
-            </div>
-          )}
-          <div className="comments-section">
-            <label htmlFor="comments">Comments:</label>
-            <textarea
-              id="comments"
-              value={comments}
-              onChange={(e) => setComments(e.target.value)}
-              placeholder="Add any comments about the transaction..."
-              rows={4}
+        {/* Profile Pictures and Names */}
+        <div className="transaction-participants">
+          <div className="participant">
+            <img
+              src={transaction.seller_profile_pic}
+              alt={`${transaction.seller_name} profile`}
+              className="profile-pic"
             />
+            <p className="participant-name">
+              {isSeller ? 'You' : transaction.seller_name} (Seller)
+            </p>
+          </div>
+          <div className="arrow">
+            ⇄
+          </div>
+          <div className="participant">
+            <img
+              src={transaction.buyer_profile_pic}
+              alt={`${transaction.buyer_name} profile`}
+              className="profile-pic"
+            />
+            <p className="participant-name">
+              {isBuyer ? 'You' : transaction.buyer_name} (Buyer)
+            </p>
           </div>
         </div>
 
-        {/* Confirmation Checkbox */}
-        <div className="confirmation-section">
-          <label>
-            <input
-              type="checkbox"
-              checked={confirmed}
-              onChange={(e) => setConfirmed(e.target.checked)}
-            />
-            I confirmed that this transaction took place, at the time and location specified above.
-          </label>
+        <div className="item-image">
+          <img
+            src="/images/book.png"
+              alt={`${transaction.item_title} pic`}
+              className="item-pic"
+          />
         </div>
+        <div className="details-box">
+          {/* Exchange Details */}
+          <div className="exchange-details">
+            <p>Exchanged {transaction.item_title} on {formattedDate}</p>
+          </div>
 
-        <div className="note">
-          <i>
-            Transaction won't be listed as complete until both seller and buyer complete their confirmation forms.
-          </i>
+          {/* Location */}
+          <div className="transaction-location">
+            <p>Location: {transaction.location}</p>
+          </div>
+
+          {/* Rating Section */}
+          <div className="rating-section">
+            <h3>Rate the Other Participant</h3>
+            {isSeller && (
+              <div className="rating-item">
+                <label>Rate Buyer ({transaction.buyer_name}):</label>
+                <StarRating rating={buyerRating} onRatingChange={setBuyerRating} />
+              </div>
+            )}
+            {isBuyer && (
+              <div className="rating-item">
+                <label>Rate Seller ({transaction.seller_name}):</label>
+                <StarRating rating={sellerRating} onRatingChange={setSellerRating} />
+              </div>
+            )}
+            <div className="comments-section">
+              <label htmlFor="comments">Comments:</label>
+              <textarea
+                id="comments"
+                value={comments}
+                onChange={(e) => setComments(e.target.value)}
+                placeholder="Add any comments about the transaction..."
+                rows={4}
+              />
+            </div>
+          </div>
+
+          {/* Confirmation Checkbox */}
+          <div className="confirmation-section">
+            <label>
+              <input
+                type="checkbox"
+                checked={confirmed}
+                onChange={(e) => setConfirmed(e.target.checked)}
+              />
+              I confirmed that this transaction took place, at the time and location specified above.
+            </label>
+          </div>
+
+          <div className="note">
+            <i>
+              Transaction won't be listed as complete until both seller and buyer complete their confirmation forms.
+            </i>
+          </div>
+
+          {/* Complete Transaction Button */}
+          <button
+            className="complete-btn"
+            onClick={handleCompleteTransaction}
+            disabled={!confirmed}
+          >
+            Complete Transaction
+          </button>
         </div>
-
-        {/* Complete Transaction Button */}
-        <button
-          className="complete-btn"
-          onClick={handleCompleteTransaction}
-          disabled={!confirmed}
-        >
-          Complete Transaction
-        </button>
-      </div>
-    </section>
+      </section>
+      <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
+    </div>
   )
 }

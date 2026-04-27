@@ -1212,6 +1212,7 @@
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
+}
 /* 
    GatorBazaar Header (Search/Results)
  */
@@ -1221,6 +1222,7 @@
   border-radius: 14px;
   padding: 14px 20px;
   box-shadow: 0 6px 20px rgba(23, 34, 33, 0.2);
+  width: 100%;
 }
 
 .gb-header-inner {
