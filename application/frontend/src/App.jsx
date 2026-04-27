@@ -4,8 +4,13 @@ import { teamMembers } from './data/teamMembers'
 import SearchPage from './SearchPage'
 import ItemPage from './ItemPage'
 import TransactionPage from './TransactionPage'
+import Inbox from './inbox'
+import HomePage from './HomePage'
+import LoginPage from './LoginPage'
+import Dashboard from './dashboard'
+import CreateListing from './CreateListing'
 
-function Home() {
+function TeamMembers() {
   return (
     <section className="banner">
       <header className="banner-header">
@@ -70,14 +75,23 @@ function MemberProfile() {
 function App() {
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const isSearch = location.pathname.startsWith('/search') || location.pathname.startsWith('/items')
+  const isTeamMembers = location.pathname.startsWith('/teamMembers')
+  const isLogin = location.pathname === '/login'
+
+  if (isLogin) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    )
+  }
 
   return (
     <div className="page">
       <nav className="site-nav">
-        {!isHome && (
-          <Link className="home-button" to="/">
-            ← Home
+        {!isTeamMembers && (
+          <Link className="team-button" to="/teamMembers">
+            ← Team Members
           </Link>
         )}
         <h1>
@@ -86,23 +100,35 @@ function App() {
           For Demonstration Only
         </h1>
         <p>Section 01, Team 07</p>
-        {isHome && (
-          <Link className="vp-nav-link" to="/search">
-            🔍 Browse &amp; Search
-          </Link>
+        {isTeamMembers && (
+          <>
+            <Link className="vp-nav-link" to="/">
+              🔍 Browse &amp; Search
+            </Link>
+            <Link className="vp-nav-link" to="/dashboard">
+              📊 Dashboard
+            </Link>
+          </>
         )}
-        {isSearch && (
-          <p className="vp-nav-subtitle">Browse &amp; Search</p>
+        {isHome && (
+          <p className="vp-nav-subtitle"> Browse and Search our Item Catalog</p>
         )}
       </nav>
 
       <main>
         <Routes>
-          <Route path="/" element={<Home />} />
+
+          <Route path="/" element={<HomePage />} />
+
+
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/team/:slug" element={<MemberProfile />} />
+          <Route path="/teamMembers" element={<TeamMembers />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/items/:id" element={<ItemPage />} />
           <Route path="/transactions" element={<TransactionPage />} />
+          <Route path="/inbox" element={<Inbox />} />
         </Routes>
       </main>
     </div>
