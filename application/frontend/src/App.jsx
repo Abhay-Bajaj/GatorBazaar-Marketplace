@@ -76,6 +76,7 @@ function App() {
   const isHome = location.pathname === '/'
   const isTeamMembers = location.pathname.startsWith('/teamMembers')
   const isLogin = location.pathname === '/login'
+  const isDashboard = location.pathname === '/dashboard'
 
   if (isLogin) {
     return (
@@ -99,19 +100,21 @@ function App() {
           For Demonstration Only
         </h1>
         <p>Section 01, Team 07</p>
-        {isTeamMembers && (
+        {(isTeamMembers || isDashboard) &&(
           <>
             <Link className="vp-nav-link" to="/">
               🔍 Browse &amp; Search
-            </Link>
-            <Link className="vp-nav-link" to="/dashboard">
-              📊 Dashboard
             </Link>
           </>
         )}
         {isHome && (
           <p className="vp-nav-subtitle"> Browse and Search our Item Catalog</p>
         )}
+
+        <Link className="vp-nav-link" to="/dashboard">
+          📊 Dashboard
+        </Link>
+
       </nav>
 
       <main>
