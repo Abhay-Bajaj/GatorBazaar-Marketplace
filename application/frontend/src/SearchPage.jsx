@@ -170,6 +170,7 @@ export default function SearchPage() {
         query={query}
         onQueryChange={setQuery}
         onSearch={handleSearch}
+        onMessagesClick={() => navigate('/inbox')}
         onProfileClick={() => setLoginModalOpen(true)}
         onSellClick={() => navigate('/create-listing')}
       />
