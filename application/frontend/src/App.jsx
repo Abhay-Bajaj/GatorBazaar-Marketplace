@@ -7,6 +7,7 @@ import Inbox from './inbox'
 import HomePage from './HomePage'
 import LoginPage from './LoginPage'
 import Dashboard from './dashboard'
+import CreateListing from './CreateListing'
 
 function TeamMembers() {
   return (
@@ -120,7 +121,7 @@ function App() {
 
 
           <Route path="/dashboard" element={<Dashboard />} />
-
+          <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/team/:slug" element={<MemberProfile />} />
           <Route path="/teamMembers" element={<TeamMembers />} />
           <Route path="/search" element={<SearchPage />} />

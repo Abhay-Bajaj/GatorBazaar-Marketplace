@@ -74,7 +74,9 @@ export default function ItemPage() {
   }
 
   return (
-    <div className="banner item-detail">
+
+    <section className="banner item-detail">
+    
       <NavigationSearchBar
         query={query}
         onQueryChange={setQuery}
@@ -83,7 +85,8 @@ export default function ItemPage() {
         onProfileClick={() => setLoginModalOpen(true)}
       />
 
-      <Link className="text-link" to="/">
+      <Link className="text-link" to="/search">
+
         ← Back to search
       </Link>
 
