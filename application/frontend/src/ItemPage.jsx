@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { mockItems } from './data/mockItems'
+import NavigationSearchBar from './components/NavigationSearchBar'
+import LoginModal from './components/LoginModal'
 
 
 export default function ItemPage() {
@@ -11,14 +13,23 @@ export default function ItemPage() {
   const [error, setError] = useState(null)
   const [isFavorited, setIsFavorited] = useState(false)
   const [messageSent, setMessageSent] = useState(false)
-  const [isSignedIn, setIsSignedIn] = useState(true) // set to false to test non-signed-in state
+  const [isSignedIn, setIsSignedIn] = useState(true) //test signed in state
+  const [query, setQuery] = useState('')
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
+  
   const favoriteImage = isFavorited ? "/images/heart_2.png" : "/images/heart_1.webp"
+  
   const handleFavorite = () => setIsFavorited(!isFavorited)
+  
   const handleSendMessage = () => {
     setMessageSent(true)
     setTimeout(() => navigate('/inbox'), 500)
   }
-  const handleGoToChat = () => navigate('/inbox')
+  
+  const handleSearch = (e) => {
+    e.preventDefault()
+    navigate(`/search?q=${encodeURIComponent(query.trim())}`)
+  }
   
   useEffect(() => {
     async function load() {
@@ -63,12 +74,20 @@ export default function ItemPage() {
   }
 
   return (
-    <section className="banner item-detail">
+    <div className="banner item-detail">
+      <NavigationSearchBar
+        query={query}
+        onQueryChange={setQuery}
+        onSearch={handleSearch}
+        onMessagesClick={() => navigate('/inbox')}
+        onProfileClick={() => setLoginModalOpen(true)}
+      />
+
       <Link className="text-link" to="/">
         ← Back to search
       </Link>
 
-      <div className="item-detail-grid">
+      <div className="item-page-grid">
         <img
           className="item-detail-image"
           src={item.image_url || '/images/item-placeholder.png'}
@@ -122,7 +141,7 @@ export default function ItemPage() {
                 </p>
                 <button
                   className="send-message-button"
-                  onClick={handleGoToChat}
+                  onClick={() => {}}
                   style={{ backgroundColor: '#28a745' }}
                 >
                   Go to Chat
@@ -148,6 +167,7 @@ export default function ItemPage() {
        
 
       </div>
-    </section>
+        {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+    </div>
   )
 }

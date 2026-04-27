@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { mockConversations } from './data/mockConversations'
+import NavigationSearchBar from './components/NavigationSearchBar'
+import LoginModal from './components/LoginModal'
 
 export default function Inbox() {
   const navigate = useNavigate()
@@ -9,7 +11,9 @@ export default function Inbox() {
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [isSignedIn, setIsSignedIn] = useState(true) // set to false for testing un registered user state
+  const [isSignedIn, setIsSignedIn] = useState(true)
+  const [query, setQuery] = useState('')
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
 
   useEffect(() => {
     async function fetchConversations() {
@@ -52,8 +56,21 @@ export default function Inbox() {
     }
   }
 
+  const handleSearch = (e) => {
+    e.preventDefault()
+    navigate(`/search?q=${encodeURIComponent(query.trim())}`)
+  }
+
   return (
     <section className="banner inbox">
+      <NavigationSearchBar
+        query={query}
+        onQueryChange={setQuery}
+        onSearch={handleSearch}
+        onMessagesClick={() => navigate('/inbox')}
+        onProfileClick={() => setLoginModalOpen(true)}
+      />
+
       <button className="back-button" onClick={() => navigate(-1)}>
         ← Back
       </button>
@@ -146,6 +163,7 @@ export default function Inbox() {
           </div>
         </div>
       )}
+      {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
     </section>
   )
 }

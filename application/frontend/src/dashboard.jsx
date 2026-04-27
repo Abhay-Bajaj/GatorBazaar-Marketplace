@@ -50,7 +50,7 @@ export default function Dashboard() {
         onQueryChange={setQuery}
         onSearch={handleSearch}
         onSellClick={() => navigate('/dashboard')}
-        onMessagesClick={() => {}}
+        onMessagesClick={() => navigate('/inbox')}
         onFavoritesClick={() => {}}
         onProfileClick={() => navigate('/login')}
         placeholder="Search marketplace items"
