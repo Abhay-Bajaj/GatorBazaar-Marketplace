@@ -67,6 +67,7 @@ export default function Inbox() {
         query={query}
         onQueryChange={setQuery}
         onSearch={handleSearch}
+        onSellClick={() => navigate('/create-listing')}
         onMessagesClick={() => navigate('/inbox')}
         onProfileClick={() => setLoginModalOpen(true)}
       />
