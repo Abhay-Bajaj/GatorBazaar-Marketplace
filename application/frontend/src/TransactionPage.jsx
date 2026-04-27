@@ -159,6 +159,13 @@ export default function TransactionPage() {
 
   return (
     <section className="banner transaction-page">
+      <NavigationSearchBar
+                          query={query}
+                          onQueryChange={setQuery}
+                          onSearch={handleSearch}
+                          onProfileClick={() => setLoginModalOpen(true)}
+                          onSellClick={() => navigate('/create-listing')}
+                        />
       <div className="transaction-header">
           Complete Transaction
       </div>
