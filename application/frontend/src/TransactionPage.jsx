@@ -169,6 +169,8 @@ export default function TransactionPage() {
   }
 
   const formattedDate = new Date(transaction.transaction_date).toLocaleString()
+  const itemImage = transaction.item_pic || '/images/book.png'
+  const description = transaction.description || 'This transaction includes the selected item, exchanged between buyer and seller at the agreed location.'
 
   return (
     <div className="transaction-page">
@@ -180,107 +182,173 @@ export default function TransactionPage() {
             onSellClick={() => navigate('/create-listing')}
                           />
       <section className="banner transaction-page">
-        <div className="transaction-header">
-            Complete Transaction
-        </div>
-        {/* Profile Pictures and Names */}
-        <div className="transaction-participants">
-          <div className="participant">
-            <img
-              src={transaction.seller_profile_pic}
-              alt={`${transaction.seller_name} profile`}
-              className="profile-pic"
-            />
-            <p className="participant-name">
-              {isSeller ? 'You' : transaction.seller_name} (Seller)
-            </p>
-          </div>
-          <div className="arrow">
-            ⇄
-          </div>
-          <div className="participant">
-            <img
-              src={transaction.buyer_profile_pic}
-              alt={`${transaction.buyer_name} profile`}
-              className="profile-pic"
-            />
-            <p className="participant-name">
-              {isBuyer ? 'You' : transaction.buyer_name} (Buyer)
-            </p>
-          </div>
-        </div>
-
-        <div className="item-image">
-          <img
-            src="/images/book.png"
-              alt={`${transaction.item_title} pic`}
-              className="item-pic"
-          />
-        </div>
-        <div className="details-box">
-          {/* Exchange Details */}
-          <div className="exchange-details">
-            <p>Exchanged {transaction.item_title} on {formattedDate}</p>
+        <div className="banner-content">
+          <div className="transaction-header-row">
+            <div>
+              <h1 className="transaction-header">Complete Transaction</h1>
+              <p className="transaction-subtitle">
+                Review the transaction details, confirm the exchange, and submit your feedback.
+              </p>
+            </div>
+            <span className={`status-badge status-${transaction.status.toLowerCase()}`}>
+              {transaction.status}
+            </span>
           </div>
 
-          {/* Location */}
-          <div className="transaction-location">
-            <p>Location: {transaction.location}</p>
-          </div>
+          <div className="transaction-grid">
+            <div className="transaction-summary">
+              <div className="transaction-card">
+                <div className="summary-card-header">
+                  <div>
+                    <p className="summary-label">Item</p>
+                    <h2>{transaction.item_title}</h2>
+                  </div>
+                  <p className="summary-price">${transaction.amount.toFixed(2)}</p>
+                </div>
 
-          {/* Rating Section */}
-          <div className="rating-section">
-            <h3>Rate the Other Participant</h3>
-            {isSeller && (
-              <div className="rating-item">
-                <label>Rate Buyer ({transaction.buyer_name}):</label>
-                <StarRating rating={buyerRating} onRatingChange={setBuyerRating} />
+                <div className="transaction-meta-row">
+                  <div>
+                    <p className="summary-label">Date</p>
+                    <p>{formattedDate}</p>
+                  </div>
+                  <div>
+                    <p className="summary-label">Location</p>
+                    <p>{transaction.location}</p>
+                  </div>
+                </div>
+
+                <div className="transaction-meta-row">
+                  <div>
+                    <p className="summary-label">Seller</p>
+                    <p>{transaction.seller_name}</p>
+                  </div>
+                  <div>
+                    <p className="summary-label">Buyer</p>
+                    <p>{transaction.buyer_name}</p>
+                  </div>
+                </div>
               </div>
-            )}
-            {isBuyer && (
-              <div className="rating-item">
-                <label>Rate Seller ({transaction.seller_name}):</label>
-                <StarRating rating={sellerRating} onRatingChange={setSellerRating} />
+
+              <div className="transaction-card">
+                <div className="transaction-participants compact">
+                  <div className="participant">
+                    <img
+                      src={transaction.seller_profile_pic}
+                      alt={`${transaction.seller_name} profile`}
+                      className="profile-pic"
+                    />
+                    <p className="participant-name">
+                      {isSeller ? 'You' : transaction.seller_name}
+                    </p>
+                    <p className="participant-role">Seller</p>
+                  </div>
+                  <div className="arrow">
+                    ⇄
+                  </div>
+                  <div className="participant">
+                    <img
+                      src={transaction.buyer_profile_pic}
+                      alt={`${transaction.buyer_name} profile`}
+                      className="profile-pic"
+                    />
+                    <p className="participant-name">
+                      {isBuyer ? 'You' : transaction.buyer_name}
+                    </p>
+                    <p className="participant-role">Buyer</p>
+                  </div>
+                </div>
               </div>
-            )}
-            <div className="comments-section">
-              <label htmlFor="comments">Comments:</label>
-              <textarea
-                id="comments"
-                value={comments}
-                onChange={(e) => setComments(e.target.value)}
-                placeholder="Add any comments about the transaction..."
-                rows={4}
-              />
+
+              <div className="transaction-card item-card">
+                <p className="summary-label">Item Preview</p>
+                <div className="item-image">
+                  <img
+                    src={itemImage}
+                    alt={`${transaction.item_title} pic`}
+                    className="item-pic"
+                  />
+                </div>
+                <p className="item-description">{description}</p>
+              </div>
+            </div>
+
+            <div className="transaction-actions">
+              <div className="transaction-card next-steps-card">
+                <h3>Next Steps</h3>
+                <ul className="transaction-list">
+                  <li>Confirm the transaction details above.</li>
+                  <li>Leave honest feedback for the other party.</li>
+                  <li>Check your inbox for any follow-up messages.</li>
+                </ul>
+              </div>
+
+              <div className="transaction-card full-card">
+                <div className="details-box">
+                  <div className="exchange-details">
+                    <p>
+                      Confirm the exchange details and leave a review for the other participant.
+                    </p>
+                  </div>
+
+                  <div className="transaction-location">
+                    <p><strong>Confirmed location:</strong> {transaction.location}</p>
+                  </div>
+
+                  <div className="rating-section">
+                    <h3>Rate the Other Participant</h3>
+                    {isSeller && (
+                      <div className="rating-item">
+                        <label>Rate Buyer ({transaction.buyer_name}):</label>
+                        <StarRating rating={buyerRating} onRatingChange={setBuyerRating} />
+                      </div>
+                    )}
+                    {isBuyer && (
+                      <div className="rating-item">
+                        <label>Rate Seller ({transaction.seller_name}):</label>
+                        <StarRating rating={sellerRating} onRatingChange={setSellerRating} />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="comments-section">
+                    <label htmlFor="comments">Comments</label>
+                    <textarea
+                      id="comments"
+                      value={comments}
+                      onChange={(e) => setComments(e.target.value)}
+                      placeholder="Add any comments about the transaction..."
+                      rows={5}
+                    />
+                  </div>
+
+                  <div className="confirmation-section">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={confirmed}
+                        onChange={(e) => setConfirmed(e.target.checked)}
+                      />
+                      I confirm this transaction was completed as described.
+                    </label>
+                  </div>
+
+                  <div className="note">
+                    <i>
+                      Both parties should confirm to finalize the transaction status.
+                    </i>
+                  </div>
+
+                  <button
+                    className="complete-btn"
+                    onClick={handleCompleteTransaction}
+                    disabled={!confirmed}
+                  >
+                    Complete Transaction
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* Confirmation Checkbox */}
-          <div className="confirmation-section">
-            <label>
-              <input
-                type="checkbox"
-                checked={confirmed}
-                onChange={(e) => setConfirmed(e.target.checked)}
-              />
-              I confirmed that this transaction took place, at the time and location specified above.
-            </label>
-          </div>
-
-          <div className="note">
-            <i>
-              Transaction won't be listed as complete until both seller and buyer complete their confirmation forms.
-            </i>
-          </div>
-
-          {/* Complete Transaction Button */}
-          <button
-            className="complete-btn"
-            onClick={handleCompleteTransaction}
-            disabled={!confirmed}
-          >
-            Complete Transaction
-          </button>
         </div>
       </section>
       <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
