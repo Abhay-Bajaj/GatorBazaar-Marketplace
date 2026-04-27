@@ -5,6 +5,7 @@ import SubHeader from './components/SubHeader'
 import FiltersSidebar from './components/FiltersSidebar'
 import ListingsGrid from './components/ListingsGrid'
 import LoginModal from './components/LoginModal'
+import CreateListing from './CreateListing'
 import { mockItems } from './data/mockItems'
 
 function searchMockItems(items, q) {
@@ -169,13 +170,15 @@ export default function SearchPage() {
         query={query}
         onQueryChange={setQuery}
         onSearch={handleSearch}
+        onMessagesClick={() => navigate('/inbox')}
         onProfileClick={() => setLoginModalOpen(true)}
+        onSellClick={() => navigate('/create-listing')}
       />
 
       <SubHeader
         query={urlQuery}
         count={loading ? null : displayedListings.length}
-        onBack={() => navigate(-1)}
+        onBack={() => navigate('/')}
       />
 
       <div className="main-layout">

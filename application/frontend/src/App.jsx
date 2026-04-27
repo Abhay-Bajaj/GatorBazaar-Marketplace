@@ -3,8 +3,11 @@ import './App.css'
 import { teamMembers } from './data/teamMembers'
 import SearchPage from './SearchPage'
 import ItemPage from './ItemPage'
+import Inbox from './inbox'
+import HomePage from './HomePage'
 import LoginPage from './LoginPage'
 import Dashboard from './dashboard'
+import CreateListing from './CreateListing'
 
 function TeamMembers() {
   return (
@@ -86,7 +89,7 @@ function App() {
     <div className="page">
       <nav className="site-nav">
         {!isTeamMembers && (
-          <Link className="home-button" to="/teamMembers">
+          <Link className="team-button" to="/teamMembers">
             ← Team Members
           </Link>
         )}
@@ -113,11 +116,17 @@ function App() {
 
       <main>
         <Routes>
-          <Route path="/" element={<SearchPage />} />
+
+          <Route path="/" element={<HomePage />} />
+
+
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/team/:slug" element={<MemberProfile />} />
           <Route path="/teamMembers" element={<TeamMembers />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/items/:id" element={<ItemPage />} />
+          <Route path="/inbox" element={<Inbox />} />
         </Routes>
       </main>
     </div>
