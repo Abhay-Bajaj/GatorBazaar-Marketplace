@@ -171,6 +171,6 @@ export default function ItemPage() {
 
       </div>
         {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
-    </div>
+    </section>
   )
 }
