@@ -1,4 +1,4 @@
-import { Link, Route, Routes, useLocation, useParams } from 'react-router-dom'
+import { Link, Route, Routes, useLocation, useParams, useNavigate } from 'react-router-dom'
 import './App.css'
 import { teamMembers } from './data/teamMembers'
 import SearchPage from './SearchPage'
@@ -8,9 +8,37 @@ import HomePage from './HomePage'
 import LoginPage from './LoginPage'
 import Dashboard from './dashboard'
 import CreateListing from './CreateListing'
+import NavigationSearchBar from './components/NavigationSearchBar'
+import { useMemo, useState } from 'react'
+import LoginModal from './components/LoginModal'
 
 function TeamMembers() {
+  const navigate = useNavigate()
+  const [query, setQuery] = useState('')
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
+
+
+  const handleSearch = (event) => {
+    event.preventDefault()
+    const params = new URLSearchParams()
+    if (query.trim()) params.set('q', query.trim())
+    navigate(`/search?${params.toString()}`)
+  }
+
   return (
+    <div className="team-members-page">
+
+      <NavigationSearchBar
+        query={query}
+        onQueryChange={setQuery}
+        onSearch={handleSearch}
+        onSellClick={() => navigate('/create-listing')}
+        onMessagesClick={() => navigate('/inbox')}
+        onFavoritesClick={() => {}}
+        onProfileClick={() => setLoginModalOpen(true)}
+        placeholder="Search marketplace items"
+        searchButtonText="Search"
+      />
     <section className="banner">
       <header className="banner-header">
         <h2>Team Members</h2>
@@ -29,10 +57,24 @@ function TeamMembers() {
         ))}
       </div>
     </section>
+    {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+    </div>
   )
 }
 
 function MemberProfile() {
+  const navigate = useNavigate()
+  const [query, setQuery] = useState('')
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
+
+
+  const handleSearch = (event) => {
+    event.preventDefault()
+    const params = new URLSearchParams()
+    if (query.trim()) params.set('q', query.trim())
+    navigate(`/search?${params.toString()}`)
+  }
+
   const { slug } = useParams()
   const member = teamMembers.find((entry) => entry.slug === slug)
 
@@ -52,7 +94,22 @@ function MemberProfile() {
   }
 
   return (
+    <div className="member-page">
+
+      <NavigationSearchBar
+        query={query}
+        onQueryChange={setQuery}
+        onSearch={handleSearch}
+        onSellClick={() => navigate('/create-listing')}
+        onMessagesClick={() => navigate('/inbox')}
+        onFavoritesClick={() => {}}
+        onProfileClick={() => setLoginModalOpen(true)}
+        placeholder="Search marketplace items"
+        searchButtonText="Search"
+      />
     <section className="banner">
+
+
       <div className="member-profile">
         <img
           src={member.image}
@@ -68,6 +125,8 @@ function MemberProfile() {
         </div>
       </div>
     </section>
+    {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+    </div>
   )
 }
 
