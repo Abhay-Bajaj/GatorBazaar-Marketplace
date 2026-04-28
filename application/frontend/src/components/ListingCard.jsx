@@ -1,6 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 
-export default function ListingCard({ id, title, price, image, isFavorited, onToggleFavorite }) {
+export default function ListingCard({
+  id,
+  title,
+  price,
+  image,
+  category_name: categoryName,
+  isFavorited,
+  onToggleFavorite,
+}) {
   const navigate = useNavigate()
 
   const handleCardClick = () => {
@@ -31,6 +39,11 @@ export default function ListingCard({ id, title, price, image, isFavorited, onTo
       </div>
 
       <div className="gb-card-footer">
+        {categoryName ? (
+          <span className="gb-card-category" style={{ display: 'block', fontSize: '0.75rem', opacity: 0.85 }}>
+            {categoryName}
+          </span>
+        ) : null}
         <span className="gb-card-title">{title}</span>
         <span className="gb-card-price">${Number(price || 0).toFixed(2)}</span>
       </div>
