@@ -44,6 +44,19 @@
   transform: translateY(-50%) translateX(-2px);
 }
 
+.team-button-bottom {
+  position: static;
+  transform: none;
+  align-self: flex-start;
+  margin-top: 8px;
+  background: rgba(28, 42, 46, 0.78);
+  border-color: rgba(28, 42, 46, 0.9);
+}
+
+.team-button-bottom:hover {
+  transform: translateY(-2px);
+}
+
 .site-nav::after {
   content: '';
   position: absolute;
@@ -1022,6 +1035,10 @@
     transform: none;
     margin-bottom: 14px;
     display: inline-flex;
+  }
+
+  .team-button-bottom {
+    margin-top: 6px;
   }
 
   .member-profile {

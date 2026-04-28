@@ -138,12 +138,6 @@ function App() {
   return (
     <div className="page">
       <nav className="site-nav">
-        {!isTeamMembers && (
-          <Link className="team-button" to="/teamMembers">
-            ← Team Members
-          </Link>
-        )}
-
         <h1>
           SFSU Software Engineering Project CSC 648-848, Spring 2026.
           <br />
@@ -183,6 +177,12 @@ function App() {
           <Route path="/inbox" element={<Inbox />} />
         </Routes>
       </main>
+
+      {!isTeamMembers && (
+        <Link className="team-button team-button-bottom" to="/teamMembers">
+          ← Team Members
+        </Link>
+      )}
     </div>
   )
 }
