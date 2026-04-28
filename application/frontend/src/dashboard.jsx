@@ -4,7 +4,6 @@ import NavigationSearchBar from './components/NavigationSearchBar'
 import ListingCard from './components/ListingCard'
 import LoginModal from './components/LoginModal'
 import { mockItems } from './data/mockItems'
-import LoginModal from "./components/LoginModal"
 
 function toListingCardFormat(items) {
   return items.map((item) => ({
