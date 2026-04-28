@@ -17,6 +17,8 @@ export default function LoginModal({ onClose }) {
     return () => document.removeEventListener('keydown', handleKey)
   }, [onClose])
 
+  if (!isOpen) return null
+
   return (
     <div
       className="login-modal-overlay"

@@ -3,6 +3,7 @@ import './App.css'
 import { teamMembers } from './data/teamMembers'
 import SearchPage from './SearchPage'
 import ItemPage from './ItemPage'
+import TransactionPage from './TransactionPage'
 import Inbox from './inbox'
 import HomePage from './HomePage'
 import Dashboard from './dashboard'
@@ -178,6 +179,7 @@ function App() {
           <Route path="/teamMembers" element={<TeamMembers />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/items/:id" element={<ItemPage />} />
+          <Route path="/complete-transaction" element={<TransactionPage />} />
           <Route path="/inbox" element={<Inbox />} />
         </Routes>
       </main>
