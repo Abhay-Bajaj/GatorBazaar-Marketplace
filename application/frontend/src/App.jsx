@@ -5,7 +5,6 @@ import SearchPage from './SearchPage'
 import ItemPage from './ItemPage'
 import Inbox from './inbox'
 import HomePage from './HomePage'
-import LoginPage from './LoginPage'
 import Dashboard from './dashboard'
 import CreateListing from './CreateListing'
 
@@ -36,7 +35,6 @@ function MemberProfile() {
   const { slug } = useParams()
   const member = teamMembers.find((entry) => entry.slug === slug)
 
-  // handle case: missing member
   if (!member) {
     return (
       <section className="banner">
@@ -59,6 +57,7 @@ function MemberProfile() {
           alt={member.name}
           className="profile-picture"
         />
+
         <div className="member-info">
           <h2>{member.name}</h2>
           <h3>{member.role}</h3>
@@ -75,15 +74,6 @@ function App() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const isTeamMembers = location.pathname.startsWith('/teamMembers')
-  const isLogin = location.pathname === '/login'
-
-  if (isLogin) {
-    return (
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-      </Routes>
-    )
-  }
 
   return (
     <div className="page">
@@ -93,12 +83,15 @@ function App() {
             ← Team Members
           </Link>
         )}
+
         <h1>
           SFSU Software Engineering Project CSC 648-848, Spring 2026.
           <br />
           For Demonstration Only
         </h1>
+
         <p>Section 01, Team 07</p>
+
         {isTeamMembers && (
           <>
             <Link className="vp-nav-link" to="/">
@@ -109,17 +102,15 @@ function App() {
             </Link>
           </>
         )}
+
         {isHome && (
-          <p className="vp-nav-subtitle"> Browse and Search our Item Catalog</p>
+          <p className="vp-nav-subtitle">Browse and Search our Item Catalog</p>
         )}
       </nav>
 
       <main>
         <Routes>
-
           <Route path="/" element={<HomePage />} />
-
-
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/team/:slug" element={<MemberProfile />} />
