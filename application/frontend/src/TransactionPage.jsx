@@ -56,27 +56,27 @@ const mockTransactions = [
   // Mockup transaction for display
   {
     transaction_id: 5,
-    item_title: 'Sample Item',
+    item_title: 'A Book',
     item_pic: '/images/book.png',
-    seller_name: 'Alice Johnson',
-    buyer_name: 'Buyer Name',
+    seller_name: 'John San Francisco',
+    buyer_name: 'Mary State University',
     seller_profile_pic: '/images/profile-placeholder.png',
     buyer_profile_pic: '/images/profile-placeholder.png',
     amount: 100.00,
     status: 'Pending',
-    transaction_date: '2024-04-21T12:00:00Z',
-    location: 'Not Cesar Chavez Center',
+    transaction_date: '2028-04-21T12:00:00Z',
+    location: 'Formerly Cesar Chavez Center',
   },
 ]
 
-function StarRating({ rating, onRatingChange }) {
+function StarRating({ rating, onRatingChange, disabled = false }) {
   return (
-    <div className="star-rating">
+    <div className={`star-rating ${disabled ? 'disabled' : ''}`}>
       {[1, 2, 3, 4, 5].map((star) => (
         <span
           key={star}
-          className={`star ${star <= rating ? 'filled' : ''}`}
-          onClick={() => onRatingChange(star)}
+          className={`star ${star <= rating ? 'filled' : ''} ${disabled ? 'disabled' : ''}`}
+          onClick={!disabled ? () => onRatingChange(star) : undefined}
         >
           ★
         </span>
@@ -99,10 +99,11 @@ export default function TransactionPage() {
   const [loginModalOpen, setLoginModalOpen] = useState(false)
 
   // Mock current user - in real app, this would come from auth context or API
-  const currentUser = 'Alice Johnson' // Change this to test different views
+  const currentUser = 'John San Francisco' // Change this to test different views
 
   const isSeller = transaction && transaction.seller_name === currentUser
   const isBuyer = transaction && transaction.buyer_name === currentUser
+  const completed = transaction && transaction.status === 'Completed'
 
   useEffect(() => {
     fetchTransaction()
@@ -136,6 +137,9 @@ export default function TransactionPage() {
 
   function handleCompleteTransaction() {
     // Here you would send the rating, comments, and confirmation to the backend
+    setTransaction((prev) =>
+      prev ? { ...prev, status: 'Completed' } : prev
+    )
     alert('Transaction completed!')
   }
 
@@ -276,7 +280,7 @@ export default function TransactionPage() {
               <div className="transaction-card next-steps-card">
                 <h3>Next Steps</h3>
                 <ul className="transaction-list">
-                  <li>Confirm the transaction details above.</li>
+                  <li>Confirm the transaction details below.</li>
                   <li>Leave honest feedback for the other party.</li>
                   <li>Check your inbox for any follow-up messages.</li>
                 </ul>
@@ -299,13 +303,21 @@ export default function TransactionPage() {
                     {isSeller && (
                       <div className="rating-item">
                         <label>Rate Buyer ({transaction.buyer_name}):</label>
-                        <StarRating rating={buyerRating} onRatingChange={setBuyerRating} />
+                        <StarRating
+                          rating={buyerRating}
+                          onRatingChange={setBuyerRating}
+                          disabled={completed}
+                        />
                       </div>
                     )}
                     {isBuyer && (
                       <div className="rating-item">
                         <label>Rate Seller ({transaction.seller_name}):</label>
-                        <StarRating rating={sellerRating} onRatingChange={setSellerRating} />
+                        <StarRating
+                          rating={sellerRating}
+                          onRatingChange={setSellerRating}
+                          disabled={completed}
+                        />
                       </div>
                     )}
                   </div>
@@ -318,6 +330,7 @@ export default function TransactionPage() {
                       onChange={(e) => setComments(e.target.value)}
                       placeholder="Add any comments about the transaction..."
                       rows={5}
+                      disabled={completed}
                     />
                   </div>
 
@@ -327,6 +340,7 @@ export default function TransactionPage() {
                         type="checkbox"
                         checked={confirmed}
                         onChange={(e) => setConfirmed(e.target.checked)}
+                        disabled={completed}
                       />
                       I confirm this transaction was completed as described.
                     </label>
@@ -341,7 +355,7 @@ export default function TransactionPage() {
                   <button
                     className="complete-btn"
                     onClick={handleCompleteTransaction}
-                    disabled={!confirmed}
+                    disabled={!confirmed || completed}
                   >
                     Complete Transaction
                   </button>

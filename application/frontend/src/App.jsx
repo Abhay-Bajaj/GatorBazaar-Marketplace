@@ -127,7 +127,7 @@ function App() {
           <Route path="/teamMembers" element={<TeamMembers />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/items/:id" element={<ItemPage />} />
-          <Route path="/transactions" element={<TransactionPage />} />
+          <Route path="/complete-transaction" element={<TransactionPage />} />
           <Route path="/inbox" element={<Inbox />} />
         </Routes>
       </main>
