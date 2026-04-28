@@ -1,18 +1,19 @@
 import { useState } from 'react'
 
-export default function LoginForm() {
+export default function LoginForm({ onSwitchToRegister, onSwitchToForgot }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
   function handleSubmit(e) {
     e.preventDefault()
+
     if (!username.trim() || !password.trim()) {
       setError('Please fill in both fields.')
       return
     }
+
     setError('')
-    // TODO: need to wire up real auth later
   }
 
   return (
@@ -25,6 +26,7 @@ export default function LoginForm() {
         onChange={(e) => setUsername(e.target.value)}
         autoComplete="username"
       />
+
       <input
         className="login-input"
         type="password"
@@ -41,8 +43,21 @@ export default function LoginForm() {
       </button>
 
       <div className="login-links">
-        <button type="button" className="login-link">Forgot Log In?</button>
-        <button type="button" className="login-link">Need an Account? Sign Up</button>
+        <button
+          type="button"
+          className="login-link"
+          onClick={onSwitchToForgot}
+        >
+          Forgot Log In?
+        </button>
+
+        <button
+          type="button"
+          className="login-link"
+          onClick={onSwitchToRegister}
+        >
+          Need an Account? Sign Up
+        </button>
       </div>
     </form>
   )

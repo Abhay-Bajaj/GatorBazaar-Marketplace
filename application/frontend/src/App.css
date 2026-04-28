@@ -48,11 +48,9 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at 10% 20%,
-    rgba(255, 203, 148, 0.22),
-    transparent 55%
-  );
+  background: radial-gradient(circle at 10% 20%,
+      rgba(255, 203, 148, 0.22),
+      transparent 55%);
   opacity: 0.8;
   pointer-events: none;
 }
@@ -217,6 +215,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -348,7 +347,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .search-error {
@@ -479,11 +480,11 @@
 }
 
 .item-page-grid {
-  display: grid; 
-  grid-template-columns: 2fr 1.5fr 1.5fr ;
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr;
   gap: clamp(20px, 4vw, 48px);
   align-items: start;
-  
+
 }
 
 .item-detail-image {
@@ -586,7 +587,7 @@
   border-radius: 5px;
   color: white;
   font-weight: 600;
-} 
+}
 
 .chat-message-input {
   width: 80%;
@@ -637,7 +638,7 @@
 }
 
 .inbox-grid {
-  display: grid; 
+  display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 20px;
   height: 600px;
@@ -1792,4 +1793,37 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.valid {
+  font-size: 0.75rem;
+  color: green;
+  margin: -4px 0 2px;
+  width: 100%;
+  max-width: 240px;
+  text-align: left;
+}
+
+.invalid {
+  font-size: 0.75rem;
+  color: red;
+  margin: -4px 0 2px;
+  width: 100%;
+  max-width: 240px;
+  text-align: left;
+}
+
+.valid-input {
+  border-color: green;
+  box-shadow: 0 0 0 2px rgba(0, 128, 0, 0.12);
+}
+
+.invalid-input {
+  border-color: red;
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+}
+
+.login-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
