@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import NavigationSearchBar from './components/NavigationSearchBar'
 import ListingCard from './components/ListingCard'
+import LoginModal from './components/LoginModal'
 import { mockItems } from './data/mockItems'
 import LoginModal from "./components/LoginModal"
 
@@ -41,7 +42,9 @@ export default function Dashboard() {
 
   function handleToggleFavorite(id) {
     setActiveListings((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, isFavorited: !item.isFavorited } : item))
+      prev.map((item) =>
+        item.id === id ? { ...item, isFavorited: !item.isFavorited } : item
+      )
     )
   }
 
@@ -53,7 +56,7 @@ export default function Dashboard() {
         onSearch={handleSearch}
         onSellClick={() => navigate('/create-listing')}
         onMessagesClick={() => navigate('/inbox')}
-        onFavoritesClick={() => {}}
+        onFavoritesClick={() => { }}
         onProfileClick={() => setLoginModalOpen(true)}
         placeholder="Search marketplace items"
         searchButtonText="Search"
@@ -71,6 +74,7 @@ export default function Dashboard() {
           <h3>Currently Listed</h3>
           <span>{activeListings.length} items</span>
         </div>
+
         <div className="dashboard-row">
           {activeListings.map((listing) => (
             <div key={listing.id} className="dashboard-row-card">
@@ -85,15 +89,21 @@ export default function Dashboard() {
           <h3>Sold Items</h3>
           <span>{soldListings.length} items</span>
         </div>
+
         <div className="dashboard-row">
           {soldListings.map((listing) => (
             <article key={listing.id} className="dashboard-sold-card">
               <div className="dashboard-sold-image">
                 <img
-                  src={listing.image && listing.image !== 'placeholder' ? listing.image : '/images/item-placeholder.png'}
+                  src={
+                    listing.image && listing.image !== 'placeholder'
+                      ? listing.image
+                      : '/images/item-placeholder.png'
+                  }
                   alt={listing.title}
                 />
               </div>
+
               <div className="dashboard-sold-info">
                 <p className="dashboard-sold-title">{listing.title}</p>
                 <p className="dashboard-sold-meta">
@@ -107,7 +117,10 @@ export default function Dashboard() {
           ))}
         </div>
       </section>
-      {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+
+      {loginModalOpen && (
+        <LoginModal onClose={() => setLoginModalOpen(false)} />
+      )}
     </div>
   )
 }
