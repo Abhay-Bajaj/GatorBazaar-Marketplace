@@ -19,7 +19,6 @@ async function getListingById(id) {
     WHERE l.listing_id = ?`,
     [id]
   )
-  console.log('[MODEL] raw rows:', rows)
 
   if (!rows.length) return null
 
