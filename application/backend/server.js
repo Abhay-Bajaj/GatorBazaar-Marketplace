@@ -25,7 +25,7 @@ const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const searchRoute = require('./routes/searchRoute')
-
+const listingRoute = require('./routes/listingRoute')
 const app = express()
 const PORT = process.env.PORT || 3000;
 
@@ -38,6 +38,8 @@ app.get('/api/hello', (req, res) => {
 })
 
 app.use('/api/search', searchRoute)
+
+app.use('/api/items', listingRoute)
 
 //  SERVE REACT BUILD 
 app.use(express.static(path.join(__dirname, '../frontend/dist')))
