@@ -8,6 +8,7 @@ import Inbox from './inbox'
 import HomePage from './HomePage'
 import Dashboard from './dashboard'
 import CreateListing from './CreateListing'
+import AccountPage from "./AccountPage";
 import NavigationSearchBar from './components/NavigationSearchBar'
 import { useMemo, useState } from 'react'
 import LoginModal from './components/LoginModal'
@@ -175,6 +176,7 @@ function App() {
           <Route path="/items/:id" element={<ItemPage />} />
           <Route path="/complete-transaction" element={<TransactionPage />} />
           <Route path="/inbox" element={<Inbox />} />
+          <Route path="/account" element={<AccountPage />} />
         </Routes>
       </main>
 
