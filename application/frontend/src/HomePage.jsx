@@ -32,6 +32,7 @@ export default function HomePage() {
     
     return (
         <div className="homepage">
+            <header className="nav-bar">
             <NavigationSearchBar
                     query={query}
                     onQueryChange={setQuery}
@@ -39,9 +40,8 @@ export default function HomePage() {
                     onProfileClick={() => setLoginModalOpen(true)}
                     onSellClick={() => navigate('/create-listing')}
                   />
-
+            </header>
             <section>
-                <h3>Popular Categories</h3>
                 <div className="category-list">
                     {categories.map((category) => (
                         <button

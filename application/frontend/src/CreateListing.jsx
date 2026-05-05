@@ -49,6 +49,7 @@ export default function CreateListing() {
 
     return (
         <div className="create-listing">
+            <nav className="nav-bar">
             <NavigationSearchBar
                     query={query}
                     onQueryChange={setQuery}
@@ -57,6 +58,7 @@ export default function CreateListing() {
                     onSellClick={() => navigate('/create-listing')}
                   />
             {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+            </nav>
             <div className="create-listing__container">
                 <h2>Create New Listing</h2>
 
