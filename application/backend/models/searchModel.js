@@ -1,8 +1,23 @@
 const pool = require('../database')
 
-async function getListings({ keyword = '', category = '', sort = '' }) {
-    let sql = 
-        `SELECT 
+function normalizeCategories(category) {
+  if (category === undefined || category === null || category === '') return []
+  const raw = Array.isArray(category) ? category : [category]
+  return raw
+    .flatMap((c) => String(c).split(','))
+    .map((c) => c.trim())
+    .filter(Boolean)
+}
+
+async function getListings({
+  keyword = '',
+  category,
+  sort = '',
+  priceMin = '',
+  priceMax = '',
+}) {
+  let sql = `
+        SELECT 
             l.listing_id,
             l.title,
             l.description,
@@ -10,40 +25,58 @@ async function getListings({ keyword = '', category = '', sort = '' }) {
             c.category_name,
             (
                 SELECT li.image_url
-            FROM listing_images li
-            WHERE li.listing_id = l.listing_id
-            LIMIT 1
+                FROM listing_images li
+                WHERE li.listing_id = l.listing_id
+                LIMIT 1
             ) AS image_url
         FROM listings l
         JOIN Categories c ON l.category = c.category_id
         WHERE l.active = 1`
-    
 
-    const params = []
+  const params = []
 
+  const kw = typeof keyword === 'string' ? keyword.trim() : ''
+  if (kw) {
+    sql += ' AND (l.title LIKE ? OR l.description LIKE ?)'
+    params.push(`%${kw}%`, `%${kw}%`)
+  }
 
-    if (keyword) {
-        sql += ' AND (l.title LIKE ? OR l.description LIKE ?)'
-        params.push(`%${keyword}%`, `%${keyword}%`)
+  const categories = normalizeCategories(category)
+  if (categories.length > 0) {
+    const placeholders = categories.map(() => '?').join(', ')
+    sql += ` AND LOWER(TRIM(c.category_name)) IN (${placeholders})`
+    params.push(...categories.map((c) => c.toLowerCase()))
+  }
+
+  if (priceMin !== '' && priceMin !== undefined && priceMin !== null) {
+    const n = Number(priceMin)
+    if (!Number.isNaN(n)) {
+      sql += ' AND l.price >= ?'
+      params.push(n)
     }
-
-    if (category) {
-        sql += ' AND LOWER(c.category_name) = LOWER(?)'
-        params.push(category.trim())
+  }
+  if (priceMax !== '' && priceMax !== undefined && priceMax !== null) {
+    const n = Number(priceMax)
+    if (!Number.isNaN(n)) {
+      sql += ' AND l.price <= ?'
+      params.push(n)
     }
+  }
 
-    if (sort === 'price_low') {
-        sql += ' ORDER BY l.price ASC'
-    } else if (sort === 'price_high') {
-        sql += ' ORDER BY l.price DESC'
-    } else if (sort === 'newest') {
-        sql += ' ORDER BY l.created_at DESC'
-    }
+  if (sort === 'price_low') {
+    sql += ' ORDER BY l.price ASC'
+  } else if (sort === 'price_high') {
+    sql += ' ORDER BY l.price DESC'
+  } else if (sort === 'newest') {
+    sql += ' ORDER BY l.created_at DESC'
+  } else {
+    sql += ' ORDER BY l.created_at DESC'
+  }
 
-    const [rows] = await pool.query(sql, params)
-    return rows
+  const [rows] = await pool.query(sql, params)
+  return rows
 }
 
 module.exports = {
-    getListings,
+  getListings,
 }

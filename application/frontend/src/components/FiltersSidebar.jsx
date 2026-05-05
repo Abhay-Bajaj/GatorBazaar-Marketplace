@@ -1,5 +1,4 @@
 const SIDEBAR_CATEGORIES = ['All Listings', 'Clothes', 'Text Books', 'Furniture', 'Electronics', 'School Supplies', 'Room Search']
-const STAR_RATINGS = [5, 4, 3, 2, 1]
 
 export default function FiltersSidebar({ filters, onChange }) {
   return (
@@ -42,24 +41,6 @@ export default function FiltersSidebar({ filters, onChange }) {
             aria-label="Minimum price"
           />
         </div>
-      </div>
-
-      {/* Rating */}
-      <div className="gb-filter-section">
-        <h4 className="gb-filter-heading">Rating</h4>
-        {STAR_RATINGS.map((stars) => (
-          <label key={stars} className="gb-filter-label">
-            <input
-              type="checkbox"
-              checked={filters.ratings.includes(stars)}
-              onChange={() => onChange('ratings', stars)}
-            />
-            <span className="gb-stars" aria-label={`${stars} stars`}>
-              {'★'.repeat(stars)}
-              {'☆'.repeat(5 - stars)}
-            </span>
-          </label>
-        ))}
       </div>
     </aside>
   )

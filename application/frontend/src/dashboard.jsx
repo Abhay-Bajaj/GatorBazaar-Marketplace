@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import NavigationSearchBar from './components/NavigationSearchBar'
 import ListingCard from './components/ListingCard'
+import LoginModal from './components/LoginModal'
 import { mockItems } from './data/mockItems'
 
 function toListingCardFormat(items) {
@@ -17,6 +18,7 @@ function toListingCardFormat(items) {
 export default function Dashboard() {
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
   const [activeListings, setActiveListings] = useState(
     toListingCardFormat(mockItems.slice(0, 6))
   )
@@ -34,12 +36,14 @@ export default function Dashboard() {
     event.preventDefault()
     const params = new URLSearchParams()
     if (query.trim()) params.set('q', query.trim())
-    navigate(`/?${params.toString()}`)
+    navigate(`/search?${params.toString()}`)
   }
 
   function handleToggleFavorite(id) {
     setActiveListings((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, isFavorited: !item.isFavorited } : item))
+      prev.map((item) =>
+        item.id === id ? { ...item, isFavorited: !item.isFavorited } : item
+      )
     )
   }
 
@@ -49,10 +53,10 @@ export default function Dashboard() {
         query={query}
         onQueryChange={setQuery}
         onSearch={handleSearch}
-        onSellClick={() => navigate('/dashboard')}
+        onSellClick={() => navigate('/create-listing')}
         onMessagesClick={() => navigate('/inbox')}
-        onFavoritesClick={() => {}}
-        onProfileClick={() => navigate('/login')}
+        onFavoritesClick={() => { }}
+        onProfileClick={() => setLoginModalOpen(true)}
         placeholder="Search marketplace items"
         searchButtonText="Search"
       />
@@ -69,6 +73,7 @@ export default function Dashboard() {
           <h3>Currently Listed</h3>
           <span>{activeListings.length} items</span>
         </div>
+
         <div className="dashboard-row">
           {activeListings.map((listing) => (
             <div key={listing.id} className="dashboard-row-card">
@@ -83,15 +88,21 @@ export default function Dashboard() {
           <h3>Sold Items</h3>
           <span>{soldListings.length} items</span>
         </div>
+
         <div className="dashboard-row">
           {soldListings.map((listing) => (
             <article key={listing.id} className="dashboard-sold-card">
               <div className="dashboard-sold-image">
                 <img
-                  src={listing.image && listing.image !== 'placeholder' ? listing.image : '/images/item-placeholder.png'}
+                  src={
+                    listing.image && listing.image !== 'placeholder'
+                      ? listing.image
+                      : '/images/item-placeholder.png'
+                  }
                   alt={listing.title}
                 />
               </div>
+
               <div className="dashboard-sold-info">
                 <p className="dashboard-sold-title">{listing.title}</p>
                 <p className="dashboard-sold-meta">
@@ -105,6 +116,10 @@ export default function Dashboard() {
           ))}
         </div>
       </section>
+
+      {loginModalOpen && (
+        <LoginModal onClose={() => setLoginModalOpen(false)} />
+      )}
     </div>
   )
 }
