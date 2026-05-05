@@ -172,5 +172,4 @@ export default function ItemPage() {
     </section>
     </>
   )
-
 }
