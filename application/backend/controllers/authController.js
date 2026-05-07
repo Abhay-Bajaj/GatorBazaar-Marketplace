@@ -74,7 +74,29 @@ async function login(req, res) {
     }
 }
 
+async function checkLoggedUser(req, res) {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({
+                authenticated: false
+            });
+        }
+
+        res.json({
+            authenticated: true,
+            userId: req.session.userId
+        });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: "Not logged in"
+        });
+    }
+}
+
 module.exports = {
     register,
-    login
+    login,
+    checkLoggedUser
 }
