@@ -43,14 +43,41 @@ export default function RegisterForm({ onSwitchToLogin }) {
         return isValid ? 'login-input valid-input' : 'login-input invalid-input'
     }
 
-    function handleSubmit(e) {
-        e.preventDefault()
+    async function handleSubmit(e) {
+        e.preventDefault();
 
         if (!formValid) {
-            return
+            return;
         }
 
-        // TODO: connect to backend later
+        try {
+            const response = await fetch("http://localhost:3000/auth/register", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    fullname: form.fullName,
+                    username: form.username,
+                    email: form.email,
+                    password: form.password,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.error || "Registration failed");
+                return;
+            }
+
+            onclose();
+
+        } catch (err) {
+            console.error(err);
+            alert("Server error");
+        }
     }
 
     return (

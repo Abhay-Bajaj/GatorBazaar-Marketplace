@@ -8,12 +8,16 @@ const cors = require('cors')
 const path = require('path')
 const searchRoute = require('./routes/searchRoute')
 const userRoute = require('./routes/userRoute')
-const authRoute = require('./routes/authRoute.js')
+const authRoute = require('./routes/authRoute')
 const listingRoute = require('./routes/listingRoute')
 const app = express()
 const PORT = process.env.PORT || 3000;
 
-app.use(cors())
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
+
 app.use(express.json())
 
 app.use(session({

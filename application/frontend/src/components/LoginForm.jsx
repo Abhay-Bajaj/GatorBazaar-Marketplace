@@ -1,20 +1,49 @@
 import { useState } from 'react'
+import { useNavigate } from "react-router-dom";
 
 export default function LoginForm({ onSwitchToRegister, onSwitchToForgot }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const navigate = useNavigate();
 
-  function handleSubmit(e) {
-    e.preventDefault()
+async function handleSubmit(e) {
+  e.preventDefault();
 
-    if (!username.trim() || !password.trim()) {
-      setError('Please fill in both fields.')
-      return
+  if (!username.trim() || !password.trim()) {
+    setError('Please fill in both fields.');
+    return;
+  }
+
+  try {
+    setError('');
+
+    const response = await fetch("http://localhost:3000/auth/login", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.error || "Login failed");
+      return;
     }
 
-    setError('')
+    navigate("/dashboard");
+
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+    setError("Server error");
   }
+}
 
   return (
     <form className="login-form" onSubmit={handleSubmit} noValidate>
