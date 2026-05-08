@@ -87,7 +87,14 @@ export default function Dashboard() {
         <div className="dashboard-row">
           {activeListings.map((listing) => (
             <div key={listing.id} className="dashboard-row-card">
-              <ListingCard {...listing} onToggleFavorite={handleToggleFavorite} />
+              <ListingCard 
+                id={listing.listing_id}
+                title={listing.title}
+                price={listing.price}
+                image={listing.image_url || 'placeholder'}
+                category_name={listing.category_name}
+                isFavorited={false}
+                onToggleFavorite={handleToggleFavorite} />
             </div>
           ))}
         </div>
