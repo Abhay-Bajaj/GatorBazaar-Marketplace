@@ -1,0 +1,37 @@
+export const mockFavorites = [
+  {
+    id: 101,
+    title: 'Dell 24" Monitor',
+    category: 'electronics',
+    description: '1080p monitor in good condition with HDMI cable included.',
+    price: 85,
+    image_url: '/images/computer.png',
+    rating: 4,
+  },
+  {
+    id: 102,
+    title: 'Mechanical Keyboard',
+    category: 'electronics',
+    description: 'Hot-swappable keyboard with tactile switches and RGB backlight.',
+    price: 60,
+    image_url: '/images/computer.png',
+    rating: 5,
+  },
+  {
+    id: 103,
+    title: 'Data Structures Textbook',
+    category: 'textbooks',
+    description: 'Used CS textbook with highlighted notes for interview prep.',
+    price: 25,
+    image_url: '/images/book.png',
+    rating: 3,
+  },
+  {
+    id: 104,
+    title: 'JavaScript: The Good Parts',
+    category: 'textbooks',
+    description: 'Classic programming book for frontend developers.',
+    price: 12,
+    image_url: '/images/book.png',
+    rating: 5,
+  }]

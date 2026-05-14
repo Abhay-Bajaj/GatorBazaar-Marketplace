@@ -7,6 +7,7 @@ import Inbox from './inbox'
 import HomePage from './HomePage'
 import LoginPage from './LoginPage'
 import Dashboard from './dashboard'
+import Favorite from './favorite'
 
 function TeamMembers() {
   return (
@@ -126,6 +127,7 @@ function App() {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/items/:id" element={<ItemPage />} />
           <Route path="/inbox" element={<Inbox />} />
+          <Route path="/favorites/" element={<Favorite />} />
         </Routes>
       </main>
     </div>

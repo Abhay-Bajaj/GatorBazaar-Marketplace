@@ -171,6 +171,7 @@ export default function SearchPage() {
         onSearch={handleSearch}
         onMessagesClick={() => navigate('/inbox')}
         onProfileClick={() => setLoginModalOpen(true)}
+        onFavoritesClick={() => navigate('/favorites')}
       />
 
       <SubHeader

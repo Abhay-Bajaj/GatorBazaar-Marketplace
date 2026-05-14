@@ -501,12 +501,7 @@
   display: flex;
   flex-direction: row;
   gap: 8px;
-   /* Limits the height of the thumbnail column */
-   /* Adds the scrollbar if there are many thumbnails */
-  flex-shrink: 0;    /* Prevents thumbnails from being squashed width-wise */
-
-  
-
+  flex-shrink: 0;  
 }
 
 .item-images-gallery::-webkit-scrollbar {
@@ -1014,6 +1009,18 @@
   font-weight: 500;
   letter-spacing: 0.3px;
   margin: 0;
+}
+
+/* ══════════════════════════════════════════
+   Inbox Page
+══════════════════════════════════════════ */
+
+.favorite-empty{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  flex: 1;
 }
 
 /* ── Responsive ── */

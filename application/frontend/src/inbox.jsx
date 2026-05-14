@@ -69,6 +69,7 @@ export default function Inbox() {
         onSearch={handleSearch}
         onMessagesClick={() => navigate('/inbox')}
         onProfileClick={() => setLoginModalOpen(true)}
+        onFavoritesClick={() => navigate('/favorites')}
       />
 
       <button className="back-button" onClick={() => navigate(-1)}>
