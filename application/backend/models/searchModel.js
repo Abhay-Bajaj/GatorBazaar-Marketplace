@@ -1,4 +1,4 @@
-const pool = require('../database')
+const { pool } = require('../database')
 
 function normalizeCategories(category) {
   if (category === undefined || category === null || category === '') return []
