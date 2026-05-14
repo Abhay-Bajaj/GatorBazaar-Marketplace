@@ -17,9 +17,30 @@
   background: linear-gradient(135deg, #1c2a2e, #203b3a 55%, #37524c);
   color: #f6f3ee;
   border-radius: 18px;
-  text-align: center;
   box-shadow: 0 14px 30px rgba(23, 34, 33, 0.25);
   overflow: hidden;
+}
+
+.site-nav-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.site-nav-brand-icon {
+  flex-shrink: 0;
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  border-radius: 14px;
+}
+
+.site-nav-body {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
 }
 
 .team-button {
@@ -1028,6 +1049,15 @@
 
   .site-nav {
     padding: 24px 18px;
+  }
+
+  .site-nav-inner {
+    gap: 12px;
+  }
+
+  .site-nav-brand-icon {
+    width: 52px;
+    height: 52px;
   }
 
   .site-nav p {

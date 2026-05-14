@@ -139,30 +139,41 @@ function App() {
   return (
     <div className="page">
       <nav className="site-nav">
-        <h1>
-          SFSU Software Engineering Project CSC 648-848, Spring 2026.
-          <br />
-          For Demonstration Only
-        </h1>
+        <div className="site-nav-inner">
+          <img
+            className="site-nav-brand-icon"
+            src="/images/Icon.png"
+            alt=""
+            width={68}
+            height={68}
+            decoding="async"
+          />
+          <div className="site-nav-body">
+            <h1>
+              SFSU Software Engineering Project CSC 648-848, Spring 2026.
+              <br />
+              For Demonstration Only
+            </h1>
 
-        <p>Section 01, Team 07</p>
+            <p>Section 01, Team 07</p>
 
-        {isTeamMembers && (
-          <>
-            <Link className="vp-nav-link" to="/">
-              🔍 Browse &amp; Search
+            {isTeamMembers && (
+              <>
+                <Link className="vp-nav-link" to="/">
+                  🔍 Browse &amp; Search
+                </Link>
+              </>
+            )}
+
+            {isHome && (
+              <p className="vp-nav-subtitle">Browse and Search our Item Catalog</p>
+            )}
+
+            <Link className="vp-nav-link" to="/dashboard">
+              📊 Dashboard
             </Link>
-          </>
-        )}
-
-        {isHome && (
-          <p className="vp-nav-subtitle">Browse and Search our Item Catalog</p>
-        )}
-
-        <Link className="vp-nav-link" to="/dashboard">
-          📊 Dashboard
-        </Link>
-
+          </div>
+        </div>
       </nav>
 
       <main>
