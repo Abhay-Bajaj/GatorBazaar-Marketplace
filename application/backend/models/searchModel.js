@@ -15,6 +15,7 @@ async function getListings({
   sort = '',
   priceMin = '',
   priceMax = '',
+  userId = null
 }) {
   let sql = `
         SELECT 
@@ -28,9 +29,20 @@ async function getListings({
                 FROM listing_images li
                 WHERE li.listing_id = l.listing_id
                 LIMIT 1
-            ) AS image_url
+            ) AS image_url,
+            CASE
+              WHEN uf.favorite_id IS NOT NULL THEN TRUE
+              ELSE FALSE
+            END AS isFavorited,
+            CASE
+              WHEN l.user_id = ${userId} THEN TRUE
+              ELSE FALSE
+            END AS isOwner
         FROM listings l
         JOIN Categories c ON l.category = c.category_id
+        LEFT JOIN user_favorites uf
+          ON uf.listing_id = l.listing_id
+          AND uf.user_id = ${userId}
         WHERE l.active = 1`
 
   const params = []

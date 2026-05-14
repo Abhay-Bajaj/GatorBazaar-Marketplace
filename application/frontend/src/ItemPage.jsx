@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 import { mockItems } from './data/mockItems'
 import NavigationSearchBar from './components/NavigationSearchBar'
 import LoginModal from './components/LoginModal'
+import { addFavorite, removeFavorite } from './api/favoritesAPI'
 
 
 export default function ItemPage() {
@@ -19,7 +20,23 @@ export default function ItemPage() {
   
   const favoriteImage = isFavorited ? "/images/heart_2.png" : "/images/heart_1.webp"
   
-  const handleFavorite = () => setIsFavorited(!isFavorited)
+  async function handleToggleFavorite() {
+    if (!item) return
+    const nextIsFavorited = !isFavorited
+
+    try {
+      if (nextIsFavorited) {
+        await addFavorite(item.listing_id)
+      } else {
+        await removeFavorite(item.listing_id)
+      }
+  
+      setIsFavorited(nextIsFavorited)
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
   
   const handleSendMessage = () => {
     setMessageSent(true)
@@ -34,9 +51,13 @@ export default function ItemPage() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(`/api/items/${id}`)
+        const res = await fetch(`/api/items/${id}`, {
+          credentials: 'include',
+        })
         if (!res.ok) throw new Error(`Item not found (${res.status})`)
-        setItem(await res.json())
+        const data = await res.json()
+        setItem(data)
+        setIsFavorited(data.isFavorited)
       } catch {
         const localItem = mockItems.find((entry) => String(entry.id) === String(id))
         if (localItem) {
@@ -100,9 +121,12 @@ export default function ItemPage() {
           
           <div className="item-favorite">
             <h2 className="item-detail-title">{item.title}</h2>
-            <button className="item-favorite-button" onClick={handleFavorite}>
-              <img className="item-favorite-img" src={favoriteImage} alt="Favorite" style={{transform: isFavorited ? 'scale(1.20)' : 'scale(0.90)' }} />
-            </button>
+
+            {!item.isOwner && (
+              <button className="item-favorite-button" onClick={handleToggleFavorite}>
+                <img className="item-favorite-img" src={favoriteImage} alt="Favorite" style={{transform: isFavorited ? 'scale(1.20)' : 'scale(0.90)' }} />
+              </button>
+            )}
            
           </div>
           

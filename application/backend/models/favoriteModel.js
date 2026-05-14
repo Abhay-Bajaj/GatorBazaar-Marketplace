@@ -6,20 +6,8 @@ async function addUserFavorite(userId, listingId) {
     VALUES (?, ?, NOW())`,
     [userId, listingId]
   );
-
   return favorite.insertId;
 };
-
-async function getUserFavorite(userId, listingId) {
-  const [rows] = await pool.execute(
-    `SELECT * FROM user_favorites
-    WHERE user_id = ? AND listing_id = ?`,
-    [userId, listingId]
-  )
-
-  return rows[0] || null;
-}
-
 
 async function removeUserFavorite(userId, listingId) {
   const [result] = await pool.execute(
@@ -43,7 +31,6 @@ async function getFavoritesList(userId) {
 
 module.exports = {
   addUserFavorite,
-  getUserFavorite,
   removeUserFavorite,
   getFavoritesList
 }

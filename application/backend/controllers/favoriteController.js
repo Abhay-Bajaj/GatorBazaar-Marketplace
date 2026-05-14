@@ -2,10 +2,13 @@ const favoriteModel = require("../models/favoriteModel");
 
 async function addFavorite(req, res) {
     try {
+        if (!req.session.userId) {
+            return res.json({ loggedIn: false })
+        }
 
-        const userId = req.session.user.user_id
-        const listingId = req.params.listing_id
-
+        const userId = req.session.userId
+        const listingId = req.params.listingId
+        
         await favoriteModel.addUserFavorite(userId, listingId)
 
         res.json({ success: true })
@@ -19,8 +22,12 @@ async function addFavorite(req, res) {
 async function removeFavorite(req, res) {
     try {
 
-        const userId = req.session.user.user_id
-        const listingId = req.params.listing_id
+        if (!req.session.userId) {
+            return res.json({ loggedIn: false })
+        }
+        
+        const userId = req.session.userId
+        const listingId = req.params.listingId
 
         await favoriteModel.removeUserFavorite(userId, listingId)
 
@@ -33,26 +40,10 @@ async function removeFavorite(req, res) {
 
 }
 
-async function checkFavorite(req, res) {
-    try {
-
-        const userId = req.session.user.user_id
-        const listingId = req.params.listing_id
-
-        const favorite = await favoriteModel.getFavoritesList(userId, listingId)
-
-        res.json({ isFavorited: !!favorite })
-
-    } catch (err) {
-        console.error(err)
-        res.status(500).json({ error: err.message })
-    }
-}
-
 async function getFavorites(req, res) {
     try {
 
-        const userId = req.session.user.user_id
+        const userId = req.session.userId
 
         const favorites = await favoriteModel.getFavoritesList(userId)
 
@@ -67,6 +58,5 @@ async function getFavorites(req, res) {
 module.exports = {
     addFavorite,
     removeFavorite,
-    checkFavorite,
     getFavorites
 }
