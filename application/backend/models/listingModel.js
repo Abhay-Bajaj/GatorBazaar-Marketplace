@@ -1,4 +1,4 @@
-const pool = require('../database')
+const { pool } = require('../database')
 
 async function getListingById(id, userId = null) {
   const [rows] = await pool.query(
