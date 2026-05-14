@@ -1,4 +1,4 @@
-const pool = require('../database')
+const { pool } = require('../database')
 
 async function createUser(fullname, username, email, hashedPassword) {
   const [user] = await pool.execute(

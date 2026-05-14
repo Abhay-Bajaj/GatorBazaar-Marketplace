@@ -2,6 +2,30 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
+const REQUIRED_ENV = [
+  'SESSION_SECRET',
+  'DB_HOST',
+  'DB_USER',
+  'DB_PASSWORD',
+  'DB_NAME',
+]
+
+function assertRequiredEnv() {
+  const missing = REQUIRED_ENV.filter(
+    (key) => process.env[key] === undefined || process.env[key] === ''
+  )
+  if (missing.length > 0) {
+    console.error(
+      'Startup aborted: missing required environment variables:',
+      missing.join(', ')
+    )
+    process.exit(1)
+  }
+}
+
+assertRequiredEnv()
+
+const { verifyDatabase } = require('./database')
 const express = require('express')
 const session = require('express-session');
 const cors = require('cors')
@@ -48,7 +72,17 @@ app.get('/*path', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
 })
 
-//  START SERVER 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+async function start() {
+  try {
+    await verifyDatabase()
+  } catch (err) {
+    console.error('Startup aborted: could not connect to the database.', err.message)
+    process.exit(1)
+  }
+
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
+}
+
+start()
