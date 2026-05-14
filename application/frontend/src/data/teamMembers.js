@@ -65,7 +65,7 @@ export const teamMembers = [
     slug: 'sebastian-cervantez',
     name: 'Sebastian Cervantez',
     role: 'Back-End Lead',
-    image: '/images/profile-placeholder.png',
+    image: '/images/seb.png',
     bio: [
       "I'm a senior Computer Science major at SFSU. I'm from the Bay Area, California and love spending time with friends and family along with coding! I'm currently the team's backend lead.",
     ],
