@@ -1,36 +1,18 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import NavigationSearchBar from './components/NavigationSearchBar'
 import ListingCard from './components/ListingCard'
 import LoginModal from './components/LoginModal'
-import { mockItems } from './data/mockItems'
 
-function toListingCardFormat(items) {
-  return items.map((item) => ({
-    id: item.id,
-    title: item.title,
-    price: item.price,
-    image: item.image_url || 'placeholder',
-    isFavorited: false,
-  }))
-}
 
 export default function Dashboard() {
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [loginModalOpen, setLoginModalOpen] = useState(false)
-  const [activeListings, setActiveListings] = useState(
-    toListingCardFormat(mockItems.slice(0, 6))
-  )
 
-  const soldListings = useMemo(
-    () =>
-      toListingCardFormat(mockItems.slice(6, 12)).map((item, index) => ({
-        ...item,
-        soldPrice: Number(item.price) - (index % 2 === 0 ? 5 : 0),
-      })),
-    []
-  )
+  const [activeListings, setActiveListings] = useState([])
+  const [soldListings, setSoldListings] = useState([])
+
 
   function handleSearch(event) {
     event.preventDefault()
@@ -46,6 +28,34 @@ export default function Dashboard() {
       )
     )
   }
+
+  useEffect(() => {
+    async function fetchListings() {
+      try {
+        const response = await fetch(
+          'http://localhost:3000/api/items/my-listings',
+          {
+            credentials: 'include',
+          }
+        )
+
+        const data = await response.json()
+
+        if (!response.ok){
+          console.error(data.error)
+          return
+        }
+
+        setActiveListings(data.currentListings)
+        setSoldListings(data.soldListings)
+
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    fetchListings()
+  }, [])
 
   return (
     <div className="search-page">
@@ -77,7 +87,14 @@ export default function Dashboard() {
         <div className="dashboard-row">
           {activeListings.map((listing) => (
             <div key={listing.id} className="dashboard-row-card">
-              <ListingCard {...listing} onToggleFavorite={handleToggleFavorite} />
+              <ListingCard 
+                id={listing.listing_id}
+                title={listing.title}
+                price={listing.price}
+                image={listing.image_url || 'placeholder'}
+                category_name={listing.category_name}
+                isFavorited={false}
+                onToggleFavorite={handleToggleFavorite} />
             </div>
           ))}
         </div>

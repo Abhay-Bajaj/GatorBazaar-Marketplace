@@ -25,6 +25,21 @@ async function getListingById(id) {
   return rows[0]
 }
 
+async function getListingsByUser(userId) {
+
+  const [rows] = await pool.execute(
+    `SELECT *
+    FROM listings
+    WHERE user_id = ?
+    ORDER BY created_at DESC`,
+    [userId]
+  );
+
+  return rows;
+
+}
+
 module.exports = {
   getListingById,
+  getListingsByUser
 }
