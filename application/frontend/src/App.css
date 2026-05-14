@@ -486,6 +486,77 @@
   
 }
 
+.item-images-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  overflow-y: auto;
+  max-height: 500px;
+  width: 130px;
+
+}
+
+.item-images-gallery {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+   /* Limits the height of the thumbnail column */
+   /* Adds the scrollbar if there are many thumbnails */
+  flex-shrink: 0;    /* Prevents thumbnails from being squashed width-wise */
+
+  
+
+}
+
+.item-images-gallery::-webkit-scrollbar {
+  width: 8px;
+}
+
+.item-images-gallery::-webkit-scrollbar-track {
+  background: #f1ede6;
+  border-radius: 10px;
+}
+
+.item-images-gallery::-webkit-scrollbar-thumb {
+  background: #d4cfc8;
+  border-radius: 10px;
+}
+
+.item-images-gallery::-webkit-scrollbar-thumb:hover {
+  background: #bbb4ad;
+}
+
+.image-thumbnail {
+  width: 80px;
+  height: 80px;
+  padding: 0;
+  border: 2px solid #e2ddd6;
+  border-radius: 10px;
+  background: #f9f7f4;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+}
+
+.image-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-thumbnail:hover {
+  border-color: #37524c;
+  box-shadow: 0 4px 12px rgba(20, 28, 26, 0.1);
+}
+
+.image-thumbnail.selected {
+  border-color: #37524c;
+  box-shadow: 0 0 0 2px #37524c;
+}
+
 .item-detail-image {
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -494,6 +565,7 @@
   border: 2px solid #e2ddd6;
   box-shadow: 0 12px 28px rgba(20, 28, 26, 0.1);
   background: #ede9e2;
+  flex-grow: 1;
 }
 
 .item-detail-body {
@@ -531,17 +603,24 @@
 
 .item-favorite-button {
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  border: 1px solid black;
-  background: transparent;
-  padding: 4px;
-  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid #e2ddd6;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  font-size: 1.05rem;
+  color: #9a9590;
+}
+
+.item-favorite-button.favorited {
+  color: #e05252;
+  background: rgba(224, 82, 82, 0.08);
+  border-color: rgba(224, 82, 82, 0.3);
 }
 
 .item-favorite-img {
