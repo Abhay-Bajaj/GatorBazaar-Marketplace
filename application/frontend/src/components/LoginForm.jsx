@@ -1,19 +1,49 @@
 import { useState } from 'react'
+import { useNavigate } from "react-router-dom";
 
-export default function LoginForm() {
+export default function LoginForm({ onSwitchToRegister, onSwitchToForgot }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const navigate = useNavigate();
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    if (!username.trim() || !password.trim()) {
-      setError('Please fill in both fields.')
-      return
-    }
-    setError('')
-    // TODO: need to wire up real auth later
+async function handleSubmit(e) {
+  e.preventDefault();
+
+  if (!username.trim() || !password.trim()) {
+    setError('Please fill in both fields.');
+    return;
   }
+
+  try {
+    setError('');
+
+    const response = await fetch("http://localhost:3000/auth/login", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.error || "Login failed");
+      return;
+    }
+
+    navigate("/dashboard");
+
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+    setError("Server error");
+  }
+}
 
   return (
     <form className="login-form" onSubmit={handleSubmit} noValidate>
@@ -25,6 +55,7 @@ export default function LoginForm() {
         onChange={(e) => setUsername(e.target.value)}
         autoComplete="username"
       />
+
       <input
         className="login-input"
         type="password"
@@ -41,8 +72,21 @@ export default function LoginForm() {
       </button>
 
       <div className="login-links">
-        <button type="button" className="login-link">Forgot Log In?</button>
-        <button type="button" className="login-link">Need an Account? Sign Up</button>
+        <button
+          type="button"
+          className="login-link"
+          onClick={onSwitchToForgot}
+        >
+          Forgot Log In?
+        </button>
+
+        <button
+          type="button"
+          className="login-link"
+          onClick={onSwitchToRegister}
+        >
+          Need an Account? Sign Up
+        </button>
       </div>
     </form>
   )

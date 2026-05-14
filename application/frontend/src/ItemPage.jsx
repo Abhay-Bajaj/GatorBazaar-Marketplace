@@ -80,7 +80,7 @@ export default function ItemPage() {
   }
 
   return (
-    <div className="banner item-detail">
+    <>
       <NavigationSearchBar
         query={query}
         onQueryChange={setQuery}
@@ -90,7 +90,8 @@ export default function ItemPage() {
         onFavoritesClick={() => navigate("/favorites")}
       />
 
-      <Link className="text-link" to="/">
+    <section className="banner item-detail">
+      <Link className="text-link" to="/search">
         ← Back to search
       </Link>
 

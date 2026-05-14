@@ -1,10 +1,13 @@
 import { useState } from "react"
 import './HomePage.css'
+import NavigationSearchBar from "./components/NavigationSearchBar"
+import LoginModal from "./components/LoginModal"
+import CreateListing from "./CreateListing"
 import { Link, useNavigate } from "react-router-dom"
 import { mockItems } from './data/mockItems'
 
 const categories = [
-    "Clothess", 
+    "Clothes", 
     "Text Books", 
     "Funiture", 
     "Electronics", 
@@ -14,6 +17,7 @@ const categories = [
 export default function HomePage() {
     const [query, setQuery] = useState("")
     const navigate = useNavigate()
+    const [loginModalOpen, setLoginModalOpen] = useState(false)
 
     function handleSearch(e) {
         e.preventDefault()
@@ -28,24 +32,16 @@ export default function HomePage() {
     
     return (
         <div className="homepage">
-            {/* Placeholder, implement with Ken's updated search page nav bar */}
-            <div className="navbar">
-                <h2> Gator Bazaar</h2>
-                
-                <form onSubmit={handleSearch} className="search-form">
-                    <input 
-                        type="text"
-                        placeholder="Search items..."
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                    />
-                </form>
-
-                <button> Sell </button>
-            </div>
-
+            <header className="nav-bar">
+            <NavigationSearchBar
+                    query={query}
+                    onQueryChange={setQuery}
+                    onSearch={handleSearch}
+                    onProfileClick={() => setLoginModalOpen(true)}
+                    onSellClick={() => navigate('/create-listing')}
+                  />
+            </header>
             <section>
-                <h3>Popular Categories</h3>
                 <div className="category-list">
                     {categories.map((category) => (
                         <button
@@ -75,7 +71,12 @@ export default function HomePage() {
                     ))}
                 </div>
             </section>
+
+            {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
         </div>
+        
+
+        
     )
 }
     

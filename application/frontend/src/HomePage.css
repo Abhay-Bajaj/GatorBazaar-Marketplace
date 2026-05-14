@@ -1,7 +1,6 @@
 .homepage {
     display: flex;
     flex-direction: column;
-    background-color: #f8f8f7;
     gap: 32px;
     border-radius: 18px;
   }
@@ -19,12 +18,13 @@
 }
   
 .category-list button {
-    width: 300px;
-    height: 260px;
+    width: 260px;
+    height: 50px;
     border: 1px solid black;
     background: white;
     cursor: pointer;
     font-size: 16px;
+    border-radius: 15px;
 }
   
 .recent-items {
