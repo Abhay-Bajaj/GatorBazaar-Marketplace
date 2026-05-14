@@ -6,6 +6,14 @@ export const mockItems = [
     description: '1080p monitor in good condition with HDMI cable included.',
     price: 85,
     image_url: '/images/computer.png',
+    images: [
+      '/images/computer.png',
+      '/images/computer.png',
+      '/images/computer.png',
+      '/images/chair.jpeg',
+      '/images/computer.png',
+      '/images/computer.png',
+    ],
     rating: 4,
   },
   {
