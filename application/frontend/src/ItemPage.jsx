@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { mockItems } from "./data/mockItems";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
+import { addFavorite, removeFavorite } from './api/favoritesAPI'
 
 export default function ItemPage() {
   const { id } = useParams();
@@ -17,14 +18,23 @@ export default function ItemPage() {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  const onToggleFavorite = (itemId) => {
-    setIsFavorited((prev) => !prev);
-  };
+  async function handleToggleFavorite() {
+    if (!item) return
+    const nextIsFavorited = !isFavorited
 
-  const handleFavoriteClick = (e) => {
-    e.stopPropagation();
-    onToggleFavorite(id);
-  };
+    try {
+      if (nextIsFavorited) {
+        await addFavorite(item.listing_id)
+      } else {
+        await removeFavorite(item.listing_id)
+      }
+  
+      setIsFavorited(nextIsFavorited)
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   const handleSendMessage = () => {
     setMessageSent(true);
@@ -38,9 +48,13 @@ export default function ItemPage() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(`/api/items/${id}`);
-        if (!res.ok) throw new Error(`Item not found (${res.status})`);
-        setItem(await res.json());
+        const res = await fetch(`/api/items/${id}`, {
+          credentials: 'include',
+        })
+        if (!res.ok) throw new Error(`Item not found (${res.status})`)
+        const data = await res.json()
+        setItem(data)
+        setIsFavorited(data.isFavorited)
       } catch {
         const localItem = mockItems.find(
           (entry) => String(entry.id) === String(id),
@@ -134,16 +148,18 @@ export default function ItemPage() {
           <div className="item-favorite">
             <h2 className="item-detail-title">{item.title}</h2>
 
-            <button
-              className={`item-favorite-button${isFavorited ? " favorited" : ""}`}
-              type="button"
-              onClick={handleFavoriteClick}
-              aria-label={
-                isFavorited ? "Remove from favorites" : "Add to favorites"
-              }
-            >
-              {isFavorited ? "♥" : "♡"}
-            </button>
+            {!item.isOwner && (
+              <button
+                className={`item-favorite-button${isFavorited ? " favorited" : ""}`}
+                type="button"
+                onClick={handleToggleFavorite}
+                aria-label={
+                  isFavorited ? "Remove from favorites" : "Add to favorites"
+                }
+              >
+                {isFavorited ? "♥" : "♡"}
+              </button>
+            )}
           </div>
 
           <p className="item-detail-price">
@@ -206,6 +222,7 @@ export default function ItemPage() {
       {loginModalOpen && (
         <LoginModal onClose={() => setLoginModalOpen(false)} />
       )}
-    </div>
+    </section>
+    </>
   );
 }

@@ -3,7 +3,8 @@ const { getListingById, getListingsByUser } = require('../models/listingModel')
 async function getListing(req, res) {
   try {
 
-    const listing = await getListingById(req.params.id)
+    const userId = req.session.userId || null
+    const listing = await getListingById(req.params.id, userId)
 
     if(!listing) {
         return res.status(404).json({ message: 'Item not found'})

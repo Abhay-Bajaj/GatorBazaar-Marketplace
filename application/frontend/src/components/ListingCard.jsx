@@ -7,6 +7,7 @@ export default function ListingCard({
   image,
   category_name: categoryName,
   isFavorited,
+  isOwner,
   onToggleFavorite,
 }) {
   const navigate = useNavigate()
@@ -22,14 +23,16 @@ export default function ListingCard({
 
   return (
     <div className="gb-listing-card" onClick={handleCardClick} style={{ cursor: 'pointer' }}>
-      <button
-        className={`gb-favorite-btn${isFavorited ? ' favorited' : ''}`}
-        type="button"
-        onClick={handleFavoriteClick}
-        aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-      >
-        {isFavorited ? '♥' : '♡'}
-      </button>
+      {!isOwner && (
+        <button
+          className={`gb-favorite-btn${isFavorited ? ' favorited' : ''}`}
+          type="button"
+          onClick={handleFavoriteClick}
+          aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          {isFavorited ? '♥' : '♡'}
+        </button>
+      )}
 
       <div className="gb-card-image">
         <img
