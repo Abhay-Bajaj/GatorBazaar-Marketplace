@@ -80,7 +80,7 @@ export default function ItemPage() {
   }
 
   return (
-    <>
+    <div>
       <NavigationSearchBar
         query={query}
         onQueryChange={setQuery}
@@ -203,6 +203,7 @@ export default function ItemPage() {
           </div>
         </div>
       </div>
+    </section>
       {loginModalOpen && (
         <LoginModal onClose={() => setLoginModalOpen(false)} />
       )}
