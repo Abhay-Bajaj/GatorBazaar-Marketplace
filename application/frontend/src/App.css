@@ -295,6 +295,30 @@
   opacity: 0.75;
 }
 
+/* Add padding above the logo that appears inside the site-nav body */
+.site-nav-body .site-nav-brand-icon {
+  margin-top: 24px;
+}
+
+/* Dashboard link/icon shown inside the nav body on all pages */
+.site-nav-dashboard-link {
+  display: inline-block;
+  margin-top: 12px;
+}
+
+.site-nav-dashboard-icon {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(20, 28, 26, 0.12);
+  transition: transform 0.18s ease;
+}
+
+.site-nav-dashboard-icon:hover {
+  transform: translateY(-2px);
+}
+
 /* ══════════════════════════════════════════
    Search page
 ══════════════════════════════════════════ */
@@ -396,6 +420,46 @@
   margin: 0;
   font-size: 0.95rem;
   color: #b94040;
+}
+
+/* Search Page Styling */
+/* Sort row dropdown styling */
+.gb-sort-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gb-sort-row label {
+  font-size: 0.95rem;
+  color: rgba(26, 31, 29, 0.85);
+}
+
+.gb-sort-row select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #1a1f1d;
+  background: #fff;
+  border: 1px solid #d4cfc6;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(26, 30, 27, 0.06);
+  outline: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.gb-sort-row select:focus {
+  border-color: #1c2a2e;
+  box-shadow: 0 8px 22px rgba(28, 42, 46, 0.08);
+}
+
+/* Text Alignment for dropdown box */
+.gb-sort-row select option {
+  text-align: left;
 }
 
 /* ── Result count ── */

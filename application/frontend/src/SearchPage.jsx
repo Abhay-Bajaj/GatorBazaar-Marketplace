@@ -216,10 +216,13 @@ export default function SearchPage() {
           value={searchParams.get('sort') ?? ''}
           onChange={handleSortChange}
         >
-          <option value="">Newest first</option>
+          <option value=""> Newest first</option>
           <option value="price_low">Price: Low to High</option>
           <option value="price_high">Price: High to Low</option>
-          <option value="newest">Newest</option>
+          
+          {/* Rating options added for sorting */}
+          <option value="rating_low">Rating: Low to High</option>
+          <option value="rating_high">Rating: High to Low</option>
         </select>
       </div>
 

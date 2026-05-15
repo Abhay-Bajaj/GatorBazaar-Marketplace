@@ -32,15 +32,16 @@ export default function HomePage() {
     
     return (
         <div className="homepage">
-            <header className="nav-bar">
-            <NavigationSearchBar
-                    query={query}
-                    onQueryChange={setQuery}
-                    onSearch={handleSearch}
-                    onProfileClick={() => setLoginModalOpen(true)}
-                    onSellClick={() => navigate('/create-listing')}
-                  />
-            </header>
+                        <header className="nav-bar">
+                        <NavigationSearchBar
+                                        query={query}
+                                        onQueryChange={setQuery}
+                                        onSearch={handleSearch}
+                                        onProfileClick={() => setLoginModalOpen(true)}
+                                        onSellClick={() => navigate('/create-listing')}
+                                        onMessagesClick={() => navigate('/inbox')}
+                                    />
+                        </header>
             <section>
                 <div className="category-list">
                     {categories.map((category) => (
