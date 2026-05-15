@@ -1,65 +1,84 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { mockConversations } from './data/mockConversations'
-import NavigationSearchBar from './components/NavigationSearchBar'
-import LoginModal from './components/LoginModal'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { mockConversations } from "./data/mockConversations";
+import NavigationSearchBar from "./components/NavigationSearchBar";
+import LoginModal from "./components/LoginModal";
 
 export default function Inbox() {
-  const navigate = useNavigate()
-  const [conversations, setConversations] = useState([])
-  const [selectedConversation, setSelectedConversation] = useState(null)
-  const [newMessage, setNewMessage] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [isSignedIn, setIsSignedIn] = useState(true)
-  const [query, setQuery] = useState('')
-  const [loginModalOpen, setLoginModalOpen] = useState(false)
+  const navigate = useNavigate();
+  const [conversations, setConversations] = useState([]);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [newMessage, setNewMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isSignedIn, setIsSignedIn] = useState(true);
+  const [query, setQuery] = useState("");
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchConversations() {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
       try {
-        const res = await fetch('/api/conversations')
-        if (!res.ok) throw new Error(`Server error (${res.status})`)
-        const data = await res.json()
-        setConversations(data)
+        const res = await fetch("/api/conversations");
+        if (!res.ok) throw new Error(`Server error (${res.status})`);
+        const data = await res.json();
+        setConversations(data);
+        setSelectedConversation(data[0] || null);
       } catch (err) {
-        console.error(err)
-        // Fall back to mock data
-        setConversations(mockConversations)
+        console.error(err);
+        setConversations(mockConversations);
+        setSelectedConversation(mockConversations[0] || null);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-    fetchConversations()
-  }, [])
+    fetchConversations();
+  }, []);
 
   const handleSendMessage = () => {
     if (newMessage.trim() && selectedConversation) {
-      const updatedConversations = conversations.map(conv => {
+      const updatedConversations = conversations.map((conv) => {
         if (conv.id === selectedConversation.id) {
           const newMsg = {
             id: conv.messages.length + 1,
-            sender: 'buyer',
+            sender: "buyer",
             text: newMessage,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          }
-          return { ...conv, messages: [...conv.messages, newMsg], lastMessage: newMessage }
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
+          return {
+            ...conv,
+            messages: [...conv.messages, newMsg],
+            lastMessage: newMessage,
+          };
         }
-        return conv
-      })
-      const updated = updatedConversations.find(c => c.id === selectedConversation.id)
-      setConversations(updatedConversations)
-      setSelectedConversation(updated)
-      setNewMessage('')
+        return conv;
+      });
+      const updated = updatedConversations.find(
+        (c) => c.id === selectedConversation.id,
+      );
+      setConversations(updatedConversations);
+      setSelectedConversation(updated);
+      setNewMessage("");
     }
-  }
+  };
+
+  const handleSelectedConversation = (conversation) => {
+    setSelectedConversation(conversation);
+    setConversations((prev) =>
+      prev.map((conv) =>
+        conv.id === conversation.id ? { ...conv, read: true } : conv,
+      ),
+    );
+  };
 
   const handleSearch = (e) => {
-    e.preventDefault()
-    navigate(`/search?q=${encodeURIComponent(query.trim())}`)
-  }
+    e.preventDefault();
+    navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+  };
 
   return (
     <section className="banner inbox">
@@ -67,9 +86,9 @@ export default function Inbox() {
         query={query}
         onQueryChange={setQuery}
         onSearch={handleSearch}
-        onMessagesClick={() => navigate('/inbox')}
+        onMessagesClick={() => navigate("/inbox")}
         onProfileClick={() => setLoginModalOpen(true)}
-        onFavoritesClick={() => navigate('/favorites')}
+        onFavoritesClick={() => navigate("/favorites")}
       />
 
       <button className="back-button" onClick={() => navigate(-1)}>
@@ -83,9 +102,7 @@ export default function Inbox() {
         </div>
       )}
 
-      {error && (
-        <p className="search-error">⚠ Error loading conversations</p>
-      )}
+      {error && <p className="search-error">⚠ Error loading conversations</p>}
 
       {!loading && !error && (
         <div className="inbox-grid">
@@ -97,16 +114,27 @@ export default function Inbox() {
               </div>
             ) : (
               <div className="conversations-list">
-                {conversations.map(conversation => (
+                {conversations.map((conversation) => (
                   <div
                     key={conversation.id}
-                    className={`conversation-card ${selectedConversation?.id === conversation.id ? 'active' : ''}`}
-                    onClick={() => setSelectedConversation(conversation)}
+                    className={`conversation-card ${selectedConversation?.id === conversation.id ? "active" : ""}`}
+                    onClick={() => handleSelectedConversation(conversation)}
                   >
-                    <img src={conversation.itemImage} alt={conversation.itemName} className="conversation-item-image" />
+                    <img
+                      src={conversation.itemImage}
+                      alt={conversation.itemName}
+                      className="conversation-item-image"
+                    />
                     <div className="conversation-info">
-                      <p className="conversation-item-name">{conversation.itemName}</p>
-                      <p className="conversation-last-message">{conversation.lastMessage}</p>
+                      <div className="conversation-name-row">
+                        <p className="conversation-item-name">
+                          {conversation.itemName}
+                        </p>
+                        {!conversation.read && <span className="unread-dot" />}
+                      </div>
+                      <p className="conversation-last-message">
+                        {conversation.lastMessage}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -118,7 +146,12 @@ export default function Inbox() {
             {!isSignedIn ? (
               <div className="inbox-signin-state">
                 <p>Please register/sign-in to view messages</p>
-                <button className="inbox-signin-button" onClick={() => navigate('/auth')}>Register/Sign-in</button>
+                <button
+                  className="inbox-signin-button"
+                  onClick={() => navigate("/auth")}
+                >
+                  Register/Sign-in
+                </button>
               </div>
             ) : conversations.length === 0 ? (
               <div className="inbox-no-conversations-state">
@@ -127,7 +160,11 @@ export default function Inbox() {
             ) : selectedConversation ? (
               <>
                 <div className="chat-header">
-                  <img src={selectedConversation.itemImage} alt={selectedConversation.itemName} className="chat-item-image" />
+                  <img
+                    src={selectedConversation.itemImage}
+                    alt={selectedConversation.itemName}
+                    className="chat-item-image"
+                  />
                   <div className="chat-header-info">
                     <h3>{selectedConversation.itemName}</h3>
                     <p>{selectedConversation.sellerName}</p>
@@ -136,8 +173,11 @@ export default function Inbox() {
                 </div>
 
                 <div className="messages-container">
-                  {selectedConversation.messages.map(message => (
-                    <div key={message.id} className={`message ${message.sender}`}>
+                  {selectedConversation.messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`message ${message.sender}`}
+                    >
                       <p className="message-text">{message.text}</p>
                       <p className="message-time">{message.timestamp}</p>
                     </div>
@@ -150,10 +190,15 @@ export default function Inbox() {
                     placeholder="Type your message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
                     className="message-input"
                   />
-                  <button onClick={handleSendMessage} className="message-send-button">Send</button>
+                  <button
+                    onClick={handleSendMessage}
+                    className="message-send-button"
+                  >
+                    Send
+                  </button>
                 </div>
               </>
             ) : (
@@ -164,7 +209,9 @@ export default function Inbox() {
           </div>
         </div>
       )}
-      {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+      {loginModalOpen && (
+        <LoginModal onClose={() => setLoginModalOpen(false)} />
+      )}
     </section>
-  )
+  );
 }

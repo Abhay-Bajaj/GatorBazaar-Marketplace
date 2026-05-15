@@ -1,6 +1,7 @@
 export const mockConversations = [
   {
     id: 1,
+    read: false,
     itemId: 101,
     itemName: 'Dell 24" Monitor',
     itemImage: '/images/item-placeholder.png',
@@ -28,6 +29,7 @@ export const mockConversations = [
   {
     id: 2,
     itemId: 106,
+    read: false,
     itemName: 'Ergonomic Office Chair',
     itemImage: '/images/item-placeholder.png',
     sellerName: 'Sarah Johnson',
@@ -41,6 +43,7 @@ export const mockConversations = [
   },
   {
     id: 3,
+    read: true,
     itemId: 103,
     itemName: 'Data Structures Textbook',
     itemImage: '/images/item-placeholder.png',
@@ -54,6 +57,7 @@ export const mockConversations = [
   },
   {
     id: 4,
+    read: false,
     itemId: 110,
     itemName: 'Noise Cancelling Headphones',
     itemImage: '/images/item-placeholder.png',
@@ -67,6 +71,7 @@ export const mockConversations = [
   },
   {
     id: 5,
+    read: false,
     itemId: 102,
     itemName: 'Mechanical Keyboard',
     itemImage: '/images/item-placeholder.png',
@@ -80,6 +85,7 @@ export const mockConversations = [
   },
   {
     id: 6,
+    read: true,
     itemId: 104,
     itemName: 'JavaScript: The Good Parts',
     itemImage: '/images/item-placeholder.png',
@@ -93,6 +99,7 @@ export const mockConversations = [
   },
   {
     id: 7,
+    read: false,
     itemId: 105,
     itemName: 'Study Desk',
     itemImage: '/images/item-placeholder.png',
@@ -106,6 +113,7 @@ export const mockConversations = [
   },
   {
     id: 8,
+    read: false,
     itemId: 107,
     itemName: 'iPad 9th Gen',
     itemImage: '/images/item-placeholder.png',
