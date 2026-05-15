@@ -1,6 +1,15 @@
 import { useNavigate } from 'react-router-dom'
 
-export default function ListingCard({ id, title, price, image, isFavorited, onToggleFavorite }) {
+export default function ListingCard({
+  id,
+  title,
+  price,
+  image,
+  category_name: categoryName,
+  isFavorited,
+  isOwner,
+  onToggleFavorite,
+}) {
   const navigate = useNavigate()
 
   const handleCardClick = () => {
@@ -14,14 +23,16 @@ export default function ListingCard({ id, title, price, image, isFavorited, onTo
 
   return (
     <div className="gb-listing-card" onClick={handleCardClick} style={{ cursor: 'pointer' }}>
-      <button
-        className={`gb-favorite-btn${isFavorited ? ' favorited' : ''}`}
-        type="button"
-        onClick={handleFavoriteClick}
-        aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-      >
-        {isFavorited ? '♥' : '♡'}
-      </button>
+      {!isOwner && (
+        <button
+          className={`gb-favorite-btn${isFavorited ? ' favorited' : ''}`}
+          type="button"
+          onClick={handleFavoriteClick}
+          aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          {isFavorited ? '♥' : '♡'}
+        </button>
+      )}
 
       <div className="gb-card-image">
         <img
@@ -31,6 +42,11 @@ export default function ListingCard({ id, title, price, image, isFavorited, onTo
       </div>
 
       <div className="gb-card-footer">
+        {categoryName ? (
+          <span className="gb-card-category" style={{ display: 'block', fontSize: '0.75rem', opacity: 0.85 }}>
+            {categoryName}
+          </span>
+        ) : null}
         <span className="gb-card-title">{title}</span>
         <span className="gb-card-price">${Number(price || 0).toFixed(2)}</span>
       </div>

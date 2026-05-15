@@ -1,69 +1,38 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import NavigationSearchBar from './components/NavigationSearchBar'
 import SubHeader from './components/SubHeader'
 import FiltersSidebar from './components/FiltersSidebar'
 import ListingsGrid from './components/ListingsGrid'
 import LoginModal from './components/LoginModal'
-import { mockItems } from './data/mockItems'
+import { addFavorite, removeFavorite } from './api/favoritesAPI'
 
-function searchMockItems(items, q) {
-  const normalizedQuery = q.trim().toLowerCase()
-  const terms = normalizedQuery ? normalizedQuery.split(/\s+/) : []
-
-  return items.filter((item) => {
-    if (terms.length === 0) return true
-    const haystack =
-      `${item.title} ${item.description || ''} ${item.category || ''} 
-       ${item.category_name || ''}`.toLowerCase()
-    return terms.every((term) => haystack.includes(term))
-  })
+function categoriesFromParams(searchParams) {
+  const cats = searchParams.getAll('category')
+  if (cats.length === 0) return ['All Listings']
+  return cats
 }
 
 function toListingFormat(items) {
   return items.map((item) => ({
-    id: item.listing_id || item.id,
+    id: item.listing_id ?? item.id,
     title: item.title,
     price: item.price,
     image: item.image_url || 'placeholder',
-    isFavorited: false,
-    category: (item.category_name || item.category || '').toLowerCase(),
+    isFavorited: item.isFavorited,
+    isOwner: item.isOwner,
+    category_name: item.category_name ?? '',
     rating: item.rating ?? null,
   }))
 }
 
-function applyFilters(listings, filters) {
-  return listings.filter((listing) => {
-    // Category filter
-    const hasAllListings =
-      filters.categories.includes('All Listings') || filters.categories.length === 0
-    if (!hasAllListings) {
-      const cat = listing.category
-      const matches = filters.categories.some((filterCat) => {
-        if (filterCat === 'Clothes') return cat === 'clothes'
-        if (filterCat === 'Text Books') return cat === 'textbooks'
-        if (filterCat === 'Furniture') return cat === 'furniture'
-        if (filterCat === 'Electronics') return cat === 'electronics'
-        if (filterCat === 'School Supplies') return cat === 'school supplies'
-        if (filterCat === 'Room Search') return cat === 'room search'
-        return true
-      })
-      if (!matches) return false
-    }
-
-    // Price filter
-    const price = Number(listing.price || 0)
-    if (filters.priceMin !== '' && price < Number(filters.priceMin)) return false
-    if (filters.priceMax !== '' && price > Number(filters.priceMax)) return false
-
-    // Rating filter
-    if (filters.ratings.length > 0) {
-      const rating = Math.floor(listing.rating ?? 0)
-      if (!filters.ratings.includes(rating)) return false
-    }
-
-    return true
-  })
+function useDebouncedPrices(priceMin, priceMax, delayMs) {
+  const [debounced, setDebounced] = useState({ priceMin, priceMax })
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced({ priceMin, priceMax }), delayMs)
+    return () => clearTimeout(id)
+  }, [priceMin, priceMax, delayMs])
+  return debounced
 }
 
 export default function SearchPage() {
@@ -78,89 +47,146 @@ export default function SearchPage() {
   const [error, setError] = useState(null)
 
   const [filters, setFilters] = useState({
-    categories: ['All Listings'],
     priceMin: '',
     priceMax: '',
-    ratings: [],
   })
 
-  /* Re-run whenever URL search params change */
+  const debouncedPrices = useDebouncedPrices(filters.priceMin, filters.priceMax, 400)
+
+  const categoriesFromUrl = useMemo(() => categoriesFromParams(searchParams), [searchParams])
+
   useEffect(() => {
-    const urlQuery = searchParams.get('q') ?? ''
-    setQuery(urlQuery)
-    fetchResults(urlQuery)
+    setQuery(searchParams.get('q') ?? '')
   }, [searchParams])
 
-  /* if API request fails, it resorts to mock data */
-  async function fetchResults(q = '') {
-    setLoading(true)
-    setError(null)
+  useEffect(() => {
+    let cancelled = false
 
-    const applyMockResults = () => {
-      const filtered = searchMockItems(mockItems, q)
-      const formatted = toListingFormat(filtered)
-      setListings(formatted)
-    }
+    async function fetchResults() {
+      setLoading(true)
+      setError(null)
 
-    try {
       const params = new URLSearchParams()
-      if (q) params.set('keyword', q)
 
-      const res = await fetch(`/api/search?${params.toString()}`)
-      const data = await res.json()
+      const keyword = searchParams.get('q') ?? ''
+      if (keyword.trim()) params.set('keyword', keyword.trim())
 
-      if (!res.ok) throw new Error(data.error || `Server error (${res.status})`)
+      searchParams.getAll('category').forEach((c) => params.append('category', c))
 
-      const items = Array.isArray(data) ? data : (data.items ?? [])
+      const sort = searchParams.get('sort') ?? ''
+      if (sort) params.set('sort', sort)
 
-      const formatted = toListingFormat(items)
-      setListings(formatted)
-    } catch (err) {
-      console.error(err)
-      applyMockResults()
-    } finally {
-      setLoading(false)
+      if (debouncedPrices.priceMin !== '') params.set('priceMin', debouncedPrices.priceMin)
+      if (debouncedPrices.priceMax !== '') params.set('priceMax', debouncedPrices.priceMax)
+
+      try {
+        const res = await fetch(`/api/search?${params.toString()}`)
+        const data = await res.json()
+
+        if (!res.ok) throw new Error(data.error || `Server error (${res.status})`)
+
+        const items = Array.isArray(data) ? data : (data.items ?? [])
+        if (!cancelled) {
+          setListings(toListingFormat(items))
+        }
+      } catch (err) {
+        console.error(err)
+        if (!cancelled) {
+          setError(err.message || 'Search failed')
+          setListings([])
+        }
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
     }
-  }
-/* Section above part of Mock Tests */
 
+    fetchResults()
+    return () => {
+      cancelled = true
+    }
+  }, [searchParams, debouncedPrices])
 
   function handleSearch(e) {
     e.preventDefault()
-    const params = {}
-    if (query.trim()) params.q = query.trim()
-    setSearchParams(params)
+    const next = new URLSearchParams(searchParams)
+    const trimmed = query.trim()
+    if (trimmed) next.set('q', trimmed)
+    else next.delete('q')
+    setSearchParams(next)
   }
 
   function handleFilterChange(type, value) {
-    setFilters((prev) => {
-      if (type === 'categories') {
-        if (value === 'All Listings') {
-          return { ...prev, categories: ['All Listings'] }
-        }
-        const next = prev.categories.filter((c) => c !== 'All Listings')
-        const idx = next.indexOf(value)
-        const updated = idx === -1 ? [...next, value] : next.filter((c) => c !== value)
-        return { ...prev, categories: updated.length === 0 ? ['All Listings'] : updated }
+    if (type === 'categories') {
+      const next = new URLSearchParams(searchParams)
+      next.delete('category')
+
+      if (value === 'All Listings') {
+        setSearchParams(next)
+        return
       }
-      if (type === 'ratings') {
-        const idx = prev.ratings.indexOf(value)
-        return {
-          ...prev,
-          ratings: idx === -1 ? [...prev.ratings, value] : prev.ratings.filter((r) => r !== value),
-        }
+
+      let selected = searchParams.getAll('category')
+      const hadAll = selected.length === 0
+
+      if (hadAll) {
+        selected = [value]
+      } else if (selected.includes(value)) {
+        selected = selected.filter((c) => c !== value)
+      } else {
+        selected = [...selected, value]
       }
-      return { ...prev, [type]: value }
-    })
+
+      if (selected.length === 0) {
+        setSearchParams(next)
+        return
+      }
+
+      selected.forEach((c) => next.append('category', c))
+      setSearchParams(next)
+      return
+    }
+
+    if (type === 'priceMin' || type === 'priceMax') {
+      setFilters((prev) => ({ ...prev, [type]: value }))
+    }
   }
 
-  function handleToggleFavorite(id) {
-    setListings((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, isFavorited: !item.isFavorited } : item))
-    )
+  function handleSortChange(e) {
+    const next = new URLSearchParams(searchParams)
+    const v = e.target.value
+    if (v) next.set('sort', v)
+    else next.delete('sort')
+    setSearchParams(next)
   }
 
-  const displayedListings = applyFilters(listings, filters)
+  async function handleToggleFavorite(id) {
+    const listing = listings.find((item) => item.id === id)
+    if (!listing) return
+
+    const nextIsFavorited = !listing.isFavorited
+
+    try {
+      if (nextIsFavorited) {
+        await addFavorite(id)
+      } else {
+        await removeFavorite(id)
+      }
+  
+      setListings((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, isFavorited: nextIsFavorited } : item))
+      )
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const sidebarFilters = {
+    categories: categoriesFromUrl,
+    priceMin: filters.priceMin,
+    priceMax: filters.priceMax,
+  }
+
   const urlQuery = searchParams.get('q') ?? ''
 
   return (
@@ -172,18 +198,35 @@ export default function SearchPage() {
         onMessagesClick={() => navigate('/inbox')}
         onProfileClick={() => setLoginModalOpen(true)}
         onFavoritesClick={() => navigate('/favorites')}
+        onSellClick={() => navigate('/create-listing')}
       />
 
       <SubHeader
         query={urlQuery}
-        count={loading ? null : displayedListings.length}
-        onBack={() => navigate(-1)}
+        count={loading ? null : listings.length}
+        onBack={() => navigate('/')}
       />
 
+      <div className="gb-sort-row" style={{ padding: '0 1rem', marginBottom: '0.5rem' }}>
+        <label htmlFor="search-sort" style={{ marginRight: '0.5rem' }}>
+          Sort by
+        </label>
+        <select
+          id="search-sort"
+          value={searchParams.get('sort') ?? ''}
+          onChange={handleSortChange}
+        >
+          <option value="">Newest first</option>
+          <option value="price_low">Price: Low to High</option>
+          <option value="price_high">Price: High to Low</option>
+          <option value="newest">Newest</option>
+        </select>
+      </div>
+
       <div className="main-layout">
-        <FiltersSidebar filters={filters} onChange={handleFilterChange} />
+        <FiltersSidebar filters={sidebarFilters} onChange={handleFilterChange} />
         <ListingsGrid
-          listings={displayedListings}
+          listings={listings}
           loading={loading}
           error={error}
           onToggleFavorite={handleToggleFavorite}

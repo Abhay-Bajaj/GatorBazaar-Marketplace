@@ -9,7 +9,7 @@ export default function SubHeader({ query, count, onBack }) {
   return (
     <div className="gb-subheader">
       <button className="gb-back-btn" type="button" onClick={onBack}>
-        ← Back
+        ← HOME
       </button>
       {resultText && <span className="gb-result-text">{resultText}</span>}
     </div>

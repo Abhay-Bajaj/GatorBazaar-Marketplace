@@ -1,43 +1,71 @@
-/*
-const express = require('express');
-const path = require('path');
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const REQUIRED_ENV = [
+  'SESSION_SECRET',
+  'DB_HOST',
+  'DB_USER',
+  'DB_PASSWORD',
+  'DB_NAME',
+]
 
-// Serve static files from public folder
-app.use(express.static(path.join(__dirname, 'public')));
+function assertRequiredEnv() {
+  const missing = REQUIRED_ENV.filter(
+    (key) => process.env[key] === undefined || process.env[key] === ''
+  )
+  if (missing.length > 0) {
+    console.error(
+      'Startup aborted: missing required environment variables:',
+      missing.join(', ')
+    )
+    process.exit(1)
+  }
+}
 
-// Optional: JSON body parsing for API routes later
-app.use(express.json());
+assertRequiredEnv()
 
-// Health check / root API
-app.get('/api', (req, res) => {
-  res.json({ message: 'Express backend is running' });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
-*/
-
+const { verifyDatabase } = require('./database')
 const express = require('express')
+const session = require('express-session');
 const cors = require('cors')
 const path = require('path')
 const searchRoute = require('./routes/searchRoute')
-
+const userRoute = require('./routes/userRoute')
+const authRoute = require('./routes/authRoute')
+const listingRoute = require('./routes/listingRoute')
+const favoritesRoute = require('./routes/favoriteRoute')
 const app = express()
 const PORT = process.env.PORT || 3000;
 
-app.use(cors())
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
+
 app.use(express.json())
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: false,    //change to true in production
+    sameSite: "strict"
+  }
+}));
 
 //  API ROUTES 
 app.get('/api/hello', (req, res) => {
   res.json({ message: "Hello from backend!" })
 })
 
+app.use("/auth", authRoute);
 app.use('/api/search', searchRoute)
+app.use('/api/user', userRoute)
+app.use('/api/items', listingRoute)
+app.use('/api/favorites', favoritesRoute)
 
 //  SERVE REACT BUILD 
 app.use(express.static(path.join(__dirname, '../frontend/dist')))
@@ -46,7 +74,17 @@ app.get('/*path', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
 })
 
-//  START SERVER 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+async function start() {
+  try {
+    await verifyDatabase()
+  } catch (err) {
+    console.error('Startup aborted: could not connect to the database.', err.message)
+    process.exit(1)
+  }
+
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
+}
+
+start()

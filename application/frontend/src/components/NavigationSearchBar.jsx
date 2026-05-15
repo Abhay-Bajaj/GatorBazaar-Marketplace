@@ -1,9 +1,10 @@
+import { Link } from "react-router-dom"
 export default function NavigationSearchBar({
   query,
   onQueryChange,
   onSearch,
   onProfileClick,
-  onSellClick = () => {},
+  onSellClick,
   onMessagesClick = () => {},
   onFavoritesClick = () => {},
   logoText = 'GatorBazaar',
@@ -15,8 +16,9 @@ export default function NavigationSearchBar({
   return (
     <header className="gb-header">
       <div className="gb-header-inner">
+        <Link to="/">
         <span className="gb-logo">{logoText}</span>
-
+        </Link>
         <form className="gb-search-form" onSubmit={onSearch} role="search">
           <input
             className="gb-search-input"
