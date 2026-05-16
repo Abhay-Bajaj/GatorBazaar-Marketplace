@@ -19,7 +19,7 @@ async function getConversation(user_id, conversation_id) {
             c.conversation_id = ?
             AND (
                 c.buyer_user_id = ? 
-                OR l.seller_user_id = ?
+                OR l.user_id = ?
             )
         ORDER BY m.created_at ASC;
         `,
@@ -49,7 +49,7 @@ async function getPreviews(user_id) {
                 c.listing_id,
                 l.title,
                 li.image_url,
-                l.user_id
+                l.user_id,
                 u.fullname,
                 l.price,
                 m.body,
@@ -64,12 +64,12 @@ async function getPreviews(user_id) {
             JOIN listings l
                 ON c.listing_id = l.listing_id
             JOIN registered_users u
-                ON l.seller_user_id = u.user_id
+                ON l.user_id = u.user_id
             LEFT JOIN listing_images li
                 ON l.listing_id = li.listing_id
             WHERE 
                 c.buyer_user_id = ?
-                OR l.seller_user_id = ?
+                OR l.user_id = ?
         ) ranked
         WHERE rn = 1
         ORDER BY created_at DESC;

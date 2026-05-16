@@ -1,4 +1,4 @@
-const pool = require('../database')
+const {pool} = require('../database')
 
 async function addUserFavorite(userId, listingId) {
   const [favorite] = await pool.execute(

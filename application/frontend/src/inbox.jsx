@@ -24,9 +24,12 @@ export default function Inbox() {
           credentials:'include'
         })
         if (!res.ok) throw new Error(`Server error (${res.status})`)
-        setConversations(data)
+        const data = await res.json();
+        
+        setConversations(data);
       } catch (err) {
         console.error(err);
+        console.error('fetch failed:', err);
         setConversations(mockConversations);
         setSelectedConversation(mockConversations[0] || null);
       } finally {
@@ -53,11 +56,11 @@ export default function Inbox() {
       if (!res.ok) throw new Error(`Server error (${res.status})`)
 
       const data = await res.json()
-
       await handleSelectedConversation(selectedConversation)
 
       setNewMessage('')
     } catch (err) {
+      console.error('fetch failed:', err)
       console.error(err)
       setError(err.message)
     }
@@ -176,7 +179,7 @@ export default function Inbox() {
                   {selectedConversation.messages.map(message => (
                     <div
                       key={message.message_id}
-                      className={`message ${message.sender_user_id === selectedConversation.seller_user_id ? 'seller' : 'buyer'}`}
+                      className={`message ${Number(message.sender_user_id) === Number(selectedConversation.seller_user_id) ? 'seller' : 'buyer'}`}
                     >
                       <p className="message-text">{message.body}</p>
                       <p className="message-time">
