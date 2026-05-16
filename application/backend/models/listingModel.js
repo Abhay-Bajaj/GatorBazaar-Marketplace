@@ -50,7 +50,20 @@ async function getListingsByUser(userId) {
 
 }
 
+async function getNewestListings() {
+
+  const [rows] = await pool.execute(
+    `SELECT * 
+    FROM listings
+    ORDER BY listing_id DESC
+    LIMIT 5`
+  )
+
+  return rows;
+}
+
 module.exports = {
   getListingById,
-  getListingsByUser
+  getListingsByUser,
+  getNewestListings
 }
