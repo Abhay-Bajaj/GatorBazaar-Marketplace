@@ -7,6 +7,7 @@ import TransactionPage from './TransactionPage'
 import Inbox from './inbox'
 import HomePage from './HomePage'
 import Dashboard from './dashboard'
+import Favorite from './favorite'
 import CreateListing from './CreateListing'
 import AccountPage from "./AccountPage";
 import NavigationSearchBar from './components/NavigationSearchBar'
@@ -140,14 +141,9 @@ function App() {
     <div className="page">
       <nav className="site-nav">
         <div className="site-nav-inner">
-          <img
-            className="site-nav-brand-icon"
-            src="/images/Icon.png"
-            alt=""
-            width={68}
-            height={68}
-            decoding="async"
-          />
+          <Link to="/">
+           
+          </Link>
           <div className="site-nav-body">
             <h1>
               SFSU Software Engineering Project CSC 648-848, Spring 2026.
@@ -157,21 +153,20 @@ function App() {
 
             <p>Section 01, Team 07</p>
 
-            {isTeamMembers && (
-              <>
-                <Link className="vp-nav-link" to="/">
-                  🔍 Browse &amp; Search
-                </Link>
-              </>
-            )}
+              {isHome && (
+                <p className="vp-nav-subtitle">Browse and Search our Item Catalog</p>
+              )}
 
-            {isHome && (
-              <p className="vp-nav-subtitle">Browse and Search our Item Catalog</p>
-            )}
-
-            <Link className="vp-nav-link" to="/dashboard">
-              📊 Dashboard
-            </Link>
+              <Link to="/" className="site-nav-dashboard-link" aria-label="Home">
+                <img
+                  className="site-nav-brand-icon site-nav-dashboard-icon"
+                  src="/images/Icon.png"
+                  alt="Home Logo"
+                  width={68}
+                  height={68}
+                  decoding="async"
+                />
+              </Link>
           </div>
         </div>
       </nav>
@@ -187,6 +182,7 @@ function App() {
           <Route path="/items/:id" element={<ItemPage />} />
           <Route path="/complete-transaction" element={<TransactionPage />} />
           <Route path="/inbox" element={<Inbox />} />
+          <Route path="/favorites/" element={<Favorite />} />
           <Route path="/account" element={<AccountPage />} />
         </Routes>
       </main>

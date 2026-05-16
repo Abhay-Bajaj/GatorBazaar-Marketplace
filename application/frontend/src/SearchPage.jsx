@@ -5,6 +5,7 @@ import SubHeader from './components/SubHeader'
 import FiltersSidebar from './components/FiltersSidebar'
 import ListingsGrid from './components/ListingsGrid'
 import LoginModal from './components/LoginModal'
+import { addFavorite, removeFavorite } from './api/favoritesAPI'
 
 function categoriesFromParams(searchParams) {
   const cats = searchParams.getAll('category')
@@ -18,7 +19,8 @@ function toListingFormat(items) {
     title: item.title,
     price: item.price,
     image: item.image_url || 'placeholder',
-    isFavorited: false,
+    isFavorited: item.isFavorited,
+    isOwner: item.isOwner,
     category_name: item.category_name ?? '',
     rating: item.rating ?? null,
   }))
@@ -157,10 +159,26 @@ export default function SearchPage() {
     setSearchParams(next)
   }
 
-  function handleToggleFavorite(id) {
-    setListings((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, isFavorited: !item.isFavorited } : item))
-    )
+  async function handleToggleFavorite(id) {
+    const listing = listings.find((item) => item.id === id)
+    if (!listing) return
+
+    const nextIsFavorited = !listing.isFavorited
+
+    try {
+      if (nextIsFavorited) {
+        await addFavorite(id)
+      } else {
+        await removeFavorite(id)
+      }
+  
+      setListings((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, isFavorited: nextIsFavorited } : item))
+      )
+
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const sidebarFilters = {
@@ -179,6 +197,7 @@ export default function SearchPage() {
         onSearch={handleSearch}
         onMessagesClick={() => navigate('/inbox')}
         onProfileClick={() => setLoginModalOpen(true)}
+        onFavoritesClick={() => navigate('/favorites')}
         onSellClick={() => navigate('/create-listing')}
       />
 
@@ -197,10 +216,13 @@ export default function SearchPage() {
           value={searchParams.get('sort') ?? ''}
           onChange={handleSortChange}
         >
-          <option value="">Newest first</option>
+          <option value=""> Newest first</option>
           <option value="price_low">Price: Low to High</option>
           <option value="price_high">Price: High to Low</option>
-          <option value="newest">Newest</option>
+          
+          {/* Rating options added for sorting */}
+          <option value="rating_low">Rating: Low to High</option>
+          <option value="rating_high">Rating: High to Low</option>
         </select>
       </div>
 
