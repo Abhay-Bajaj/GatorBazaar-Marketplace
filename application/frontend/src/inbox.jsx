@@ -24,7 +24,6 @@ export default function Inbox() {
           credentials:'include'
         })
         if (!res.ok) throw new Error(`Server error (${res.status})`)
-        const data = await res.json()
         setConversations(data)
       } catch (err) {
         console.error(err);
@@ -40,15 +39,13 @@ export default function Inbox() {
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConversation) return
     try {
-      const res = await fetch('/api/messages', {
+      const res = await fetch(`/api/messages/${selectedConversation.conversation_id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         credentials: 'include',
         body: JSON.stringify({
-          request_id: selectedConversation.request_id,
-          receiver_id: selectedConversation.other_user_id,
           message_content: newMessage.trim()
         })
       })
@@ -67,7 +64,7 @@ export default function Inbox() {
   }
   const handleSelectedConversation = async (conversation) =>{
     try {
-      const res = await fetch(`/api/messages/${conversation.request_id}`, {
+      const res = await fetch(`/api/messages/${conversation.conversation_id}`, {
         credentials: 'include'
       })
 
@@ -126,8 +123,8 @@ export default function Inbox() {
               <div className="conversations-list">
                 {conversations.map((conversation) => (
                   <div
-                    key={conversation.request_id}
-                    className={`conversation-card ${selectedConversation?.request_id === conversation.request_id ? 'active' : ''}`}
+                    key={conversation.conversation_id}
+                    className={`conversation-card ${selectedConversation?.conversation_id === conversation.conversation_id ? 'active' : ''}`}
                     onClick={() => handleSelectedConversation(conversation)}
                   >
                     <img
@@ -137,7 +134,7 @@ export default function Inbox() {
                     />
                     <div className="conversation-info">
                       <p className="conversation-item-name">{conversation.itemName}</p>
-                      <p className="conversation-last-message">{conversation.message_content}</p>
+                      <p className="conversation-last-message">{conversation.lastMessage}</p>
                     </div>
                   </div>
                 ))}
@@ -179,11 +176,11 @@ export default function Inbox() {
                   {selectedConversation.messages.map(message => (
                     <div
                       key={message.message_id}
-                      className={`message ${message.sender_id === selectedConversation.other_user_id_id ? 'seller' : 'buyer'}`}
+                      className={`message ${message.sender_user_id === selectedConversation.seller_user_id ? 'seller' : 'buyer'}`}
                     >
-                      <p className="message-text">{message.message_content}</p>
+                      <p className="message-text">{message.body}</p>
                       <p className="message-time">
-                        {new Date(message.sent_at).toLocaleTimeString([], {
+                        {new Date(message.created_at).toLocaleTimeString([], {
                           hour: '2-digit',
                           minute: '2-digit'
                         })}

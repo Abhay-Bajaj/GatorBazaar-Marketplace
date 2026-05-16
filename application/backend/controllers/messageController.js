@@ -8,14 +8,14 @@ async function getConversation(req, res) {
             });
         }
         const user_id = req.session.userId
-        if (!req.params.request_id) {
+        if (!req.params.conversation_id) {
             return res.status(400).json({
-                error: "request id required"
+                error: "conversation id required"
             });
         }
-        const request_id = req.params.request_id
+        const conversation_id = req.params.conversation_id
 
-        const conversation = await messageModel.getConversation(user_id, request_id)
+        const conversation = await messageModel.getConversation(user_id, conversation_id)
         return res.json(conversation)
     } catch(err) {
         console.log(err)
@@ -49,24 +49,20 @@ async function sendMessage(req, res) {
             });
         }
 
-        const sender_id = req.session.userId
-        const {
-            request_id,
-            receiver_id,
-            message_content
-        } = req.body
+        const sender_user_id = req.session.userId
+        const conversation_id = req.params.conversation_id
+        const {message_content} = req.body
 
-        if (!request_id || !receiver_id || !message_content) {
+        if (!conversation_id || !sender_user_id || !message_content || !message_content.trim()) {
             return res.status(400).json({
                 error: "Missing required fields"
             });
         }
 
         const message_id = await messageModel.sendMessage(
-            request_id,
-            sender_id,
-            receiver_id,
-            message_content
+            conversation_id,
+            sender_user_id,
+            message_content.trim()
         )
 
         return res.status(201).json({message_id})

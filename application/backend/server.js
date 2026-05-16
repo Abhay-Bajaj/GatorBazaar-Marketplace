@@ -66,8 +66,8 @@ app.use("/auth", authRoute);
 app.use('/api/search', searchRoute)
 app.use('/api/user', userRoute)
 app.use('/api/items', listingRoute)
-app.use('/api/messageRoute', messageRoute)
 app.use('/api/favorites', favoritesRoute)
+app.use('/api/messages', messageRoute)
 
 //  SERVE REACT BUILD 
 app.use(express.static(path.join(__dirname, '../frontend/dist')))

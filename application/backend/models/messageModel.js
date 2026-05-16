@@ -1,47 +1,78 @@
 const { pool } = require('../database')
 
-async function getConversation(user_id, request_id) {
+// get only the rows of messages matching conversation id and user id ordered oldest to youngest
+async function getConversation(user_id, conversation_id) {
     const [rows] = await pool.query (
         `
-        SELECT *
-        FROM messages
+        SELECT 
+            m.message_id,
+            m.conversation_id,
+            m.sender_user_id,
+            m.body,
+            m.created_at
+        FROM messages m
+        JOIN conversations c
+            ON c.conversation_id = m.conversation_id
+        JOIN listings l
+            ON l.listing_id = c.listing_id 
         WHERE
-            request_id = ?
-            AND (sender_id = ? OR receiver_id = ?)
-        ORDER BY sent_at ASC;
+            c.conversation_id = ?
+            AND (
+                c.buyer_user_id = ? 
+                OR l.seller_user_id = ?
+            )
+        ORDER BY m.created_at ASC;
         `,
-        [request_id, user_id, user_id]
+        [conversation_id, user_id, user_id]
     )
     return rows;
 }
-
+// what I need is everything but the message
+// create a temp table of (conversation+message+listing+users+listing_image) grouped by conversation id and ordered by message creation time
+// from that table get only the rows with the most recent message and the current user matches the seller or buyer id ordered by createAt
+// from this table get only the necessary columns
 async function getPreviews(user_id) {
     const [rows] = await pool.query (
         `
         SELECT 
-            message_id,
-            request_id,
-            sender_id,
-            receiver_id,
-            message_content,
-            sent_at,
-            other_user_id
+            ranked.conversation_id,
+            ranked.listing_id,
+            ranked.title AS itemName,
+            ranked.image_url AS itemImage,
+            ranked.fullname AS sellerName,
+            ranked.user_id AS seller_user_id,
+            ranked.price,
+            ranked.body AS lastMessage
         FROM (
             SELECT 
-                m.*,
-                CASE
-                    WHEN sender_id = ? THEN receiver_id
-                    ELSE sender_id
-                END AS other_user_id
+                c.conversation_id,
+                c.listing_id,
+                l.title,
+                li.image_url,
+                l.user_id
+                u.fullname,
+                l.price,
+                m.body,
+                m.created_at,
                 ROW_NUMBER() OVER (
-                    PARTITION BY request_id
-                    ORDER BY sent_at DESC
+                    PARTITION BY c.conversation_id
+                    ORDER BY m.created_at DESC
                 ) AS rn
-            FROM messages m
-            WHERE sender_id = ? OR receiver_id = ?
+            FROM conversations c
+            JOIN messages m
+                ON c.conversation_id = m.conversation_id
+            JOIN listings l
+                ON c.listing_id = l.listing_id
+            JOIN registered_users u
+                ON l.seller_user_id = u.user_id
+            LEFT JOIN listing_images li
+                ON l.listing_id = li.listing_id
+            WHERE 
+                c.buyer_user_id = ?
+                OR l.seller_user_id = ?
         ) ranked
         WHERE rn = 1
-        ORDER BY sent_at DESC;
+        ORDER BY created_at DESC;
         `,
         [user_id, user_id]
     )
@@ -49,19 +80,18 @@ async function getPreviews(user_id) {
 }
 
 // just creating a new message and adding it to the message table
-async function sendMessage(request_id, user_id, receiver_id, message_content) {
+async function sendMessage(conversation_id, sender_user_id, body) {
     const [message] = await pool.execute(
-    `INSERT INTO messages (request_id, sender_id, receiver_id, message_content, sent_at)
-    VALUES (?, ?, ?, ?, NOW())`,
-    [request_id, user_id, receiver_id, message_content]
+    `INSERT INTO messages (conversation_id, sender_user_id, body)
+    VALUES (?, ?, ?)`,
+    [conversation_id, sender_user_id, body]
   );
 
   return message.insertId;
 }
 
-// message_id (Primary Key)
-// request_id (Foreign Key → Sent Requests)
-// sender_id (Foreign Key → Registered Users)
-// receiver_id (Foreign Key → Registered Users)
-// message_content
-// sent_at
+module.exports = {
+    getConversation,
+    getPreviews,
+    sendMessage
+}
