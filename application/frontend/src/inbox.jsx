@@ -20,7 +20,9 @@ export default function Inbox() {
       setLoading(true)
       setError(null)
       try {
-        const res = await fetch('/api/conversations')
+        const res = await fetch('/api/messages', {
+          credentials:'include'
+        })
         if (!res.ok) throw new Error(`Server error (${res.status})`)
         const data = await res.json()
         setConversations(data)
@@ -35,27 +37,53 @@ export default function Inbox() {
     fetchConversations()
   }, [])
 
-  const handleSendMessage = () => {
-    if (newMessage.trim() && selectedConversation) {
-      const updatedConversations = conversations.map(conv => {
-        if (conv.id === selectedConversation.id) {
-          const newMsg = {
-            id: conv.messages.length + 1,
-            sender: 'buyer',
-            text: newMessage,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          }
-          return { ...conv, messages: [...conv.messages, newMsg], lastMessage: newMessage }
-        }
-        return conv
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !selectedConversation) return
+    try {
+      const res = await fetch('/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          request_id: selectedConversation.request_id,
+          receiver_id: selectedConversation.other_user_id,
+          message_content: newMessage.trim()
+        })
       })
-      const updated = updatedConversations.find(c => c.id === selectedConversation.id)
-      setConversations(updatedConversations)
-      setSelectedConversation(updated)
+
+      if (!res.ok) throw new Error(`Server error (${res.status})`)
+
+      const data = await res.json()
+
+      await handleSelectedConversation(selectedConversation)
+
       setNewMessage('')
+    } catch (err) {
+      console.error(err)
+      setError(err.message)
     }
   }
+  const handleSelectedConversation = async (conversation) =>{
+    try {
+      const res = await fetch(`/api/messages/${conversation.request_id}`, {
+        credentials: 'include'
+      })
 
+      if (!res.ok) throw new Error(`Server error (${res.status})`)
+
+      const messages = await res.json()
+
+      setSelectedConversation({
+        ...conversation,
+        messages
+      })
+    } catch (err) {
+      console.error(err)
+      setError(err.message)
+    }
+  }
   const handleSearch = (e) => {
     e.preventDefault()
     navigate(`/search?q=${encodeURIComponent(query.trim())}`)
@@ -99,14 +127,14 @@ export default function Inbox() {
               <div className="conversations-list">
                 {conversations.map(conversation => (
                   <div
-                    key={conversation.id}
-                    className={`conversation-card ${selectedConversation?.id === conversation.id ? 'active' : ''}`}
-                    onClick={() => setSelectedConversation(conversation)}
+                    key={conversation.request_id}
+                    className={`conversation-card ${selectedConversation?.request_id === conversation.request_id ? 'active' : ''}`}
+                    onClick={() => handleSelectedConversation(conversation)}
                   >
                     <img src={conversation.itemImage} alt={conversation.itemName} className="conversation-item-image" />
                     <div className="conversation-info">
                       <p className="conversation-item-name">{conversation.itemName}</p>
-                      <p className="conversation-last-message">{conversation.lastMessage}</p>
+                      <p className="conversation-last-message">{conversation.message_content}</p>
                     </div>
                   </div>
                 ))}
@@ -137,9 +165,17 @@ export default function Inbox() {
 
                 <div className="messages-container">
                   {selectedConversation.messages.map(message => (
-                    <div key={message.id} className={`message ${message.sender}`}>
-                      <p className="message-text">{message.text}</p>
-                      <p className="message-time">{message.timestamp}</p>
+                    <div
+                      key={message.message_id}
+                      className={`message ${message.sender_id === selectedConversation.other_user_id_id ? 'seller' : 'buyer'}`}
+                    >
+                      <p className="message-text">{message.message_content}</p>
+                      <p className="message-time">
+                        {new Date(message.sent_at).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -150,7 +186,7 @@ export default function Inbox() {
                     placeholder="Type your message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                     className="message-input"
                   />
                   <button onClick={handleSendMessage} className="message-send-button">Send</button>
