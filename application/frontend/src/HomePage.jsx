@@ -5,6 +5,8 @@ import LoginModal from "./components/LoginModal"
 import CreateListing from "./CreateListing"
 import { Link, useNavigate } from "react-router-dom"
 import { mockItems } from './data/mockItems'
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
 
 const categories = [
     "Clothes", 
@@ -18,6 +20,9 @@ export default function HomePage() {
     const [query, setQuery] = useState("")
     const navigate = useNavigate()
     const [loginModalOpen, setLoginModalOpen] = useState(false)
+    const { isSignedIn } = useAuthStatus()
+    console.log("homepage check", isSignedIn, typeof isSignedIn)
+    const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
 
     function handleSearch(e) {
         e.preventDefault()
@@ -37,7 +42,7 @@ export default function HomePage() {
                                         query={query}
                                         onQueryChange={setQuery}
                                         onSearch={handleSearch}
-                                        onProfileClick={() => setLoginModalOpen(true)}
+                                        onProfileClick={handleAccountClick}
                                         onSellClick={() => navigate('/create-listing')}
                                         onMessagesClick={() => navigate('/inbox')}
                                     />

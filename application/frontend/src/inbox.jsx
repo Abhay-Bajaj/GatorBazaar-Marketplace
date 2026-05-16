@@ -3,17 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { mockConversations } from "./data/mockConversations";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
+
 
 export default function Inbox() {
+  const { isSignedIn } = useAuthStatus()
   const navigate = useNavigate();
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isSignedIn, setIsSignedIn] = useState(true);
   const [query, setQuery] = useState("");
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
 
   useEffect(() => {
     async function fetchConversations() {
@@ -88,7 +92,7 @@ export default function Inbox() {
         onSearch={handleSearch}
         onSellClick={() => navigate('/create-listing')}
         onMessagesClick={() => navigate('/inbox')}
-        onProfileClick={() => setLoginModalOpen(true)}
+        onProfileClick={handleAccountClick}
         onFavoritesClick={() => navigate("/favorites")}
       />
 

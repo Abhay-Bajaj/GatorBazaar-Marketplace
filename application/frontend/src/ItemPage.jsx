@@ -4,8 +4,11 @@ import { mockItems } from "./data/mockItems";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
 
 export default function ItemPage() {
+  const { isSignedIn } = useAuthStatus()
   const { id } = useParams();
   const navigate = useNavigate();
   const [item, setItem] = useState(null);
@@ -13,9 +16,9 @@ export default function ItemPage() {
   const [error, setError] = useState(null);
   const [isFavorited, setIsFavorited] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(true); //test signed in state
   const [query, setQuery] = useState("");
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   async function handleToggleFavorite() {
@@ -100,7 +103,7 @@ export default function ItemPage() {
         onQueryChange={setQuery}
         onSearch={handleSearch}
         onMessagesClick={() => navigate("/inbox")}
-        onProfileClick={() => setLoginModalOpen(true)}
+        onProfileClick={handleAccountClick}
         onFavoritesClick={() => navigate("/favorites")}
       />
 

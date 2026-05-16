@@ -4,15 +4,18 @@ import { mockFavorites } from "./data/mockFavorites";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
 import ListingCard from "./components/ListingCard";
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
 
 export default function Favorite() {
+  const { isSignedIn } = useAuthStatus()
   const navigate = useNavigate();
 
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [loginModalOpen, setLoginModalOpen] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(true); //test unregistered user state
+  const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
 
   const handleToggleFavorite = (itemId) => {
     setFavorites((prev) => prev.filter((item) => item.id !== itemId));
@@ -46,7 +49,7 @@ export default function Favorite() {
         onQueryChange={setQuery}
         onSearch={handleSearch}
         onMessagesClick={() => navigate("/inbox")}
-        onProfileClick={() => setLoginModalOpen(true)}
+        onProfileClick={handleAccountClick}
       />
       <button className="back-button" onClick={() => navigate(-1)}>
         ← Back

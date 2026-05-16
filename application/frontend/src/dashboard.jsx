@@ -3,15 +3,20 @@ import { useNavigate } from 'react-router-dom'
 import NavigationSearchBar from './components/NavigationSearchBar'
 import ListingCard from './components/ListingCard'
 import LoginModal from './components/LoginModal'
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
 
 
 export default function Dashboard() {
+  const {isSignedIn} = useAuthStatus()
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [loginModalOpen, setLoginModalOpen] = useState(false)
+  const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
 
   const [activeListings, setActiveListings] = useState([])
   const [soldListings, setSoldListings] = useState([])
+  
 
 
   function handleSearch(event) {
@@ -66,7 +71,7 @@ export default function Dashboard() {
         onSellClick={() => navigate('/create-listing')}
         onMessagesClick={() => navigate('/inbox')}
         onFavoritesClick={() => { }}
-        onProfileClick={() => setLoginModalOpen(true)}
+        onProfileClick={handleAccountClick}
         placeholder="Search marketplace items"
         searchButtonText="Search"
       />
