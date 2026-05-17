@@ -21,9 +21,13 @@ async function getListingById(id, userId = null) {
         CASE
           WHEN l.user_id = ? THEN TRUE
           ELSE FALSE
-        END AS isOwner
+        END AS isOwner,
+        l.user_id AS seller_id,
+        u.username AS seller_username,
+        u.fullname AS seller_fullname
     FROM listings l
     JOIN Categories c ON l.category = c.category_id
+    JOIN registered_users u ON l.user_id = u.user_id
     LEFT JOIN user_favorites uf
       ON uf.listing_id = l.listing_id
       AND uf.user_id = ?

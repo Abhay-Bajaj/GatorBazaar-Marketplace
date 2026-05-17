@@ -26,9 +26,10 @@ async function getUserByEmail(email) {
   return rows[0];
 }
 
-async function getUserById() {
-  const [rows] = await pool.query(
-    `SELECT * FROM registered_users WHERE user_id = 1`
+async function getUserById(userId) {
+  const [rows] = await pool.execute(
+    'SELECT * FROM registered_users WHERE user_id = ?',
+    [userId]
   );
   if (!rows.length) return null
   return rows[0]
