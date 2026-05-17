@@ -1,7 +1,7 @@
 const messageModel = require('../models/messageModel')
 
 async function getConversation(req, res) {
-    try{
+    try {
         if (!req.session.userId) {
             return res.status(401).json({
                 error: "Not authenticated"
@@ -13,13 +13,13 @@ async function getConversation(req, res) {
                 error: "conversation id required"
             });
         }
-        const conversation_id = req.params.conversation_id
+        const conversation_id = Number(req.params.conversation_id)
 
         const conversation = await messageModel.getConversation(user_id, conversation_id)
-        return res.json(conversation)
-    } catch(err) {
+        res.json(conversation)
+    } catch (err) {
         console.log(err)
-        return res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: "Server error" });
     }
 }
 
@@ -33,15 +33,20 @@ async function getPreviews(req, res) {
         const user_id = req.session.userId
 
         const previews = await messageModel.getPreviews(user_id)
-        return res.json(previews)
+        res.json(
+            previews.map(conversation => ({
+                ...conversation, 
+                current_user_id: user_id
+            }))
+        )
     } catch (err) {
         console.log(err)
-        return res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: "Server error" });
     }
 }
 
 async function sendMessage(req, res) {
-    try { 
+    try {
         // need request_id, user_id(sender_id), receiver_id, message_content
         if (!req.session.userId) {
             return res.status(401).json({
@@ -50,8 +55,8 @@ async function sendMessage(req, res) {
         }
 
         const sender_user_id = req.session.userId
-        const conversation_id = req.params.conversation_id
-        const {message_content} = req.body
+        const conversation_id = Number(req.params.conversation_id)
+        const { message_content } = req.body
 
         if (!conversation_id || !sender_user_id || !message_content || !message_content.trim()) {
             return res.status(400).json({
@@ -65,10 +70,10 @@ async function sendMessage(req, res) {
             message_content.trim()
         )
 
-        return res.status(201).json({message_id})
+        res.status(201).json({ message_id })
     } catch (err) {
         console.log(err)
-        return res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: "Server error" });
     }
 }
 

@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import CreateListing from "./CreateListing"
+import "./TransactionPage.css"
 
 const mockTransactions = [
   {

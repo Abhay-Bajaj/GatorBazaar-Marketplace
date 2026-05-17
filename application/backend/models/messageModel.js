@@ -41,12 +41,14 @@ async function getPreviews(user_id) {
             ranked.image_url AS itemImage,
             ranked.fullname AS sellerName,
             ranked.user_id AS seller_user_id,
+            ranked.buyer_user_id,
             ranked.price,
             ranked.body AS lastMessage
         FROM (
             SELECT 
                 c.conversation_id,
                 c.listing_id,
+                c.buyer_user_id,
                 l.title,
                 li.image_url,
                 l.user_id,
@@ -85,9 +87,9 @@ async function sendMessage(conversation_id, sender_user_id, body) {
     `INSERT INTO messages (conversation_id, sender_user_id, body)
     VALUES (?, ?, ?)`,
     [conversation_id, sender_user_id, body]
-  );
+  )
 
-  return message.insertId;
+  return message.insertId
 }
 
 module.exports = {

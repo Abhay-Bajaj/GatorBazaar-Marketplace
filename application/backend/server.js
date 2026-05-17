@@ -36,6 +36,7 @@ const authRoute = require('./routes/authRoute')
 const listingRoute = require('./routes/listingRoute')
 const messageRoute = require('./routes/messageRoute')
 const favoritesRoute = require('./routes/favoriteRoute')
+const transactionRoute = require('./routes/transactionRoute')
 const app = express()
 const PORT = process.env.PORT || 3000;
 
@@ -68,6 +69,7 @@ app.use('/api/user', userRoute)
 app.use('/api/items', listingRoute)
 app.use('/api/favorites', favoritesRoute)
 app.use('/api/messages', messageRoute)
+app.use('/api/transactions', transactionRoute)
 
 //  SERVE REACT BUILD 
 app.use(express.static(path.join(__dirname, '../frontend/dist')))
