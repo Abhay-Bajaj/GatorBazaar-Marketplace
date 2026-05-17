@@ -158,7 +158,7 @@ export default function Inbox() {
         return 'View Proposal'
 
       case 'Accepted':
-        return 'Proposal Accepted'
+        return 'Complete Transaction'
 
       case 'Completed':
         return 'Transaction Complete'
@@ -258,7 +258,15 @@ export default function Inbox() {
                   {selectedConversation?.transaction && (
                     <button
                       className="proposal-btn"
-                      onClick={() => setProposalModalOpen(true)}
+                      onClick={() => {
+                        if (selectedConversation.transaction.status === 'Accepted') {
+                          navigate(
+                            `/complete-transaction/${selectedConversation.transaction.transaction_id}`
+                          )
+                        } else {
+                          setProposalModalOpen(true)
+                        }
+                      }}
                     >
                       {getProposalButtonText(
                         selectedConversation.transaction.status

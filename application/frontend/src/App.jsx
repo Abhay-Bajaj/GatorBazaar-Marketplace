@@ -180,7 +180,7 @@ function App() {
           <Route path="/teamMembers" element={<TeamMembers />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/items/:id" element={<ItemPage />} />
-          <Route path="/complete-transaction" element={<TransactionPage />} />
+          <Route path="/complete-transaction/:transaction_id" element={<TransactionPage />} />
           <Route path="/inbox" element={<Inbox />} />
           <Route path="/favorites/" element={<Favorite />} />
           <Route path="/account" element={<AccountPage />} />

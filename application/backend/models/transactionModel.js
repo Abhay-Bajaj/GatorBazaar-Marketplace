@@ -12,6 +12,7 @@ async function getTransactionById(transaction_id) {
             t.transaction_id,
             t.listing_id,
             l.title AS item_name,
+            i.image_url AS item_pic,
             t.amount,
             t.status,
             t.exchange_location,
@@ -19,6 +20,14 @@ async function getTransactionById(transaction_id) {
         FROM transactions t
         JOIN listings l
             ON l.listing_id = t.listing_id
+        LEFT JOIN listing_images i
+            ON i.listing_id = (
+                SELECT li.image_id
+                FROM listing_images li
+                WHERE li.listing_id = l.listing_id
+                ORDER BY li.image_id ASC
+                LIMIT 1
+            )
         JOIN registered_users buyer
             ON t.buyer_user_id = buyer.user_id
         JOIN registered_users seller

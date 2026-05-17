@@ -8,8 +8,9 @@ async function getTransactionById(req, res) {
         if (!user_id) {
             return res.status(401).json({ error: 'Not logged in' })
         }
-
+        
         if (!transaction_id) {
+            
             return res.status(400).json({ error: 'Invalid transaction id' })
         }
         // ensure current user is authorized or the transaction exists
@@ -26,7 +27,10 @@ async function getTransactionById(req, res) {
             return res.status(403).json({ error: 'Not authorized' })
         }
 
-        res.json(transaction)
+        res.json({
+            ...transaction,
+            current_user_id: user_id
+        })
     } catch (err) {
         console.error(err)
         res.status(500).json({ error: 'Failed to get transaction' })
@@ -204,14 +208,14 @@ async function updateTransaction(req, res) {
         const { action, amount, exchange_location, exchange_time } = req.body
 
         let updates = {}
-
-        if (action === 'accept') {
+        console.log(action)
+        if (action === 'Accepted') {
             updates.status = 'Accepted'
-        } else if (action === 'reject') {
+        } else if (action === 'Rejected') {
             updates.status = 'Rejected'
-        } else if (action === 'cancel') {
+        } else if (action === 'Cancelled') {
             updates.status = 'Cancelled'
-        } else if (action === 'counter') {
+        } else if (action === 'Proposed') {
             const numericAmount = Number(amount)
 
             if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
@@ -233,9 +237,9 @@ async function updateTransaction(req, res) {
                 proposed_by_user_id: user_id,
                 status: 'Proposed'
             }
-        } else if (action === 'in_progress') {
+        } else if (action === 'In Progress') {
             updates.status = 'In Progress'
-        } else if (action === 'complete') {
+        } else if (action === 'Complete') {
             updates.status = 'Completed'
         } else {
             return res.status(400).json({ error: 'Invalid transaction action' })

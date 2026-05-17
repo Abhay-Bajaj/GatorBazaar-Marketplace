@@ -45,7 +45,7 @@ export default function ProposalModal({
         if (!transaction || !onUpdate || !canRespond) return
 
         await onUpdate(transaction.transaction_id, {
-            status: 'Accepted'
+            action: 'Accepted'
         })
     }
 
@@ -53,7 +53,7 @@ export default function ProposalModal({
         if (!transaction || !onUpdate || !canRespond) return
 
         await onUpdate(transaction.transaction_id, {
-            status: 'Rejected'
+            action: 'Rejected'
         })
     }
 
@@ -66,7 +66,7 @@ export default function ProposalModal({
             amount,
             exchange_location: exchangeLocation,
             exchange_time: exchangeTime,
-            status: 'Proposed'
+            action: 'Proposed'
         })
     }
 
