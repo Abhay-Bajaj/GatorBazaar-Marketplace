@@ -12,7 +12,7 @@ import {
 } from "./api/messagesAPI";
 
 export default function Inbox() {
-  const { isSignedIn } = useAuthStatus()
+  const { isSignedIn, loadingAuth } = useAuthStatus()
   const navigate = useNavigate();
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -26,24 +26,27 @@ export default function Inbox() {
 
 
   useEffect(() => {
+    if(loadingAuth) return
     async function load() {
       setLoading(true);
       setError(null);
-
+      console.log("is signed in", isSignedIn);
       if (!isSignedIn) {
         setConversations([]);
         setSelectedConversation(null);
         setLoading(false);
         return;
       }
-
+      console.log("is signed in2", isSignedIn);
       try {
         const { unauthorized, conversations: data } = await getConversations();
         if (unauthorized) {
+          console.log("not authorzied on fetch");
           setConversations([]);
           setSelectedConversation(null);
           return;
         }
+        console.log("convo data", data);
         setConversations(data);
         setSelectedConversation(data[0] || null);
       } catch (err) {
@@ -57,7 +60,7 @@ export default function Inbox() {
     }
 
     load();
-  }, []);
+  }, [isSignedIn, loadingAuth]);
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConversation || sending) return;

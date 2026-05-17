@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 export default function useAuthStatus() {
 
     const [isSignedIn, setIsSignedIn] = useState(false)
+    const [loadingAuth, setLoadingAuth] = useState(true)
 
     useEffect(() => {
         async function checkAuth() {
@@ -16,6 +17,8 @@ export default function useAuthStatus() {
                 setIsSignedIn(data.authenticated)
             } catch {
                 setIsSignedIn(false)
+            } finally {
+                setLoadingAuth(false)
             }
         }
 
@@ -23,6 +26,7 @@ export default function useAuthStatus() {
     }, [])
 
     return {
-        isSignedIn
+        isSignedIn,
+        loadingAuth
     }
 }
