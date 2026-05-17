@@ -4,6 +4,7 @@ import { mockItems } from "./data/mockItems";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
+import "./itemPage.css";
 
 export default function ItemPage() {
   const { id } = useParams();

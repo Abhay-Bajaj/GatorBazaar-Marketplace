@@ -1,5 +1,6 @@
 import { Link, Route, Routes, useLocation, useParams, useNavigate } from 'react-router-dom'
 import './App.css'
+import './login.css'
 import { teamMembers } from './data/teamMembers'
 import SearchPage from './SearchPage'
 import ItemPage from './ItemPage'
@@ -13,6 +14,7 @@ import AccountPage from "./AccountPage";
 import NavigationSearchBar from './components/NavigationSearchBar'
 import { useMemo, useState } from 'react'
 import LoginModal from './components/LoginModal'
+import Footer from './components/Footer'
 
 function TeamMembers() {
   const navigate = useNavigate()
@@ -29,18 +31,6 @@ function TeamMembers() {
 
   return (
     <div className="team-members-page">
-
-      <NavigationSearchBar
-        query={query}
-        onQueryChange={setQuery}
-        onSearch={handleSearch}
-        onSellClick={() => navigate('/create-listing')}
-        onMessagesClick={() => navigate('/inbox')}
-        onFavoritesClick={() => {}}
-        onProfileClick={() => setLoginModalOpen(true)}
-        placeholder="Search marketplace items"
-        searchButtonText="Search"
-      />
     <section className="banner">
       <header className="banner-header">
         <h2>Team Members</h2>
@@ -103,7 +93,7 @@ function MemberProfile() {
         onSearch={handleSearch}
         onSellClick={() => navigate('/create-listing')}
         onMessagesClick={() => navigate('/inbox')}
-        onFavoritesClick={() => {}}
+        onFavoritesClick={() => navigate('/favorite')}
         onProfileClick={() => setLoginModalOpen(true)}
         placeholder="Search marketplace items"
         searchButtonText="Search"
@@ -138,6 +128,7 @@ function App() {
   const isTeamMembers = location.pathname.startsWith('/teamMembers')
 
   return (
+    <>
     <div className="page">
       <nav className="site-nav">
         <div className="site-nav-inner">
@@ -153,7 +144,7 @@ function App() {
 
             <p>Section 01, Team 07</p>
 
-              {isHome && (
+              {!isTeamMembers && (
                 <p className="vp-nav-subtitle">Browse and Search our Item Catalog</p>
               )}
 
@@ -182,17 +173,15 @@ function App() {
           <Route path="/items/:id" element={<ItemPage />} />
           <Route path="/complete-transaction" element={<TransactionPage />} />
           <Route path="/inbox" element={<Inbox />} />
-          <Route path="/favorites/" element={<Favorite />} />
+          <Route path="/favorite" element={<Favorite />} />
           <Route path="/account" element={<AccountPage />} />
         </Routes>
       </main>
-
-      {!isTeamMembers && (
-        <Link className="team-button team-button-bottom" to="/teamMembers">
-          ← Team Members
-        </Link>
-      )}
     </div>
+    <footer>
+      <Footer />
+    </footer>
+    </>
   )
 }
 

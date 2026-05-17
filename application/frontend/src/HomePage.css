@@ -18,7 +18,9 @@
 }
   
 .category-list button {
-    width: 260px;
+    width: 80%;
+    max-width: 330px;
+    margin:0 auto;
     height: 50px;
     border: 1px solid black;
     background: white;

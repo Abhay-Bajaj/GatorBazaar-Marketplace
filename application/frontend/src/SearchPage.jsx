@@ -6,6 +6,7 @@ import FiltersSidebar from './components/FiltersSidebar'
 import ListingsGrid from './components/ListingsGrid'
 import LoginModal from './components/LoginModal'
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
+import './searchPage.css'
 
 function categoriesFromParams(searchParams) {
   const cats = searchParams.getAll('category')

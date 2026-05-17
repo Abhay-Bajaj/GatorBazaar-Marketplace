@@ -1,5 +1,5 @@
 import { useState } from "react"
-import './HomePage.css'
+import './homePage.css'
 import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import CreateListing from "./CreateListing"
@@ -9,7 +9,7 @@ import { mockItems } from './data/mockItems'
 const categories = [
     "Clothes", 
     "Text Books", 
-    "Funiture", 
+    "Furniture", 
     "Electronics", 
     "School Supplies", 
     "Room Search" ]
@@ -32,16 +32,17 @@ export default function HomePage() {
     
     return (
         <div className="homepage">
-                        <header className="nav-bar">
-                        <NavigationSearchBar
-                                        query={query}
-                                        onQueryChange={setQuery}
-                                        onSearch={handleSearch}
-                                        onProfileClick={() => setLoginModalOpen(true)}
-                                        onSellClick={() => navigate('/create-listing')}
-                                        onMessagesClick={() => navigate('/inbox')}
-                                    />
-                        </header>
+                <header className="nav-bar">
+                    <NavigationSearchBar
+                        query={query}
+                        onQueryChange={setQuery}
+                        onSearch={handleSearch}
+                        onProfileClick={() => setLoginModalOpen(true)}
+                        onSellClick={() => navigate('/create-listing')}
+                        onMessagesClick={() => navigate('/inbox')}
+                        onFavoritesClick={() => navigate('/favorite')}
+                    />
+                </header>
             <section>
                 <div className="category-list">
                     {categories.map((category) => (

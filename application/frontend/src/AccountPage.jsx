@@ -1,7 +1,7 @@
 import NavigationSearchBar from './components/NavigationSearchBar'
 import { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
-import "./AccountPage.css";
+import "./accountPage.css";
 
 export default function AccountPage() {
     const navigate = useNavigate()

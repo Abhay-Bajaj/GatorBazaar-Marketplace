@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import NavigationSearchBar from './components/NavigationSearchBar'
 import ListingCard from './components/ListingCard'
 import LoginModal from './components/LoginModal'
+import './dashboard.css'
 
 
 export default function Dashboard() {

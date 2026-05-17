@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { mockConversations } from "./data/mockConversations";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
+import "./inbox.css";
 
 export default function Inbox() {
   const navigate = useNavigate();
@@ -81,16 +82,17 @@ export default function Inbox() {
   };
 
   return (
-    <section className="banner inbox">
-      <NavigationSearchBar
+    <>
+    <NavigationSearchBar
         query={query}
         onQueryChange={setQuery}
         onSearch={handleSearch}
         onSellClick={() => navigate('/create-listing')}
         onMessagesClick={() => navigate('/inbox')}
         onProfileClick={() => setLoginModalOpen(true)}
-        onFavoritesClick={() => navigate("/favorites")}
+        onFavoritesClick={() => navigate("/favorite")}
       />
+    <section className="banner-inbox">
 
       <button className="back-button" onClick={() => navigate(-1)}>
         ← Back
@@ -214,5 +216,6 @@ export default function Inbox() {
         <LoginModal onClose={() => setLoginModalOpen(false)} />
       )}
     </section>
+    </>
   );
 }
