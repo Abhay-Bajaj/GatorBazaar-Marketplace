@@ -4,6 +4,8 @@ import { mockItems } from "./data/mockItems";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
+import { checkLoggedIn } from './api/authAPI'
+import { startConversation } from './api/messagesAPI'
 
 export default function ItemPage() {
   const { id } = useParams();
@@ -13,7 +15,10 @@ export default function ItemPage() {
   const [error, setError] = useState(null);
   const [isFavorited, setIsFavorited] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(true); //test signed in state
+  const [messageDraft, setMessageDraft] = useState("Is this available?");
+  const [sendingMessage, setSendingMessage] = useState(false);
+  const [messageError, setMessageError] = useState(null);
+  const [isSignedIn, setIsSignedIn] = useState(false);
   const [query, setQuery] = useState("");
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -36,14 +41,42 @@ export default function ItemPage() {
     }
   }
 
-  const handleSendMessage = () => {
-    setMessageSent(true);
+  const handleSendMessage = async () => {
+    if (!item || !messageDraft.trim()) return
+
+    setMessageError(null)
+    setSendingMessage(true)
+
+    try {
+      const listingId = item.listing_id ?? item.id
+      const result = await startConversation(listingId, messageDraft.trim())
+
+      if (result.unauthorized) {
+        setIsSignedIn(false)
+        setLoginModalOpen(true)
+        return
+      }
+
+      setMessageSent(true)
+    } catch (err) {
+      setMessageError(err.message || 'Failed to send message')
+    } finally {
+      setSendingMessage(false)
+    }
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
     navigate(`/search?q=${encodeURIComponent(query.trim())}`);
   };
+
+  useEffect(() => {
+    async function loadAuth() {
+      const auth = await checkLoggedIn()
+      setIsSignedIn(auth.authenticated === true)
+    }
+    loadAuth()
+  }, [])
 
   useEffect(() => {
     async function load() {
@@ -70,6 +103,9 @@ export default function ItemPage() {
     }
     load();
   }, [id]);
+
+  const sellerDisplayName =
+    item?.seller_fullname || item?.seller_username || 'Seller'
 
   if (loading) {
     return (
@@ -170,58 +206,79 @@ export default function ItemPage() {
 
         <div className="item-seller-info">
           <div className="seller-name">
-            <button className="seller-page" onClick={() => {}}>
+            <button className="seller-page" onClick={() => {}} type="button">
               <img
                 className="seller-image"
                 src="/images/item-placeholder.png"
                 alt="Seller"
               />
             </button>
-            <h3>Seller Name</h3>
+            <h3>{sellerDisplayName}</h3>
           </div>
 
-          <div className="message-seller">
-            Send a Message to Seller
-            {!isSignedIn ? (
-              <>
-                <p style={{ margin: "10px 0", color: "white" }}>
-                  To Message Seller, Please Register/Sign-in
-                </p>
-                <button
-                  className="send-message-button"
-                  onClick={() => {}}
-                  style={{ backgroundColor: "#007bff" }}
-                >
-                  Register/Sign in
-                </button>
-              </>
-            ) : messageSent ? (
-              <>
-                <p style={{ margin: "10px 0", color: "white" }}>
-                  ✓ Message Sent
-                </p>
-              </>
-            ) : (
-              <>
-                <input
-                  className="chat-message-input"
-                  type="text"
-                  defaultValue="Is this available?"
-                />
-                <button
-                  className="send-message-button"
-                  onClick={handleSendMessage}
-                >
-                  Send
-                </button>
-              </>
-            )}
-          </div>
+          {!item.isOwner && (
+            <div className="message-seller">
+              Send a Message to Seller
+              {!isSignedIn ? (
+                <>
+                  <p style={{ margin: "10px 0", color: "white" }}>
+                    To Message Seller, Please Register/Sign-in
+                  </p>
+                  <button
+                    className="send-message-button"
+                    type="button"
+                    onClick={() => setLoginModalOpen(true)}
+                    style={{ backgroundColor: "#007bff" }}
+                  >
+                    Register/Sign in
+                  </button>
+                </>
+              ) : messageSent ? (
+                <>
+                  <p style={{ margin: "10px 0", color: "white" }}>
+                    ✓ Message sent.{" "}
+                    <button
+                      type="button"
+                      className="text-link"
+                      style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'underline', cursor: 'pointer' }}
+                      onClick={() => navigate('/inbox')}
+                    >
+                      View inbox
+                    </button>
+                  </p>
+                </>
+              ) : (
+                <>
+                  <input
+                    className="chat-message-input"
+                    type="text"
+                    value={messageDraft}
+                    onChange={(e) => setMessageDraft(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                  />
+                  <button
+                    className="send-message-button"
+                    type="button"
+                    onClick={handleSendMessage}
+                    disabled={sendingMessage}
+                  >
+                    {sendingMessage ? 'Sending…' : 'Send'}
+                  </button>
+                  {messageError && (
+                    <p style={{ margin: "10px 0", color: "#ffb4b4" }}>{messageError}</p>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </section>
       {loginModalOpen && (
-        <LoginModal onClose={() => setLoginModalOpen(false)} />
+        <LoginModal onClose={() => {
+          setLoginModalOpen(false)
+          checkLoggedIn().then((auth) => setIsSignedIn(auth.authenticated === true))
+        }} />
       )}
     </div>
   );
