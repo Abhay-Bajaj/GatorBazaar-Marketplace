@@ -3,7 +3,11 @@ const { getUserById } = require('../models/userModel')
 async function getUser(req, res) {
   try {
 
-    const user = await getUserById(req.params.id);
+    if (!req.session.userId) {
+      return res.status(401).json({ message: 'Not authenticated' });
+    }
+
+    const user = await getUserById(req.session.userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -34,7 +38,7 @@ async function getLoggedUser(req, res) {
       joinedDate: loggedUser.created_at,
       userRating: loggedUser.user_rating
     }
-    
+
     res.json({userInfo});
 
   } catch (err) {

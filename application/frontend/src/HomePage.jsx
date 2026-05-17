@@ -17,11 +17,10 @@ const categories = [
     "Room Search" ]
 
 export default function HomePage() {
+    const { isSignedIn } = useAuthStatus()
     const [query, setQuery] = useState("")
     const navigate = useNavigate()
     const [loginModalOpen, setLoginModalOpen] = useState(false)
-    const { isSignedIn } = useAuthStatus()
-    console.log("homepage check", isSignedIn, typeof isSignedIn)
     const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
 
     function handleSearch(e) {
