@@ -3,8 +3,12 @@ import { useNavigate } from "react-router-dom"
 import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import './createListing.css'
+import { CreateListingSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders"
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
 
 export default function CreateListing() {
+    const {isSignedIn} = useAuthStatus()
     const navigate = useNavigate()
     const [form, setForm] = useState({
         title: "",
@@ -17,6 +21,9 @@ export default function CreateListing() {
     const [query, setQuery] = useState("")
     const [loginModalOpen, setLoginModalOpen] = useState(false)
     const [categories, setCategories] = useState([])
+    const [loading, setLoading] = useState(true)
+    const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
+    
     const MAX_IMAGES = 9
 
     useEffect(() => {
@@ -40,6 +47,9 @@ export default function CreateListing() {
             console.error(err)
         }
     }
+
+
+
 
     function handleSearch(e) {
         e.preventDefault()
@@ -103,8 +113,14 @@ export default function CreateListing() {
         }
     }
 
+    if (loading) {
+        return <>
+            <NavBarSkeleton />
+            <CreateListingSkeleton />
+        </>
+    }
 
-    return (
+    return ( 
         <div className="create-listing">
             <nav className="nav-bar">
                 <NavigationSearchBar
@@ -112,11 +128,11 @@ export default function CreateListing() {
                     onQueryChange={setQuery}
                     onSearch={handleSearch}
                     onMessagesClick={() => navigate('/inbox')}
-                    onProfileClick={() => setLoginModalOpen(true)}
+                    onProfileClick={handleAccountClick}
                     onSellClick={() => navigate('/create-listing')}
-                    onFavoritesClick={() => navigate('/favorite')}
-                />
-                {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+                    onFavoritesClick={() => navigate('/favorites')}
+                  />
+            {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
             </nav>
             <div className="create-listing__container">
                 <h2>Create New Listing</h2>
@@ -228,5 +244,6 @@ export default function CreateListing() {
                 </div>
             </div>
         </div>
+    </div>
     )
 }

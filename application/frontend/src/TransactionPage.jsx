@@ -3,71 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import CreateListing from "./CreateListing"
+import { mockTransactions } from "./data/mockTransactions"
+import "./TransactionPage.css"
 
-const mockTransactions = [
-  {
-    transaction_id: 1,
-    item_title: 'MacBook Pro 16"',
-    seller_name: 'John Doe',
-    buyer_name: 'Jane Smith',
-    seller_profile_pic: 'https://via.placeholder.com/100?text=JD',
-    buyer_profile_pic: 'https://via.placeholder.com/100?text=JS',
-    amount: 2499.99,
-    status: 'Completed',
-    transaction_date: '2024-04-15T10:30:00Z',
-    location: 'San Francisco, CA',
-  },
-  {
-    transaction_id: 2,
-    item_title: 'Calculus Textbook',
-    seller_name: 'Alice Johnson',
-    buyer_name: 'Bob Wilson',
-    seller_profile_pic: 'https://via.placeholder.com/100?text=AJ',
-    buyer_profile_pic: 'https://via.placeholder.com/100?text=BW',
-    amount: 75.50,
-    status: 'Pending',
-    transaction_date: '2024-04-20T14:15:00Z',
-    location: 'Los Angeles, CA',
-  },
-  {
-    transaction_id: 3,
-    item_title: 'Wireless Headphones',
-    seller_name: 'Charlie Brown',
-    buyer_name: 'Diana Prince',
-    seller_profile_pic: 'https://via.placeholder.com/100?text=CB',
-    buyer_profile_pic: 'https://via.placeholder.com/100?text=DP',
-    amount: 199.99,
-    status: 'Completed',
-    transaction_date: '2024-04-10T09:45:00Z',
-    location: 'New York, NY',
-  },
-  {
-    transaction_id: 4,
-    item_title: 'Desk Chair',
-    seller_name: 'Eve Garcia',
-    buyer_name: 'Frank Miller',
-    seller_profile_pic: 'https://via.placeholder.com/100?text=EG',
-    buyer_profile_pic: 'https://via.placeholder.com/100?text=FM',
-    amount: 150.00,
-    status: 'Cancelled',
-    transaction_date: '2024-04-18T16:20:00Z',
-    location: 'Chicago, IL',
-  },
-  // Mockup transaction for display
-  {
-    transaction_id: 5,
-    item_title: 'A Book',
-    item_pic: '/images/book.png',
-    seller_name: 'John San Francisco',
-    buyer_name: 'Mary State University',
-    seller_profile_pic: '/images/profile-placeholder.png',
-    buyer_profile_pic: '/images/profile-placeholder.png',
-    amount: 100.00,
-    status: 'Pending',
-    transaction_date: '2028-04-21T12:00:00Z',
-    location: 'Formerly Cesar Chavez Center',
-  },
-]
 
 function StarRating({ rating, onRatingChange, disabled = false }) {
   return (
@@ -87,6 +25,7 @@ function StarRating({ rating, onRatingChange, disabled = false }) {
 
 export default function TransactionPage() {
   const { transaction_id } = useParams()
+  // console.log(transaction_id)
   const navigate = useNavigate()
   const [transaction, setTransaction] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -95,15 +34,9 @@ export default function TransactionPage() {
   const [buyerRating, setBuyerRating] = useState(0)
   const [comments, setComments] = useState('')
   const [confirmed, setConfirmed] = useState(false)
+  const [reviews, setReviews] = useState([])
   const [query, setQuery] = useState('')
   const [loginModalOpen, setLoginModalOpen] = useState(false)
-
-  // Mock current user - in real app, this would come from auth context or API
-  const currentUser = 'John San Francisco' // Change this to test different views
-
-  const isSeller = transaction && transaction.seller_name === currentUser
-  const isBuyer = transaction && transaction.buyer_name === currentUser
-  const completed = transaction && transaction.status === 'Completed'
 
   useEffect(() => {
     fetchTransaction()
@@ -114,19 +47,28 @@ export default function TransactionPage() {
     setError(null)
 
     try {
-      // For now, use mock data
-      let foundTransaction = mockTransactions.find(
-        (t) => t.transaction_id === parseInt(transaction_id)
-      )
-      if (!foundTransaction) {
-        // Use the mockup transaction if not found
-        foundTransaction = mockTransactions.find((t) => t.transaction_id === 5)
+      const [transactionRes, reviewsRes] = await Promise.all([
+        fetch(`/api/transactions/${transaction_id}`, {
+          credentials: 'include'
+        }),
+        fetch(`/api/transactions/${transaction_id}/reviews`, {
+          credentials: 'include'
+        })
+      ])
+
+      if (!transactionRes.ok) {
+        throw new Error(`Transaction error (${transactionRes.status})`)
       }
-      if (foundTransaction) {
-        setTransaction(foundTransaction)
-      } else {
-        throw new Error('Transaction not found')
+
+      if (!reviewsRes.ok) {
+        throw new Error(`Reviews error (${reviewsRes.status})`)
       }
+
+      const transactionData = await transactionRes.json()
+      const reviewsData = await reviewsRes.json()
+
+      setTransaction(transactionData)
+      setReviews(reviewsData)
     } catch (err) {
       console.error(err)
       setError(err.message)
@@ -135,14 +77,60 @@ export default function TransactionPage() {
     }
   }
 
-  function handleCompleteTransaction() {
-    // Here you would send the rating, comments, and confirmation to the backend
-    setTransaction((prev) =>
-      prev ? { ...prev, status: 'Completed' } : prev
-    )
-    alert('Transaction completed!')
-  }
+  async function handleCompleteTransaction() {
+    try {
+      const reviewed_user_id = isSeller
+        ? transaction.buyer_user_id
+        : transaction.seller_user_id
 
+      const rating = isSeller ? buyerRating : sellerRating
+
+      const reviewRes = await fetch(`/api/transactions/${transaction_id}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          reviewed_user_id,
+          confirmed: true,
+          rating,
+          comment: comments
+        })
+      })
+
+      if (!reviewRes.ok) throw new Error(`Review error (${reviewRes.status})`)
+
+      await fetchTransaction()
+
+    } catch (err) {
+      console.error(err)
+      setError(err.message)
+    }
+  }
+  async function handleCancelTransaction() {
+    try {
+      const res = await fetch(`/api/transactions/${transaction_id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          action: 'Cancelled'
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error(`Cancel error (${res.status})`)
+      }
+
+      await fetchTransaction()
+    } catch (err) {
+      console.error(err)
+      setError(err.message)
+    }
+  }
   function handleSearch(e) {
     e.preventDefault()
     if (query.trim()) {
@@ -165,17 +153,47 @@ export default function TransactionPage() {
     return (
       <section className="banner transaction-page">
         <p className="search-error">⚠ {error || 'Transaction not found'}</p>
-        <Link to="/transactions" className="search-btn">
-          Back to Transactions
+        <Link to="/inbox" className="search-btn">
+          Back to Inbox
         </Link>
       </section>
     )
   }
 
-  const formattedDate = new Date(transaction.transaction_date).toLocaleString()
+  const formattedDate = new Date(transaction.exchange_time).toLocaleString()
   const itemImage = transaction.item_pic || '/images/book.png'
-  const description = transaction.description || 'This transaction includes the selected item, exchanged between buyer and seller at the agreed location.'
+  const description = 'This transaction includes the selected item, exchanged between buyer and seller at the agreed location.'
+  const sellerProfilePic = transaction.seller_profile_pic || '/images/profile-placeholder.png'
+  const buyerProfilePic = transaction.buyer_profile_pic || '/images/profile-placeholder.png'
+  const isSeller =
+    transaction &&
+    Number(transaction.current_user_id) === Number(transaction.seller_user_id)
 
+  const isBuyer =
+    transaction &&
+    Number(transaction.current_user_id) === Number(transaction.buyer_user_id)
+  const sellerConfirmed = reviews.some(
+    review =>
+      Number(review.reviewer_user_id) ===
+      Number(transaction?.seller_user_id) &&
+      Number(review.confirmed) === 1
+  )
+
+  const buyerConfirmed = reviews.some(
+    review =>
+      Number(review.reviewer_user_id) ===
+      Number(transaction?.buyer_user_id) &&
+      Number(review.confirmed) === 1
+  )
+  const completed = transaction && ((isBuyer && buyerConfirmed) || (isSeller && sellerConfirmed))
+  const statusLabel = transaction.status === 'Accepted' ? 'In Progress' : transaction.status
+  const isCancelled = transaction.status === 'Cancelled'
+  const pageTitle =
+    transaction.status === 'Cancelled'
+      ? 'Transaction Cancelled'
+      : transaction.status === 'Completed'
+        ? 'Transaction Complete'
+        : 'Complete Transaction'
   return (
     <div className="transaction-page">
       <NavigationSearchBar
@@ -184,18 +202,23 @@ export default function TransactionPage() {
             onSearch={handleSearch}
             onProfileClick={() => setLoginModalOpen(true)}
             onSellClick={() => navigate('/create-listing')}
+            onMessagesClick={() => navigate('/inbox')}
+            onFavoritesClick={() => navigate('/favorites')}
                           />
       <section className="banner transaction-page">
         <div className="banner-content">
           <div className="transaction-header-row">
             <div>
-              <h1 className="transaction-header">Complete Transaction</h1>
+              <Link className="text-link" to="/inbox">
+                ← Back to inbox
+              </Link>
+              <h1 className="transaction-header">{pageTitle}</h1>
               <p className="transaction-subtitle">
                 Review the transaction details, confirm the exchange, and submit your feedback.
               </p>
             </div>
             <span className={`status-badge status-${transaction.status.toLowerCase()}`}>
-              {transaction.status}
+              {statusLabel}
             </span>
           </div>
 
@@ -205,9 +228,9 @@ export default function TransactionPage() {
                 <div className="summary-card-header">
                   <div>
                     <p className="summary-label">Item</p>
-                    <h2>{transaction.item_title}</h2>
+                    <h2>{transaction.item_name}</h2>
                   </div>
-                  <p className="summary-price">${transaction.amount.toFixed(2)}</p>
+                  <p className="summary-price">${Number(transaction.amount).toFixed(2)}</p>
                 </div>
 
                 <div className="transaction-meta-row">
@@ -217,7 +240,7 @@ export default function TransactionPage() {
                   </div>
                   <div>
                     <p className="summary-label">Location</p>
-                    <p>{transaction.location}</p>
+                    <p>{transaction.exchange_location}</p>
                   </div>
                 </div>
 
@@ -235,11 +258,11 @@ export default function TransactionPage() {
 
               <div className="transaction-card">
                 <div className="transaction-participants compact">
-                  <div className="participant">
+                  <div className={"participant"}>
                     <img
-                      src={transaction.seller_profile_pic}
+                      src={sellerProfilePic}
                       alt={`${transaction.seller_name} profile`}
-                      className="profile-pic"
+                      className={`profile-pic ${sellerConfirmed ? 'confirmed' : ''}`}
                     />
                     <p className="participant-name">
                       {isSeller ? 'You' : transaction.seller_name}
@@ -249,11 +272,11 @@ export default function TransactionPage() {
                   <div className="arrow">
                     ⇄
                   </div>
-                  <div className="participant">
+                  <div className={"participant"}>
                     <img
-                      src={transaction.buyer_profile_pic}
+                      src={buyerProfilePic}
                       alt={`${transaction.buyer_name} profile`}
-                      className="profile-pic"
+                      className={`profile-pic ${buyerConfirmed ? 'confirmed' : ''}`}
                     />
                     <p className="participant-name">
                       {isBuyer ? 'You' : transaction.buyer_name}
@@ -295,7 +318,7 @@ export default function TransactionPage() {
                   </div>
 
                   <div className="transaction-location">
-                    <p><strong>Confirmed location:</strong> {transaction.location}</p>
+                    <p><strong>Confirmed location:</strong> {transaction.exchange_location}</p>
                   </div>
 
                   <div className="rating-section">
@@ -306,7 +329,7 @@ export default function TransactionPage() {
                         <StarRating
                           rating={buyerRating}
                           onRatingChange={setBuyerRating}
-                          disabled={completed}
+                          disabled={completed || isCancelled}
                         />
                       </div>
                     )}
@@ -316,7 +339,7 @@ export default function TransactionPage() {
                         <StarRating
                           rating={sellerRating}
                           onRatingChange={setSellerRating}
-                          disabled={completed}
+                          disabled={completed || isCancelled}
                         />
                       </div>
                     )}
@@ -330,7 +353,7 @@ export default function TransactionPage() {
                       onChange={(e) => setComments(e.target.value)}
                       placeholder="Add any comments about the transaction..."
                       rows={5}
-                      disabled={completed}
+                      disabled={completed || isCancelled}
                     />
                   </div>
 
@@ -340,7 +363,7 @@ export default function TransactionPage() {
                         type="checkbox"
                         checked={confirmed}
                         onChange={(e) => setConfirmed(e.target.checked)}
-                        disabled={completed}
+                        disabled={completed || isCancelled}
                       />
                       I confirm this transaction was completed as described.
                     </label>
@@ -348,16 +371,23 @@ export default function TransactionPage() {
 
                   <div className="note">
                     <i>
-                      Both parties should confirm to finalize the transaction status.
+                      Both parties must confirm to finalize the transaction status.
                     </i>
                   </div>
 
                   <button
                     className="complete-btn"
                     onClick={handleCompleteTransaction}
-                    disabled={!confirmed || completed}
+                    disabled={!confirmed || completed || isCancelled}
                   >
                     Complete Transaction
+                  </button>
+                  <button
+                    className="cancel-btn"
+                    onClick={handleCancelTransaction}
+                    disabled={completed || isCancelled}
+                  >
+                    Cancel Transaction
                   </button>
                 </div>
               </div>
