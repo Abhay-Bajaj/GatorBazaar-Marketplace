@@ -4,7 +4,7 @@ async function getCategories() {
   const [rows] = await pool.execute(
     `
     SELECT category_id, category_name
-    FROM categories
+    FROM Categories
     ORDER BY category_name
     `
   )

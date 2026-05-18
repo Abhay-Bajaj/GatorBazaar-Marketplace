@@ -66,7 +66,7 @@ app.get('/api/hello', (req, res) => {
 app.use("/auth", authRoute);
 app.use('/api/search', searchRoute)
 app.use('/api/user', userRoute)
-app.use('/api/items', listingRoute)
+app.use('/api/listings', listingRoute)
 app.use('/api/favorites', favoritesRoute)
 app.use('/api/conversations', conversationRoute)
 app.use('/api/categories', categoryRoute)
