@@ -26,7 +26,7 @@ export default function ItemPage() {
   const [query, setQuery] = useState("");
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState(null)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -231,7 +231,7 @@ export default function ItemPage() {
               ${Number(item.price || 0).toFixed(2)}
             </p>
             <p className="item-detail-description">{item.description}</p>
-            {item.isOwner && (
+            {!!item.isOwner && (
               <div className="owner-actions">
                 <button
                   className="delete-listing-button"
