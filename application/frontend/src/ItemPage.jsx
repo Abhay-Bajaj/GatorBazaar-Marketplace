@@ -38,7 +38,7 @@ export default function ItemPage() {
       } else {
         await removeFavorite(item.listing_id)
       }
-  
+
       setIsFavorited(nextIsFavorited)
 
     } catch (err) {
@@ -82,6 +82,7 @@ export default function ItemPage() {
         })
         if (!res.ok) throw new Error(`Item not found (${res.status})`)
         const data = await res.json()
+
         setItem(data)
         setIsFavorited(data.isFavorited)
       } catch {
@@ -133,140 +134,140 @@ export default function ItemPage() {
         onSellClick={() => navigate('/create-listing')}
       />
 
-    <section className="banner item-detail">
-      <Link className="text-link" to="/search">
-        ← Back to search
-      </Link>
+      <section className="banner item-detail">
+        <Link className="text-link" to="/search">
+          ← Back to search
+        </Link>
 
-      <div className="item-page-grid">
-        {item.images && item.images.length > 0 ? (
-          <div className="item-images-gallery">
-            <div className="item-images-container">
-              {item.images.map((image, index) => (
-                <button
-                  key={index}
-                  className={`image-thumbnail ${selectedImageIndex === index ? "selected" : ""}`}
-                  onClick={() => setSelectedImageIndex(index)}
-                  type="button"
-                  aria-label={`View image ${index + 1}`}
-                >
-                  <img src={image} alt={`${item.title} ${index + 1}`} />
-                </button>
-              ))}
+        <div className="item-page-grid">
+          {item.images && item.images.length > 0 ? (
+            <div className="item-images-gallery">
+              <div className="item-images-container">
+                {item.images.map((image, index) => (
+                  <button
+                    key={index}
+                    className={`image-thumbnail ${selectedImageIndex === index ? "selected" : ""}`}
+                    onClick={() => setSelectedImageIndex(index)}
+                    type="button"
+                    aria-label={`View image ${index + 1}`}
+                  >
+                    <img src={image} alt={`${item.title} ${index + 1}`} />
+                  </button>
+                ))}
+              </div>
+              <img
+                className="item-detail-image"
+                src={
+                  item.images[selectedImageIndex] ||
+                  "/images/item-placeholder.png"
+                }
+                alt={item.title}
+              />
             </div>
+          ) : (
             <img
               className="item-detail-image"
-              src={
-                item.images[selectedImageIndex] ||
-                "/images/item-placeholder.png"
-              }
+              src={item.images || "/images/item-placeholder.png"}
               alt={item.title}
             />
-          </div>
-        ) : (
-          <img
-            className="item-detail-image"
-            src={item.image_url || "/images/item-placeholder.png"}
-            alt={item.title}
-          />
-        )}
+          )}
 
-        <div className="item-detail-body">
-          <span className="item-card-category">{item.category_name}</span>
+          <div className="item-detail-body">
+            <span className="item-card-category">{item.category_name}</span>
 
-          <div className="item-favorite">
-            <h2 className="item-detail-title">{item.title}</h2>
+            <div className="item-favorite">
+              <h2 className="item-detail-title">{item.title}</h2>
 
-            {!item.isOwner && (
-              <button
-                className={`item-favorite-button${isFavorited ? " favorited" : ""}`}
-                type="button"
-                onClick={handleToggleFavorite}
-                aria-label={
-                  isFavorited ? "Remove from favorites" : "Add to favorites"
-                }
-              >
-                {isFavorited ? "♥" : "♡"}
-              </button>
-            )}
-          </div>
-
-          <p className="item-detail-price">
-            ${Number(item.price || 0).toFixed(2)}
-          </p>
-          <p className="item-detail-description">{item.description}</p>
-        </div>
-
-        <div className="item-seller-info">
-          <div className="seller-name">
-            <button className="seller-page" onClick={() => {}} type="button">
-              <img
-                className="seller-image"
-                src="/images/item-placeholder.png"
-                alt="Seller"
-              />
-            </button>
-            <h3>{sellerDisplayName}</h3>
-          </div>
-
-          {!item.isOwner && (
-            <div className="message-seller">
-              Send a Message to Seller
-              {!isSignedIn ? (
-                <>
-                  <p style={{ margin: "10px 0", color: "white" }}>
-                    To Message Seller, Please Register/Sign-in
-                  </p>
-                  <button
-                    className="send-message-button"
-                    type="button"
-                    onClick={() => setLoginModalOpen(true)}
-                    style={{ backgroundColor: "#007bff" }}
-                  >
-                    Register/Sign in
-                  </button>
-                </>
-              ) : messageSent ? (
-                <>
-                  <p style={{ margin: "10px 0", color: "white" }}>
-                    ✓ Message sent.{" "}
-                    <button
-                      type="button"
-                      className="text-link"
-                      style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'underline', cursor: 'pointer' }}
-                      onClick={() => navigate('/inbox')}
-                    >
-                      View inbox
-                    </button>
-                  </p>
-                </>
-              ) : (
-                <>
-                  <input
-                    className="chat-message-input"
-                    type="text"
-                    value={messageDraft}
-                    onChange={(e) => setMessageDraft(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                  />
-                  <button
-                    className="send-message-button"
-                    type="button"
-                    onClick={handleSendMessage}
-                    disabled={sendingMessage}
-                  >
-                    {sendingMessage ? 'Sending…' : 'Send'}
-                  </button>
-                  {messageError && (
-                    <p style={{ margin: "10px 0", color: "#ffb4b4" }}>{messageError}</p>
-                  )}
-                </>
+              {!item.isOwner && (
+                <button
+                  className={`item-favorite-button${isFavorited ? " favorited" : ""}`}
+                  type="button"
+                  onClick={handleToggleFavorite}
+                  aria-label={
+                    isFavorited ? "Remove from favorites" : "Add to favorites"
+                  }
+                >
+                  {isFavorited ? "♥" : "♡"}
+                </button>
               )}
             </div>
-          )}
+
+            <p className="item-detail-price">
+              ${Number(item.price || 0).toFixed(2)}
+            </p>
+            <p className="item-detail-description">{item.description}</p>
+          </div>
+
+          <div className="item-seller-info">
+            <div className="seller-name">
+              <button className="seller-page" onClick={() => { }} type="button">
+                <img
+                  className="seller-image"
+                  src="/images/item-placeholder.png"
+                  alt="Seller"
+                />
+              </button>
+              <h3>{sellerDisplayName}</h3>
+            </div>
+
+            {!item.isOwner && (
+              <div className="message-seller">
+                Send a Message to Seller
+                {!isSignedIn ? (
+                  <>
+                    <p style={{ margin: "10px 0", color: "white" }}>
+                      To Message Seller, Please Register/Sign-in
+                    </p>
+                    <button
+                      className="send-message-button"
+                      type="button"
+                      onClick={() => setLoginModalOpen(true)}
+                      style={{ backgroundColor: "#007bff" }}
+                    >
+                      Register/Sign in
+                    </button>
+                  </>
+                ) : messageSent ? (
+                  <>
+                    <p style={{ margin: "10px 0", color: "white" }}>
+                      ✓ Message sent.{" "}
+                      <button
+                        type="button"
+                        className="text-link"
+                        style={{ background: 'none', border: 'none', color: 'white', textDecoration: 'underline', cursor: 'pointer' }}
+                        onClick={() => navigate('/inbox')}
+                      >
+                        View inbox
+                      </button>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <input
+                      className="chat-message-input"
+                      type="text"
+                      value={messageDraft}
+                      onChange={(e) => setMessageDraft(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                    />
+                    <button
+                      className="send-message-button"
+                      type="button"
+                      onClick={handleSendMessage}
+                      disabled={sendingMessage}
+                    >
+                      {sendingMessage ? 'Sending…' : 'Send'}
+                    </button>
+                    {messageError && (
+                      <p style={{ margin: "10px 0", color: "#ffb4b4" }}>{messageError}</p>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
       {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
     </div>
   );

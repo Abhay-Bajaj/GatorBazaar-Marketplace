@@ -1,4 +1,4 @@
-const { getListingById, getListingsByUser, removeListing } = require('../models/listingModel')
+const { getListingById, getListingsByUser, removeListing, createListing } = require('../models/listingModel')
 
 async function getListing(req, res) {
   try {
@@ -53,6 +53,63 @@ async function getMyListings(req, res) {
   }
 }
 
+async function postListing(req, res) {
+  try {
+    const userId = req.session.userId
+
+    if (!userId) {
+      return res.status(401).json({
+        error: 'Not authenticated'
+      })
+    }
+
+    const {
+      title,
+      description,
+      price,
+      category,
+      tag
+    } = req.body
+
+    if (!title || !price || !category) {
+      return res.status(400).json({
+        error: 'Missing required listing fields'
+      })
+    }
+
+    const numericPrice = Number(price)
+
+    if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
+      return res.status(400).json({
+        error: 'Invalid price'
+      })
+    }
+
+    const imageUrls = req.files
+      ? req.files.map(file => `/uploads/images/${file.filename}`)
+      : []
+
+    const listingId = await createListing(
+      userId,
+      title.trim(),
+      description || null,
+      numericPrice,
+      category,
+      tag || null,
+      imageUrls
+    )
+
+    res.status(201).json({
+      listingId
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({
+      error: 'Failed to create listing'
+    })
+  }
+}
+
 async function deleteListing(req, res) {
   try {
     const { listing_id } = req.params
@@ -85,5 +142,6 @@ async function deleteListing(req, res) {
 module.exports = {
   getListing,
   getMyListings,
-  deleteListing
+  deleteListing,
+  postListing,
 }
