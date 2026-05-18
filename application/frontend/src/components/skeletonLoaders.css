@@ -1,0 +1,173 @@
+
+/* ── Shimmer keyframe ───────────────────────── */
+@keyframes skeleton-shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+/* ── Base skeleton class ────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #ede9e2 25%,
+    #e4e0d7 50%,
+    #ede9e2 75%
+  );
+  background-size: 600px 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: 8px;
+  flex-shrink: 0;
+  animation: card-rise 0.4s ease both;
+}
+
+/* ── Text lines ─────────────────────────────── */
+.skeleton-text-xs  { height: 12px; border-radius: 4px; }
+.skeleton-text-sm  { height: 14px; border-radius: 4px; }
+.skeleton-text-md  { height: 18px; border-radius: 4px; }
+.skeleton-text-lg  { height: 24px; border-radius: 6px; }
+
+/* ── Section heading (h3) ───────────────────── */
+.skeleton-section-heading {
+  height: 22px;
+  width: 180px;
+  border-radius: 6px;
+  margin: 0 0 12px 50px;
+}
+
+/* ── Home / Search item cards ───────────────── */
+.skeleton-card {
+  pointer-events: none;
+}
+
+.skeleton-card-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 0;                 
+  border-bottom: 1px solid #e2ddd6;
+}
+
+.skeleton-card-image-search {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 0;
+  border-bottom: 1px solid #e2ddd6;
+}
+
+/* ── Category buttons ───────────────────────── */
+.skeleton-category-btn {
+  width: 80%;
+  max-width: 330px;
+  height: 50px;
+  border-radius: 15px;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+/* ── Back button ─────────────────────────────── */
+.skeleton-back-btn {
+  height: 32px;
+  width: 72px;
+  border-radius: 999px;
+}
+
+/* ── Item Page ───────────────────────────────── */
+.skeleton-item-main-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 18px;
+  border: 2px solid #e2ddd6;
+}
+
+.skeleton-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  border: 1.5px solid #e2ddd6;
+}
+
+.skeleton-seller-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+}
+
+.skeleton-input {
+  height: 40px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.skeleton-btn {
+  height: 40px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+/* ── Inbox ───────────────────────────────────── */
+.skeleton-conv-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.skeleton-chat-image {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.skeleton-msg-input {
+  flex: 1;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.skeleton-send-btn {
+  width: 72px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+/* ── Create Listing ──────────────────────────── */
+.skeleton-textarea {
+  height: 250px;
+  border-radius: 8px;
+  width: 100%;
+  padding: 25px;
+}
+
+.skeleton-submit-btn {
+  height: 44px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+
+/* ── Navigation Bar ─────────────────────────── */
+
+.skeleton-nav-logo {
+  height: 24px;
+  width: 180px;
+  border-radius: 6px;
+}
+
+.skeleton-nav-search {
+  flex: 1;
+  max-width: 83%;
+  height: 42px;
+  border-radius: 6px;
+}
+
+.skeleton-nav-sell-btn {
+  height: 34px;
+  width: 60px;
+  border-radius: 8px;
+}
+
+.skeleton-nav-icon-btn {
+  height: 34px;
+  width: 34px;
+  border-radius: 8px;
+}

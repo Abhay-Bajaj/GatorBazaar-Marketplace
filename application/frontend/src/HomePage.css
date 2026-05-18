@@ -18,7 +18,9 @@
 }
   
 .category-list button {
-    width: 260px;
+    width: 80%;
+    max-width: 330px;
+    margin: 0 auto;
     height: 50px;
     border: 1px solid black;
     background: white;
@@ -109,56 +111,3 @@
     color: #37524c;
   }
   
-  /* ══════════════════════════════════════════
-     Item detail page
-  ══════════════════════════════════════════ */
-  
-  .item-detail {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  
-  .item-detail-grid {
-    display: grid;
-    grid-template-columns: minmax(220px, 380px) 1fr;
-    gap: clamp(20px, 4vw, 48px);
-    align-items: start;
-  }
-  
-  .item-detail-image {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-radius: 18px;
-    border: 2px solid #e2ddd6;
-    box-shadow: 0 12px 28px rgba(20, 28, 26, 0.1);
-    background: #ede9e2;
-  }
-  
-  .item-detail-body {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .item-detail-title {
-    margin: 0;
-    font-size: clamp(1.5rem, 2.8vw, 2.2rem);
-    font-weight: 700;
-    line-height: 1.25;
-  }
-  
-  .item-detail-price {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #37524c;
-  }
-  
-  .item-detail-description {
-    margin: 0;
-    font-size: 0.97rem;
-    color: rgba(26, 31, 29, 0.82);
-    line-height: 1.65;
-  }

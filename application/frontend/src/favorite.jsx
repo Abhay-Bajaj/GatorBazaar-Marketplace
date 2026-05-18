@@ -56,6 +56,7 @@ export default function Favorite() {
         onSearch={handleSearch}
         onMessagesClick={() => navigate("/inbox")}
         onProfileClick={handleAccountClick}
+        onSellClick={() => navigate('/create-listing')}
       />
       <button className="back-button" onClick={() => navigate(-1)}>
         ← Back
