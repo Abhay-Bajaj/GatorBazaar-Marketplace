@@ -83,7 +83,7 @@ export default function CreateListing() {
                     onMessagesClick={() => navigate('/inbox')}
                     onProfileClick={handleAccountClick}
                     onSellClick={() => navigate('/create-listing')}
-                    onFavoritesClick={() => navigate('/favorite')}
+                    onFavoritesClick={() => navigate('/favorites')}
                   />
             {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
             </nav>

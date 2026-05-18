@@ -159,7 +159,7 @@ function App() {
           <Route path="/items/:id" element={<ItemPage />} />
           <Route path="/complete-transaction" element={<TransactionPage />} />
           <Route path="/inbox" element={<Inbox />} />
-          <Route path="/favorite" element={<Favorite />} />
+          <Route path="/favorites" element={<Favorite />} />
           <Route path="/account" element={<AccountPage />} />
         </Routes>
       </main>
