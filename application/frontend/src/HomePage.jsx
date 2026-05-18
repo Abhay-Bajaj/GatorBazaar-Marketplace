@@ -4,13 +4,10 @@ import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import CreateListing from "./CreateListing"
 import { Link, useNavigate } from "react-router-dom"
-<<<<<<< HEAD
 import ListingCard from "./components/ListingCard"
-=======
 import { mockItems } from './data/mockItems'
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
->>>>>>> 49e6e4abf041d0389ed7b3ecb24f2888269856ba
 
 const categories = [
     "Clothes", 
@@ -25,11 +22,8 @@ export default function HomePage() {
     const [query, setQuery] = useState("")
     const navigate = useNavigate()
     const [loginModalOpen, setLoginModalOpen] = useState(false)
-<<<<<<< HEAD
     const [recentListings, setRecentListings] = useState([])
-=======
     const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
->>>>>>> 49e6e4abf041d0389ed7b3ecb24f2888269856ba
 
     function handleSearch(e) {
         e.preventDefault()
