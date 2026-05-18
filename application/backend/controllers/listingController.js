@@ -1,4 +1,4 @@
-const { getListingById, getListingsByUser } = require('../models/listingModel')
+const { getListingById, getListingsByUser, createListing } = require('../models/listingModel')
 
 async function getListing(req, res) {
   try {
@@ -53,7 +53,7 @@ async function getMyListings(req, res) {
   }
 }
 
-async function createListing(req, res) {
+async function postListing(req, res) {
   try {
     const userId = req.session.userId
 
@@ -86,10 +86,10 @@ async function createListing(req, res) {
     }
 
     const imageUrls = req.files
-      ? req.files.map(file => `/uploads/listings/${file.filename}`)
+      ? req.files.map(file => `/uploads/images/${file.filename}`)
       : []
 
-    const listingId = await listingModel.createListing(
+    const listingId = await createListing(
       userId,
       title.trim(),
       description || null,
@@ -113,5 +113,5 @@ async function createListing(req, res) {
 module.exports = {
   getListing,
   getMyListings,
-  createListing,
+  postListing,
 }

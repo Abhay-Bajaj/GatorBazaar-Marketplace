@@ -66,12 +66,12 @@ app.get('/api/hello', (req, res) => {
 app.use("/auth", authRoute);
 app.use('/api/search', searchRoute)
 app.use('/api/user', userRoute)
-app.use('/api/listings', listingRoute)
+app.use('/api/items', listingRoute)
 app.use('/api/favorites', favoritesRoute)
 app.use('/api/conversations', conversationRoute)
 app.use('/api/categories', categoryRoute)
 // serves uploaded files(images) publicly
-app.use('/uploads', express.static('uploads'))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 //  SERVE REACT BUILD 
 app.use(express.static(path.join(__dirname, '../frontend/dist')))
 

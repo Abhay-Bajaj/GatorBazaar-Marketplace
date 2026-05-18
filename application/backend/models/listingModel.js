@@ -68,7 +68,7 @@ async function createListing(userId, title, description, price, category, tag, i
   const listingId = result.insertId
   await pool.execute(
     `
-    INSERT INTO tags (tag_name)
+    INSERT INTO Tags (tag_name)
     VALUES (?)
     `,
     [tag]

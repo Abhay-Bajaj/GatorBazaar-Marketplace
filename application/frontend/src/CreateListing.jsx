@@ -83,7 +83,7 @@ export default function CreateListing() {
                 formData.append('images', image)
             })
 
-            const res = await fetch('/api/listings', {
+            const res = await fetch('/api/items', {
                 method: 'POST',
                 credentials: 'include',
                 body: formData
@@ -96,7 +96,7 @@ export default function CreateListing() {
 
             const data = await res.json()
 
-            navigate(`/listing/${data.listingId}`)
+            navigate(`/items/${data.listingId}`)
         } catch (err) {
             console.error(err)
             alert(err.message)
