@@ -147,10 +147,10 @@ export default function ItemPage() {
         </Link>
 
         <div className="item-page-grid">
-          {item.image_url && item.image_url.length > 0 ? (
+          {item.images && item.images.length > 0 ? (
             <div className="item-images-gallery">
               <div className="item-images-container">
-                {item.image_url.map((image, index) => (
+                {item.images.map((image, index) => (
                   <button
                     key={index}
                     className={`image-thumbnail ${selectedImageIndex === index ? "selected" : ""}`}
@@ -165,7 +165,7 @@ export default function ItemPage() {
               <img
                 className="item-detail-image"
                 src={
-                  item.image_url[selectedImageIndex] ||
+                  item.images[selectedImageIndex] ||
                   "/images/item-placeholder.png"
                 }
                 alt={item.title}
@@ -174,7 +174,7 @@ export default function ItemPage() {
           ) : (
             <img
               className="item-detail-image"
-              src={item.image_url || "/images/item-placeholder.png"}
+              src={item.images || "/images/item-placeholder.png"}
               alt={item.title}
             />
           )}
