@@ -36,7 +36,23 @@ async function getListingById(id, userId = null) {
   )
 
   if (!rows.length) return null
+  const listing = rows[0]
 
+  if (!listing) return null
+
+  const [imageRows] = await pool.execute(
+    `
+    SELECT image_url
+    FROM listing_images
+    WHERE listing_id = ?
+    ORDER BY image_id ASC
+    `,
+    [id]
+  )
+
+  listing.images = imageRows.map(row => row.image_url)
+
+  return listing
   return rows[0]
 }
 
@@ -53,8 +69,41 @@ async function getListingsByUser(userId) {
   return rows;
 
 }
+// what do i need to do? 
+// insert into listings (user_id, title, desc, price, category)
+// insert tag into tags
+// insert image_url into listing_images with listing_id
+async function createListing(userId, title, description, price, category, tag, imageUrls) {
+  const [result] = await pool.execute(
+    `
+    INSERT INTO listings (user_id, title, description, price, category)
+    VALUES (?, ?, ?, ?, ?)
+    `,
+    [userId, title, description, price, category]
+  )
+  const listingId = result.insertId
+  await pool.execute(
+    `
+    INSERT INTO Tags (tag_name)
+    VALUES (?)
+    `,
+    [tag]
+  )
+  for (const imageUrl of imageUrls) {
+    await pool.execute(
+      `
+      INSERT INTO listing_images (image_url, listing_id)
+      VALUES (?, ?)
+      `,
+      [imageUrl, listingId]
+    )
+  }
+  return listingId
+
+}
 
 module.exports = {
   getListingById,
-  getListingsByUser
+  getListingsByUser,
+  createListing
 }

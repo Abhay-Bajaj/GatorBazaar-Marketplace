@@ -37,6 +37,7 @@ const listingRoute = require('./routes/listingRoute')
 const favoritesRoute = require('./routes/favoriteRoute')
 const transactionRoute = require('./routes/transactionRoute')
 const conversationRoute = require('./routes/conversationRoute')
+const categoryRoute = require('./routes/categoryRoute')
 const app = express()
 const PORT = process.env.PORT || 3000;
 
@@ -70,7 +71,9 @@ app.use('/api/items', listingRoute)
 app.use('/api/favorites', favoritesRoute)
 app.use('/api/transactions', transactionRoute)
 app.use('/api/conversations', conversationRoute)
-
+app.use('/api/categories', categoryRoute)
+// serves uploaded files(images) publicly
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 //  SERVE REACT BUILD 
 app.use(express.static(path.join(__dirname, '../frontend/dist')))
 
