@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
+import './createListing.css'
 
 export default function CreateListing() {
     const navigate = useNavigate()
@@ -11,10 +12,11 @@ export default function CreateListing() {
         description: "",
         category: "",
         tag: "",
-        image: null,
+        images: [],
     })
     const [query, setQuery] = useState("")
     const [loginModalOpen, setLoginModalOpen] = useState(false)
+    const MAX_IMAGES = 9
 
     function handleSearch(e) {
         e.preventDefault()
@@ -26,16 +28,23 @@ export default function CreateListing() {
     }
 
     const handleImageChange = (e) => {
-        const file = e.target.files[0]
-        setForm(prev => ({ ...prev, image: file }))
+        const files = Array.from(e.target.files)
+        const total = form.images.length + files.length
+
+        if (total > MAX_IMAGES) {
+            alert(`You can only upload up to ${MAX_IMAGES} images`)
+            return
+        }
+
+        setForm(prev => ({ ...prev, images: [...prev.images, ...files] }))
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
 
         // basic validation
-        if (!form.title || !form.price) {
-            alert("Title and price are required")
+        if (!form.title || !form.price || !form.category) {
+            alert("Please fill in all required fields")
             return
         }
 
@@ -57,16 +66,17 @@ export default function CreateListing() {
                     onMessagesClick={() => navigate('/inbox')}
                     onProfileClick={() => setLoginModalOpen(true)}
                     onSellClick={() => navigate('/create-listing')}
+                    onFavoritesClick={() => navigate('/favorite')}
                   />
             {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
             </nav>
             <div className="create-listing__container">
                 <h2>Create New Listing</h2>
-
+                <div className="create-listing__layout">
                 <form onSubmit={handleSubmit} className="form">
                     {/* Title */}
                     <div className="form__section">
-                        <label>Title</label>
+                        <label>Title <span className="required">*</span></label>
                         <input
                             type="text"
                             placeholder="Title"
@@ -76,7 +86,7 @@ export default function CreateListing() {
                     </div>
                     {/* Price */}
                     <div className="form__section">
-                        <label>Price</label>
+                        <label>Price <span className="required">*</span></label>
                         <input
                             type="number"
                             placeholder="Price"
@@ -97,7 +107,7 @@ export default function CreateListing() {
 
                     {/* Category */}
                     <div className="form__section">
-                        <label>Category</label>
+                        <label>Category <span className="required">*</span></label>
                         <select
                             value={form.category}
                             onChange={(e) => handleChange("category", e.target.value)}
@@ -126,7 +136,12 @@ export default function CreateListing() {
                     {/* Image */}
                     <div className="form__section">
                         <label>Image</label>
-                        <input type="file" onChange={handleImageChange} />
+                        <input 
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            onChange={handleImageChange} 
+                        />
                     </div>
 
                     {/* Submit */}
@@ -135,7 +150,32 @@ export default function CreateListing() {
                     </button>
 
                 </form>
+            {form.images.length > 0 && (
+                        <div className="image-preview-container">
+                            {form.images.map((image,index) => (
+                                <div className="image-preview">
+                                <img
+                                    src={URL.createObjectURL(image)}
+                                    alt={`Preview-${index}`} 
+                                />
+
+                                <button 
+                                    type="button-image"
+                                    onClick={() => {
+                                        setForm(prev => ({ 
+                                            ...prev, 
+                                            images: prev.images.filter((_, i) => i !== index) 
+                                        }))
+                                    }}
+                                >
+                                x
+                                </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
             </div>
         </div>
+    </div>
     )
 }
