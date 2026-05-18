@@ -4,8 +4,11 @@ import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import './createListing.css'
 import { CreateListingSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders"
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
 
 export default function CreateListing() {
+    const {isSignedIn} = useAuthStatus()
     const navigate = useNavigate()
     const [form, setForm] = useState({
         title: "",
@@ -24,6 +27,7 @@ export default function CreateListing() {
         const timer = setTimeout(() => setLoading(false), 1000)
         return () => clearTimeout(timer)
     }, [])
+    const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
 
     function handleSearch(e) {
         e.preventDefault()
@@ -77,7 +81,7 @@ export default function CreateListing() {
                     onQueryChange={setQuery}
                     onSearch={handleSearch}
                     onMessagesClick={() => navigate('/inbox')}
-                    onProfileClick={() => setLoginModalOpen(true)}
+                    onProfileClick={handleAccountClick}
                     onSellClick={() => navigate('/create-listing')}
                     onFavoritesClick={() => navigate('/favorite')}
                   />

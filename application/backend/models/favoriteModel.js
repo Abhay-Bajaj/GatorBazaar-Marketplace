@@ -1,4 +1,4 @@
-const pool = require('../database')
+const { pool } = require('../database')
 
 async function addUserFavorite(userId, listingId) {
   const [favorite] = await pool.execute(
@@ -17,12 +17,29 @@ async function removeUserFavorite(userId, listingId) {
   )
 
   return result;
-}
+};
 
 async function getFavoritesList(userId) {
   const [rows] = await pool.execute(
-    `SELECT * FROM user_favorites 
-    WHERE user_id = ?`,
+    `SELECT 
+      l.listing_id,
+      l.title,
+      l.price,
+      c.category_name,
+      uf.created_at AS favorited_at,
+      (
+        SELECT li.image_url
+        FROM listing_images li
+        WHERE li.listing_id = l.listing_id
+        LIMIT 1
+      ) AS image_url
+    FROM user_favorites uf
+    JOIN listings l
+      ON uf.listing_id = l.listing_id
+    JOIN Categories c
+      ON l.category = c.category_id
+    WHERE uf.user_id = ?
+    ORDER BY uf.created_at DESC`,
     [userId]
   );
 

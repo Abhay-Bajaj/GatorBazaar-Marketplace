@@ -6,6 +6,8 @@ import CreateListing from "./CreateListing"
 import { Link, useNavigate } from "react-router-dom"
 import { mockItems } from './data/mockItems'
 import { HomePageSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders"
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
 
 const categories = [
     "Clothes", 
@@ -16,6 +18,7 @@ const categories = [
     "Room Search" ]
 
 export default function HomePage() {
+    const { isSignedIn } = useAuthStatus()
     const [query, setQuery] = useState("")
     const navigate = useNavigate() 
     const [loginModalOpen, setLoginModalOpen] = useState(false)
@@ -25,6 +28,7 @@ export default function HomePage() {
         const timer = setTimeout(() => setLoading(false), 1000)
         return () => clearTimeout(timer)
     }, [])
+    const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
 
     function handleSearch(e) {
         e.preventDefault()
@@ -46,17 +50,16 @@ export default function HomePage() {
     
     return (
         <div className="homepage">
-                <header className="nav-bar">
-                    <NavigationSearchBar
-                        query={query}
-                        onQueryChange={setQuery}
-                        onSearch={handleSearch}
-                        onProfileClick={() => setLoginModalOpen(true)}
-                        onSellClick={() => navigate('/create-listing')}
-                        onMessagesClick={() => navigate('/inbox')}
-                        onFavoritesClick={() => navigate('/favorite')}
-                    />
-                </header>
+                        <header className="nav-bar">
+                        <NavigationSearchBar
+                                        query={query}
+                                        onQueryChange={setQuery}
+                                        onSearch={handleSearch}
+                                        onProfileClick={handleAccountClick}
+                                        onSellClick={() => navigate('/create-listing')}
+                                        onMessagesClick={() => navigate('/inbox')}
+                                    />
+                        </header>
             <section>
                 <div className="category-list">
                     {categories.map((category) => (

@@ -1,79 +1,118 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { mockConversations } from "./data/mockConversations";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
 import "./inbox.css";
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
+
+import {
+  getConversations,
+  sendMessage,
+  markConversationRead,
+} from "./api/messagesAPI";
 
 export default function Inbox() {
+  const { isSignedIn, loadingAuth } = useAuthStatus()
   const navigate = useNavigate();
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isSignedIn, setIsSignedIn] = useState(true);
   const [query, setQuery] = useState("");
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
+  const [sending, setSending] = useState(false);
+
 
   useEffect(() => {
-    async function fetchConversations() {
+    if(loadingAuth) return
+    async function load() {
       setLoading(true);
       setError(null);
+      console.log("is signed in", isSignedIn);
+      if (!isSignedIn) {
+        setConversations([]);
+        setSelectedConversation(null);
+        setLoading(false);
+        return;
+      }
+      console.log("is signed in2", isSignedIn);
       try {
-        const res = await fetch("/api/conversations");
-        if (!res.ok) throw new Error(`Server error (${res.status})`);
-        const data = await res.json();
+        const { unauthorized, conversations: data } = await getConversations();
+        if (unauthorized) {
+          console.log("not authorzied on fetch");
+          setConversations([]);
+          setSelectedConversation(null);
+          return;
+        }
+        console.log("convo data", data);
         setConversations(data);
         setSelectedConversation(data[0] || null);
       } catch (err) {
         console.error(err);
-        setConversations(mockConversations);
-        setSelectedConversation(mockConversations[0] || null);
+        setError("Could not load conversations. Is the backend running?");
+        setConversations([]);
+        setSelectedConversation(null);
       } finally {
         setLoading(false);
       }
     }
-    fetchConversations();
-  }, []);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim() && selectedConversation) {
+    load();
+  }, [isSignedIn, loadingAuth]);
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !selectedConversation || sending) return;
+
+    setSending(true);
+    try {
+      const created = await sendMessage(
+        selectedConversation.id,
+        newMessage.trim(),
+      );
+
+      if (created.unauthorized) {
+        setLoginModalOpen(true);
+        return;
+      }
+
       const updatedConversations = conversations.map((conv) => {
-        if (conv.id === selectedConversation.id) {
-          const newMsg = {
-            id: conv.messages.length + 1,
-            sender: "buyer",
-            text: newMessage,
-            timestamp: new Date().toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          };
-          return {
-            ...conv,
-            messages: [...conv.messages, newMsg],
-            lastMessage: newMessage,
-          };
-        }
-        return conv;
+        if (conv.id !== selectedConversation.id) return conv;
+        return {
+          ...conv,
+          messages: [...conv.messages, created],
+          lastMessage: newMessage.trim(),
+        };
       });
+
       const updated = updatedConversations.find(
         (c) => c.id === selectedConversation.id,
       );
       setConversations(updatedConversations);
       setSelectedConversation(updated);
       setNewMessage("");
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Failed to send message");
+    } finally {
+      setSending(false);
     }
   };
 
-  const handleSelectedConversation = (conversation) => {
+  const handleSelectedConversation = async (conversation) => {
     setSelectedConversation(conversation);
     setConversations((prev) =>
       prev.map((conv) =>
         conv.id === conversation.id ? { ...conv, read: true } : conv,
       ),
     );
+    try {
+      await markConversationRead(conversation.id);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleSearch = (e) => {
@@ -89,12 +128,12 @@ export default function Inbox() {
         onSearch={handleSearch}
         onSellClick={() => navigate('/create-listing')}
         onMessagesClick={() => navigate('/inbox')}
-        onProfileClick={() => setLoginModalOpen(true)}
-        onFavoritesClick={() => navigate("/favorite")}
+        onProfileClick={handleAccountClick}
+        onFavoritesClick={() => navigate("/favorites")}
       />
     <section className="banner-inbox">
 
-      <button className="back-button" onClick={() => navigate(-1)}>
+      <button className="back-button" type="button" onClick={() => navigate(-1)}>
         ← Back
       </button>
 
@@ -105,15 +144,15 @@ export default function Inbox() {
         </div>
       )}
 
-      {error && <p className="search-error">⚠ Error loading conversations</p>}
+      {error && <p className="search-error">⚠ {error}</p>}
 
-      {!loading && !error && (
+      {!loading && (
         <div className="inbox-grid">
           <div className="inbox-messages">
             <h2>Messages</h2>
             {!isSignedIn || conversations.length === 0 ? (
               <div className="inbox-no-messages">
-                <p>No messages</p>
+                <p>{isSignedIn ? "No messages" : "Sign in to view messages"}</p>
               </div>
             ) : (
               <div className="conversations-list">
@@ -122,6 +161,9 @@ export default function Inbox() {
                     key={conversation.id}
                     className={`conversation-card ${selectedConversation?.id === conversation.id ? "active" : ""}`}
                     onClick={() => handleSelectedConversation(conversation)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSelectedConversation(conversation)}
+                    role="button"
+                    tabIndex={0}
                   >
                     <img
                       src={conversation.itemImage}
@@ -151,14 +193,15 @@ export default function Inbox() {
                 <p>Please register/sign-in to view messages</p>
                 <button
                   className="inbox-signin-button"
-                  onClick={() => navigate("/auth")}
+                  type="button"
+                  onClick={() => setLoginModalOpen(true)}
                 >
                   Register/Sign-in
                 </button>
               </div>
             ) : conversations.length === 0 ? (
               <div className="inbox-no-conversations-state">
-                <p>Message Sellers to Start Chatting</p>
+                <p>Message sellers from a listing page to start chatting</p>
               </div>
             ) : selectedConversation ? (
               <>
@@ -193,28 +236,28 @@ export default function Inbox() {
                     placeholder="Type your message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                    onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
                     className="message-input"
                   />
                   <button
+                    type="button"
                     onClick={handleSendMessage}
                     className="message-send-button"
+                    disabled={sending}
                   >
-                    Send
+                    {sending ? "Sending…" : "Send"}
                   </button>
                 </div>
               </>
             ) : (
               <div className="inbox-empty-state">
-                <p>Select a chat to message sellers</p>
+                <p>Select a chat to view messages</p>
               </div>
             )}
           </div>
         </div>
       )}
-      {loginModalOpen && (
-        <LoginModal onClose={() => setLoginModalOpen(false)} />
-      )}
+      {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
     </section>
     </>
   );
