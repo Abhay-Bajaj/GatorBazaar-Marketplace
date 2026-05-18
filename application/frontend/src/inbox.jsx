@@ -107,7 +107,7 @@ export default function Inbox() {
     try {
       const transactionRes = await fetch(
         `/api/transactions/conversation/${conversation.id}`,
-        {credentials: 'include'}
+        { credentials: 'include' }
       );
       if (transactionRes.ok) {
         transaction = await transactionRes.json()
@@ -124,7 +124,7 @@ export default function Inbox() {
           conv.id === conversation.id ? { ...conv, read: true } : conv,
         ),
       );
-        await markConversationRead(conversation.id);
+      await markConversationRead(conversation.id);
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -254,7 +254,10 @@ export default function Inbox() {
                       className="conversation-item-image"
                     />
                     <div className="conversation-info">
-                      <p className="conversation-item-name">{conversation.itemName}</p>
+                      <div className="conversation-name-row">
+                        <p className="conversation-item-name">{conversation.itemName}</p>
+                        {!conversation.read && <span className="unread-dot" />}
+                      </div>
                       <p className="conversation-last-message">{conversation.lastMessage}</p>
                     </div>
                   </div>
