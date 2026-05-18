@@ -54,7 +54,20 @@ async function getListingsByUser(userId) {
 
 }
 
+async function removeListing(listingId, userId) {
+  const [result] = await pool.query (
+    `
+    DELETE FROM listings 
+    WHERE listing_id = ?
+    AND user_id = ?
+    `,
+    [listingId, userId]
+  );
+  return result.affectedRows > 0
+}
+
 module.exports = {
   getListingById,
-  getListingsByUser
+  getListingsByUser,
+  removeListing
 }
