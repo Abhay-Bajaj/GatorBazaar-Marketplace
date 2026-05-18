@@ -112,14 +112,14 @@ async function postListing(req, res) {
 
 async function deleteListing(req, res) {
   try {
-    const { listing_id } = req.params
+    const id = req.params.id
     const userId = req.session.userId
 
-    if (!listing_id) {
+    if (!id) {
       return res.status(400).json({ error: 'Listing id required' })
     }
 
-    const deleted = await listingModel.deleteListing(listing_id, userId)
+    const deleted = await removeListing(id, userId)
 
     if (!deleted) {
       return res.status(404).json({
@@ -133,7 +133,7 @@ async function deleteListing(req, res) {
   } catch (err) {
     console.error('deleteListing error:', err)
 
-    return res.status(500).json({
+    res.status(500).json({
       error: 'Server error',
     })
   }
