@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
+import "./inbox.css";
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
 
@@ -120,8 +121,8 @@ export default function Inbox() {
   };
 
   return (
-    <section className="banner inbox">
-      <NavigationSearchBar
+    <>
+    <NavigationSearchBar
         query={query}
         onQueryChange={setQuery}
         onSearch={handleSearch}
@@ -130,6 +131,7 @@ export default function Inbox() {
         onProfileClick={handleAccountClick}
         onFavoritesClick={() => navigate("/favorites")}
       />
+    <section className="banner-inbox">
 
       <button className="back-button" type="button" onClick={() => navigate(-1)}>
         ← Back
@@ -257,5 +259,6 @@ export default function Inbox() {
       )}
       {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
     </section>
+    </>
   );
 }

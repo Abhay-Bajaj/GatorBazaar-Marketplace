@@ -4,6 +4,8 @@ import { mockItems } from "./data/mockItems";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
+import "./itemPage.css";
+import { ItemPageSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders";
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
 import { startConversation } from './api/messagesAPI'
@@ -102,14 +104,10 @@ export default function ItemPage() {
     item?.seller_fullname || item?.seller_username || 'Seller'
 
   if (loading) {
-    return (
-      <section className="banner item-detail">
-        <div className="search-loading">
-          <span className="search-spinner" />
-          Loading item…
-        </div>
-      </section>
-    );
+    return <>
+      <NavBarSkeleton />
+      <ItemPageSkeleton />
+    </>
   }
 
   if (error) {
@@ -132,6 +130,7 @@ export default function ItemPage() {
         onMessagesClick={() => navigate("/inbox")}
         onProfileClick={handleAccountClick}
         onFavoritesClick={() => navigate("/favorites")}
+        onSellClick={() => navigate('/create-listing')}
       />
 
     <section className="banner item-detail">

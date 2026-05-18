@@ -6,6 +6,8 @@ import FiltersSidebar from './components/FiltersSidebar'
 import ListingsGrid from './components/ListingsGrid'
 import LoginModal from './components/LoginModal'
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
+import './searchPage.css'
+import { SearchPageSkeleton, NavBarSkeleton } from './components/SkeletonLoaders'
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
 
@@ -195,6 +197,12 @@ export default function SearchPage() {
 
   const urlQuery = searchParams.get('q') ?? ''
 
+  if (loading) {
+    return <>
+      <NavBarSkeleton />
+      <SearchPageSkeleton />
+    </>
+  }
   return (
     <div className="search-page">
       <NavigationSearchBar

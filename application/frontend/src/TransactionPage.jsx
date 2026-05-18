@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import CreateListing from "./CreateListing"
+import './transactionPage.css'
 
 const mockTransactions = [
   {
@@ -184,6 +185,8 @@ export default function TransactionPage() {
             onSearch={handleSearch}
             onProfileClick={() => setLoginModalOpen(true)}
             onSellClick={() => navigate('/create-listing')}
+            onMessagesClick={() => navigate('/inbox')}
+            onFavoritesClick={() => navigate('/favorites')}
                           />
       <section className="banner transaction-page">
         <div className="banner-content">

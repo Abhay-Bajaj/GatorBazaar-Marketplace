@@ -86,16 +86,15 @@ export default function RegisterForm({ onSwitchToLogin }) {
                 className={getInputClass(form.fullName, fullNameValid)}
                 type="text"
                 name="fullName"
-                placeholder="Full Name"
+                placeholder="Full Name *" 
                 value={form.fullName}
                 onChange={handleChange}
             />
-
             <input
                 className={getInputClass(form.username, usernameValid)}
                 type="text"
                 name="username"
-                placeholder="Username"
+                placeholder="Username * "
                 value={form.username}
                 onChange={handleChange}
             />
@@ -105,27 +104,24 @@ export default function RegisterForm({ onSwitchToLogin }) {
                     {usernameValid ? '✓' : '✗'} At least 5 letters, no numbers or symbols
                 </p>
             )}
-
             <input
                 className={getInputClass(form.email, emailValid)}
                 type="email"
                 name="email"
-                placeholder="SFSU Email"
+                placeholder="SFSU Email *"
                 value={form.email}
                 onChange={handleChange}
             />
-
             {form.email && (
                 <p className={emailValid ? 'valid' : 'invalid'}>
                     {emailValid ? '✓' : '✗'} Must use @sfsu.edu email
                 </p>
             )}
-
             <input
                 className={getInputClass(form.password, passwordValid)}
                 type="password"
                 name="password"
-                placeholder="Password"
+                placeholder="Password *"
                 value={form.password}
                 onChange={handleChange}
             />
@@ -135,12 +131,11 @@ export default function RegisterForm({ onSwitchToLogin }) {
                     {passwordValid ? '✓' : '✗'} 8+ chars, 1+ number, 1+ special character
                 </p>
             )}
-
             <input
                 className={getInputClass(form.confirmPassword, passwordsMatch)}
                 type="password"
                 name="confirmPassword"
-                placeholder="Confirm Password"
+                placeholder="Confirm Password *"
                 value={form.confirmPassword}
                 onChange={handleChange}
             />
@@ -150,7 +145,7 @@ export default function RegisterForm({ onSwitchToLogin }) {
                     {passwordsMatch ? '✓' : '✗'} Passwords must match
                 </p>
             )}
-
+            <p1 className="required-note"><span className="required">*</span> Required fields</p1>
             <button className="login-btn" type="submit" disabled={!formValid}>
                 Sign Up
             </button>
