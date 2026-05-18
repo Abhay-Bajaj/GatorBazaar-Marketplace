@@ -2,7 +2,7 @@ const { pool } = require('../database')
 
 // the compelete transaction page uses this fill out the page.
 async function getTransactionById(transaction_id) {
-    const [rows] = await pool.query (
+    const [rows] = await pool.query(
         `
         SELECT 
             buyer.fullname AS buyer_name,
@@ -22,7 +22,7 @@ async function getTransactionById(transaction_id) {
             ON l.listing_id = t.listing_id
         LEFT JOIN listing_images i
             ON i.listing_id = (
-                SELECT li.image_id
+                SELECT li.listing_id
                 FROM listing_images li
                 WHERE li.listing_id = l.listing_id
                 ORDER BY li.image_id ASC
@@ -41,7 +41,7 @@ async function getTransactionById(transaction_id) {
 // this will return the information for the view proposal button on
 // on the message window
 async function getConversationTransaction(conversation_id) {
-    const [rows] = await pool.query (
+    const [rows] = await pool.query(
         `
         SELECT
             t.buyer_user_id,
@@ -61,7 +61,7 @@ async function getConversationTransaction(conversation_id) {
 }
 
 async function getTransactionReviews(transaction_id) {
-    const [rows] = await pool.query (
+    const [rows] = await pool.query(
         `
         SELECT
             reviewer.fullname AS reviewer_name,
@@ -86,16 +86,16 @@ async function getTransactionReviews(transaction_id) {
 }
 
 async function createTransaction(
-        listing_id,
-        buyer_user_id,
-        seller_user_id,
-        conversation_id,
-        amount,
-        exchange_location,
-        exchange_time,
-        proposed_by_user_id
-    ) {
-    const [transaction] = await pool.query (
+    listing_id,
+    buyer_user_id,
+    seller_user_id,
+    conversation_id,
+    amount,
+    exchange_location,
+    exchange_time,
+    proposed_by_user_id
+) {
+    const [transaction] = await pool.query(
         `
         INSERT INTO transactions (listing_id, buyer_user_id, seller_user_id, conversation_id, amount, exchange_location, exchange_time, proposed_by_user_id)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -150,11 +150,39 @@ async function updateTransaction(transaction_id, updates) {
     return result.affectedRows
 }
 
+async function markListingAsBought(
+    listing_id,
+    buyer_id,
+) {
+    const [updateResult] = await pool.query(
+        `
+        UPDATE listings
+        SET active = 0
+        WHERE listing_id = ?
+        `,
+        [listing_id]
+    )
+
+    await pool.query(
+        `
+        INSERT INTO bought_listings (
+            listing_id,
+            buyer_id
+        )
+        VALUES (?, ?)
+        `,
+        [listing_id, buyer_id]
+    )
+
+    return updateResult.affectedRows
+}
+
 module.exports = {
     getTransactionById,
     getConversationTransaction,
     getTransactionReviews,
     createTransaction,
     createReview,
-    updateTransaction
+    updateTransaction,
+    markListingAsBought
 }

@@ -9,10 +9,12 @@ function formatPrice(price) {
   return `$${Number(price || 0).toFixed(2)}`
 }
 
-function mapMessage(row, buyerId) {
+function mapMessage(row, userId) {
+      console.log(row.sender_id, userId)
+
   return {
     id: row.message_id,
-    sender: row.sender_id === buyerId ? 'buyer' : 'seller',
+    sender: row.sender_id === userId ? 'own' : 'other',
     text: row.body,
     timestamp: formatTime(row.created_at),
   }
@@ -48,10 +50,13 @@ function formatConversation(row, userId, messageRows) {
     itemName: row.item_name,
     itemImage: row.item_image || '/images/item-placeholder.png',
     sellerName: otherPartyName(row, userId),
+    buyerId: row.buyer_id,
+    sellerId: row.seller_id,
     price: formatPrice(row.price),
     lastMessage: row.last_message || '',
     read: unreadCount === 0,
-    messages: messageRows.map((m) => mapMessage(m, row.buyer_id)),
+    messages: messageRows.map((m) => mapMessage(m, userId)),
+    currentUserId: userId,
   }
 }
 
@@ -152,7 +157,7 @@ async function sendMessage(req, res) {
       body
     )
 
-    res.status(201).json(mapMessage(messageRow, conversation.buyer_id))
+    res.status(201).json(mapMessage(messageRow, userId))
   } catch (err) {
     console.error(err)
     res.status(500).json({ error: err.message })

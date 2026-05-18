@@ -34,6 +34,7 @@ export default function TransactionPage() {
   const [buyerRating, setBuyerRating] = useState(0)
   const [comments, setComments] = useState('')
   const [confirmed, setConfirmed] = useState(false)
+  const [reviews, setReviews] = useState([])
   const [query, setQuery] = useState('')
   const [loginModalOpen, setLoginModalOpen] = useState(false)
 
@@ -46,14 +47,28 @@ export default function TransactionPage() {
     setError(null)
 
     try {
-      const res = await fetch(`/api/transactions/${transaction_id}`, {
-        credentials: 'include'
-      })
+      const [transactionRes, reviewsRes] = await Promise.all([
+        fetch(`/api/transactions/${transaction_id}`, {
+          credentials: 'include'
+        }),
+        fetch(`/api/transactions/${transaction_id}/reviews`, {
+          credentials: 'include'
+        })
+      ])
 
-      if (!res.ok) throw new Error(`Server error (${res.status})`)
+      if (!transactionRes.ok) {
+        throw new Error(`Transaction error (${transactionRes.status})`)
+      }
 
-      const data = await res.json()
-      setTransaction(data)
+      if (!reviewsRes.ok) {
+        throw new Error(`Reviews error (${reviewsRes.status})`)
+      }
+
+      const transactionData = await transactionRes.json()
+      const reviewsData = await reviewsRes.json()
+
+      setTransaction(transactionData)
+      setReviews(reviewsData)
     } catch (err) {
       console.error(err)
       setError(err.message)
@@ -86,20 +101,8 @@ export default function TransactionPage() {
 
       if (!reviewRes.ok) throw new Error(`Review error (${reviewRes.status})`)
 
-      const updateRes = await fetch(`/api/transactions/${transaction_id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          action: 'Complete'
-        })
-      })
+      await fetchTransaction()
 
-      if (!updateRes.ok) throw new Error(`Update error (${updateRes.status})`)
-
-      navigate('/inbox')
     } catch (err) {
       console.error(err)
       setError(err.message)
@@ -122,7 +125,7 @@ export default function TransactionPage() {
         throw new Error(`Cancel error (${res.status})`)
       }
 
-      navigate('/inbox')
+      await fetchTransaction()
     } catch (err) {
       console.error(err)
       setError(err.message)
@@ -169,9 +172,28 @@ export default function TransactionPage() {
   const isBuyer =
     transaction &&
     Number(transaction.current_user_id) === Number(transaction.buyer_user_id)
-  const completed = transaction && transaction.status === 'Completed'
-  console.log(isSeller)
-  console.log(isBuyer)
+  const sellerConfirmed = reviews.some(
+    review =>
+      Number(review.reviewer_user_id) ===
+      Number(transaction?.seller_user_id) &&
+      Number(review.confirmed) === 1
+  )
+
+  const buyerConfirmed = reviews.some(
+    review =>
+      Number(review.reviewer_user_id) ===
+      Number(transaction?.buyer_user_id) &&
+      Number(review.confirmed) === 1
+  )
+  const completed = transaction && ((isBuyer && buyerConfirmed) || (isSeller && sellerConfirmed))
+  const statusLabel = transaction.status === 'Accepted' ? 'In Progress' : transaction.status
+  const isCancelled = transaction.status === 'Cancelled'
+  const pageTitle =
+    transaction.status === 'Cancelled'
+      ? 'Transaction Cancelled'
+      : transaction.status === 'Completed'
+        ? 'Transaction Complete'
+        : 'Complete Transaction'
   return (
     <div className="transaction-page">
       <NavigationSearchBar
@@ -185,13 +207,16 @@ export default function TransactionPage() {
         <div className="banner-content">
           <div className="transaction-header-row">
             <div>
-              <h1 className="transaction-header">Complete Transaction</h1>
+              <Link className="text-link" to="/inbox">
+                ← Back to inbox
+              </Link>
+              <h1 className="transaction-header">{pageTitle}</h1>
               <p className="transaction-subtitle">
                 Review the transaction details, confirm the exchange, and submit your feedback.
               </p>
             </div>
             <span className={`status-badge status-${transaction.status.toLowerCase()}`}>
-              {transaction.status}
+              {statusLabel}
             </span>
           </div>
 
@@ -231,11 +256,11 @@ export default function TransactionPage() {
 
               <div className="transaction-card">
                 <div className="transaction-participants compact">
-                  <div className="participant">
+                  <div className={"participant"}>
                     <img
                       src={sellerProfilePic}
                       alt={`${transaction.seller_name} profile`}
-                      className="profile-pic"
+                      className={`profile-pic ${sellerConfirmed ? 'confirmed' : ''}`}
                     />
                     <p className="participant-name">
                       {isSeller ? 'You' : transaction.seller_name}
@@ -245,11 +270,11 @@ export default function TransactionPage() {
                   <div className="arrow">
                     ⇄
                   </div>
-                  <div className="participant">
+                  <div className={"participant"}>
                     <img
                       src={buyerProfilePic}
                       alt={`${transaction.buyer_name} profile`}
-                      className="profile-pic"
+                      className={`profile-pic ${buyerConfirmed ? 'confirmed' : ''}`}
                     />
                     <p className="participant-name">
                       {isBuyer ? 'You' : transaction.buyer_name}
@@ -302,7 +327,7 @@ export default function TransactionPage() {
                         <StarRating
                           rating={buyerRating}
                           onRatingChange={setBuyerRating}
-                          disabled={completed}
+                          disabled={completed || isCancelled}
                         />
                       </div>
                     )}
@@ -312,7 +337,7 @@ export default function TransactionPage() {
                         <StarRating
                           rating={sellerRating}
                           onRatingChange={setSellerRating}
-                          disabled={completed}
+                          disabled={completed || isCancelled}
                         />
                       </div>
                     )}
@@ -326,7 +351,7 @@ export default function TransactionPage() {
                       onChange={(e) => setComments(e.target.value)}
                       placeholder="Add any comments about the transaction..."
                       rows={5}
-                      disabled={completed}
+                      disabled={completed || isCancelled}
                     />
                   </div>
 
@@ -336,7 +361,7 @@ export default function TransactionPage() {
                         type="checkbox"
                         checked={confirmed}
                         onChange={(e) => setConfirmed(e.target.checked)}
-                        disabled={completed}
+                        disabled={completed || isCancelled}
                       />
                       I confirm this transaction was completed as described.
                     </label>
@@ -344,21 +369,21 @@ export default function TransactionPage() {
 
                   <div className="note">
                     <i>
-                      Both parties should confirm to finalize the transaction status.
+                      Both parties must confirm to finalize the transaction status.
                     </i>
                   </div>
 
                   <button
                     className="complete-btn"
                     onClick={handleCompleteTransaction}
-                    disabled={!confirmed || completed}
+                    disabled={!confirmed || completed || isCancelled}
                   >
                     Complete Transaction
                   </button>
                   <button
                     className="cancel-btn"
                     onClick={handleCancelTransaction}
-                    disabled={completed}
+                    disabled={completed || isCancelled}
                   >
                     Cancel Transaction
                   </button>

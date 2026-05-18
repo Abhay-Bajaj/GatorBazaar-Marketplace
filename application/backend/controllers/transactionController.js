@@ -8,9 +8,9 @@ async function getTransactionById(req, res) {
         if (!user_id) {
             return res.status(401).json({ error: 'Not logged in' })
         }
-        
+
         if (!transaction_id) {
-            
+
             return res.status(400).json({ error: 'Invalid transaction id' })
         }
         // ensure current user is authorized or the transaction exists
@@ -55,7 +55,7 @@ async function getConversationTransaction(req, res) {
         if (!transaction) {
             return res.json(null)
         }
-
+        console.log(transaction.buyer_user_id, transaction.seller_user_id, user_id)
         if (
             Number(transaction.buyer_user_id) !== Number(user_id) &&
             Number(transaction.seller_user_id) !== Number(user_id)
@@ -239,8 +239,6 @@ async function updateTransaction(req, res) {
             }
         } else if (action === 'In Progress') {
             updates.status = 'In Progress'
-        } else if (action === 'Complete') {
-            updates.status = 'Completed'
         } else {
             return res.status(400).json({ error: 'Invalid transaction action' })
         }
@@ -309,7 +307,27 @@ async function createReview(req, res) {
             numericRating,
             comment || null
         )
+        const reviews = await transactionModel.getTransactionReviews(transaction_id)
 
+        const buyerConfirmed = reviews.some(
+            review =>
+                Number(review.reviewer_user_id) === Number(transaction.buyer_user_id) &&
+                Number(review.confirmed) === 1
+        )
+
+        const sellerConfirmed = reviews.some(
+            review =>
+                Number(review.reviewer_user_id) === Number(transaction.seller_user_id) &&
+                Number(review.confirmed) === 1
+        )
+
+        if (buyerConfirmed && sellerConfirmed) {
+            const updatedTransaction = await transactionModel.updateTransaction(transaction_id, {
+                status: 'Completed'
+            })
+            
+            await transactionModel.markListingAsBought(transaction.listing_id, transaction.buyer_user_id)
+        }
         res.status(201).json({ review_id })
     } catch (err) {
         console.error(err)

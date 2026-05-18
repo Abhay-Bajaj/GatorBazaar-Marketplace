@@ -212,8 +212,12 @@
   padding: 0 14px;
 }
 
-.message.buyer .message-time {
+.message.own .message-time {
   text-align: right;
+}
+
+.message.other .message-time {
+  text-align: left;
 }
 
 .message-input-area {
@@ -439,7 +443,7 @@
 .proposal-actions {
   display: flex;
   gap: 10px;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .proposal-submit-button,

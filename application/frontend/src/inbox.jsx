@@ -100,49 +100,37 @@ export default function Inbox() {
       setSending(false);
     }
   }
-  const handleSelectedConversation = async (conversation) => {
-    try {
-      const res = await fetch(`/api/messages/${conversation.conversation_id}`, {
-        credentials: 'include'
-      })
+
 
   const handleSelectedConversation = async (conversation) => {
-    setSelectedConversation(conversation);
-    setConversations((prev) =>
-      prev.map((conv) =>
-        conv.id === conversation.id ? { ...conv, read: true } : conv,
-      ),
-    );
+    let transaction = null;
     try {
-      await markConversationRead(conversation.id);
+      const transactionRes = await fetch(
+        `/api/transactions/conversation/${conversation.id}`,
+        {credentials: 'include'}
+      );
+      if (transactionRes.ok) {
+        transaction = await transactionRes.json()
+      };
+      console.log(transaction)
+      const selected = {
+        ...conversation,
+        transaction
+      };
+
+      setSelectedConversation(selected);
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv.id === conversation.id ? { ...conv, read: true } : conv,
+        ),
+      );
+        await markConversationRead(conversation.id);
     } catch (err) {
       console.error(err);
+      setError(err.message);
     }
   };
 
-      const messages = await res.json()
-      const transactionRes = await fetch(
-        `/api/transactions/conversation/${conversation.conversation_id}`,
-        {
-          credentials: 'include'
-        }
-      )
-
-      if (!transactionRes.ok) throw new Error(`Server error (${transactionRes.status})`)
-
-      const transaction = await transactionRes.json()
-      console.log(conversation.current_user_id)
-      setSelectedConversation({
-        ...conversation,
-        current_user_id: conversation.current_user_id,
-        messages,
-        transaction
-      })
-    } catch (err) {
-      console.error(err)
-      setError(err.message)
-    }
-  }
   const handleSearch = (e) => {
     e.preventDefault();
     navigate(`/search?q=${encodeURIComponent(query.trim())}`);
@@ -157,10 +145,10 @@ export default function Inbox() {
         },
         credentials: 'include',
         body: JSON.stringify({
-          listing_id: selectedConversation.listing_id,
-          buyer_user_id: selectedConversation.buyer_user_id,
-          seller_user_id: selectedConversation.seller_user_id,
-          conversation_id: selectedConversation.conversation_id,
+          listing_id: selectedConversation.itemId,
+          buyer_user_id: selectedConversation.buyerId,
+          seller_user_id: selectedConversation.sellerId,
+          conversation_id: selectedConversation.id,
           amount,
           exchange_location,
           exchange_time
@@ -177,9 +165,9 @@ export default function Inbox() {
     }
   }
 
-  const handleUpdateProposal = async (transaction_id, updates) => {
+  const handleUpdateProposal = async (transactionId, updates) => {
     try {
-      const res = await fetch(`/api/transactions/${transaction_id}`, {
+      const res = await fetch(`/api/transactions/${transactionId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -253,8 +241,8 @@ export default function Inbox() {
               <div className="conversations-list">
                 {conversations.map((conversation) => (
                   <div
-                    key={conversation.conversation_id}
-                    className={`conversation-card ${selectedConversation?.conversation_id === conversation.conversation_id ? 'active' : ''}`}
+                    key={conversation.id}
+                    className={`conversation-card ${selectedConversation?.id === conversation.id ? 'active' : ''}`}
                     onClick={() => handleSelectedConversation(conversation)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSelectedConversation(conversation)}
                     role="button"
@@ -335,17 +323,11 @@ export default function Inbox() {
                 <div className="messages-container">
                   {selectedConversation.messages.map(message => (
                     <div
-                      key={message.message_id}
-                      className={`message ${Number(message.sender_user_id) === Number(selectedConversation.current_user_id)
-                          ? 'own'
-                          : 'other'
-                        }`}                    >
-                      <p className="message-text">{message.body}</p>
+                      key={message.id}
+                      className={`message ${message.sender}`}                 >
+                      <p className="message-text">{message.text}</p>
                       <p className="message-time">
-                        {new Date(message.created_at).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
+                        {message.timestamp}
                       </p>
                     </div>
                   ))}

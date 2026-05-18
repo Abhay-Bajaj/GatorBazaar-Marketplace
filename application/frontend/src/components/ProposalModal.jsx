@@ -14,9 +14,18 @@ export default function ProposalModal({
     onUpdate,
     transaction,
 }) {
+    // proposalMode can be 'view' or 'counter', determining whether the user is viewing an existing proposal or creating a new one
+    const [proposalMode, setProposalMode] = useState(transaction ? 'view' : 'new')
+    const status = transaction?.status
+    const isEditable =
+        !transaction ||
+        proposalMode === 'counter' ||
+        proposalMode === 'new'
+
     const canRespond =
         transaction &&
-        Number(transaction.proposed_by_user_id) !== Number(transaction.current_user_id)
+        Number(transaction.proposed_by_user_id) !== Number(transaction.current_user_id) &&
+        transaction.status === 'Proposed'
 
     const [amount, setAmount] = useState(transaction?.amount || '')
     const [exchangeLocation, setExchangeLocation] = useState(transaction?.exchange_location || '')
@@ -38,7 +47,9 @@ export default function ProposalModal({
         document.addEventListener('keydown', handleKey)
         return () => document.removeEventListener('keydown', handleKey)
     }, [onClose])
-
+    useEffect(() => {
+        setProposalMode(transaction ? 'view' : 'new')
+    }, [transaction])
     if (!isOpen) return null
 
     const handleAccept = async () => {
@@ -57,25 +68,21 @@ export default function ProposalModal({
         })
     }
 
-    const handleCounter = async (event) => {
-        event.preventDefault()
-
-        if (!transaction || !onUpdate || !canRespond) return
-
-        await onUpdate(transaction.transaction_id, {
-            amount,
-            exchange_location: exchangeLocation,
-            exchange_time: exchangeTime,
-            action: 'Proposed'
-        })
-    }
-
     const handleSubmit = async (event) => {
         event.preventDefault()
 
         if (!onSubmit) return
 
-        await onSubmit({
+        if (!transaction) {
+            await onSubmit({
+                amount,
+                exchange_location: exchangeLocation,
+                exchange_time: exchangeTime
+            })
+            return
+        }
+        await onUpdate(transaction.transaction_id, {
+            action: 'Proposed',
             amount,
             exchange_location: exchangeLocation,
             exchange_time: exchangeTime
@@ -94,7 +101,7 @@ export default function ProposalModal({
                 </button>
 
                 {transaction ? (
-                    <form className="proposal-modal-content" onSubmit={handleCounter}>
+                    <form className="proposal-modal-content" onSubmit={handleSubmit}>
                         <h2>Proposal Details</h2>
 
                         <div className="proposal-field">
@@ -109,6 +116,7 @@ export default function ProposalModal({
                                 min="0.01"
                                 step="0.01"
                                 value={amount}
+                                disabled={!isEditable}
                                 onChange={(event) => setAmount(event.target.value)}
                                 required
                             />
@@ -119,6 +127,7 @@ export default function ProposalModal({
                             <input
                                 type="text"
                                 value={exchangeLocation}
+                                disabled={!isEditable}
                                 onChange={(event) => setExchangeLocation(event.target.value)}
                                 required
                             />
@@ -129,12 +138,19 @@ export default function ProposalModal({
                             <input
                                 type="datetime-local"
                                 value={exchangeTime}
+                                disabled={!isEditable}
                                 onChange={(event) => setExchangeTime(event.target.value)}
                                 required
                             />
                         </label>
-
-                        {canRespond && (
+                        {(status === 'Rejected' || status === 'Cancelled') && proposalMode === 'view' && (
+                            <div className="proposal-actions">
+                                <button type="button" onClick={() => setProposalMode('counter')}>
+                                    Send New Proposal
+                                </button>
+                            </div>
+                        )}
+                        {status === 'Proposed' && canRespond && proposalMode === 'view' && (
                             <div className="proposal-actions">
                                 <button type="button" onClick={handleAccept}>
                                     Accept
@@ -144,13 +160,23 @@ export default function ProposalModal({
                                     Reject
                                 </button>
 
-                                <button type="submit">
+                                <button type="button" onClick={() => setProposalMode('counter')}>
                                     Counter
                                 </button>
                             </div>
                         )}
+                        {proposalMode === 'counter' && (
+                            <div className="proposal-actions">
+                                <button type="button" onClick={() => setProposalMode('view')}>
+                                    Cancel
+                                </button>
 
-                        {!canRespond && (
+                                <button type="submit">
+                                    Send Proposal
+                                </button>
+                            </div>
+                        )}
+                        {status === 'Proposed' && !canRespond && proposalMode === 'view' && (
                             <p className="proposal-note">
                                 Waiting for the other user to respond.
                             </p>

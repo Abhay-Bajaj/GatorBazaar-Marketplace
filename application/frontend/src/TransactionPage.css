@@ -1,4 +1,3 @@
-
 /* ══════════════════════════════════════════
    Transaction page
 ══════════════════════════════════════════ */
@@ -48,7 +47,7 @@
   background: #2b7a44;
 }
 
-.status-pending {
+.status-accepted {
   background: #c67c0f;
 }
 
@@ -118,7 +117,7 @@
   flex-wrap: wrap;
 }
 
-.transaction-meta-row > div {
+.transaction-meta-row>div {
   min-width: 170px;
 }
 
@@ -139,6 +138,13 @@
   align-items: center;
   gap: 10px;
   text-align: center;
+}
+
+.profile-pic.confirmed {
+  border: 3px solid #22c55e;
+  border-radius: 50%;
+  padding: 12px;
+  background: rgba(34, 197, 94, 0.08);
 }
 
 .participant-role {
