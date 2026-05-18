@@ -86,14 +86,6 @@ export default function ItemPage() {
         })
         if (!res.ok) throw new Error(`Item not found (${res.status})`)
         const data = await res.json()
-        // console.log(typeof data.image_url, data.image_url)
-        if (typeof data.image_url === 'string') {
-          try {
-            data.image_url = JSON.parse(data.image_url)
-          } catch {
-            data.image_url = []
-          }
-        }
 
         setItem(data)
         setIsFavorited(data.isFavorited)

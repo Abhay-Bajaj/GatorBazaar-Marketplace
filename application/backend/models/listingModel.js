@@ -36,8 +36,17 @@ async function getListingById(id, userId = null) {
   )
 
   if (!rows.length) return null
+  const listing = rows[0]
 
-  return rows[0]
+  if (typeof listing.image_url === 'string') {
+    try {
+      listing.image_url = JSON.parse(listing.image_url)
+    } catch (err) {
+      console.error('Error parsing image_url:', err)
+      listing.image_url = []
+    }
+  }
+  return listing
 }
 
 async function getListingsByUser(userId) {
