@@ -71,7 +71,7 @@ export default function Dashboard() {
         onSearch={handleSearch}
         onSellClick={() => navigate('/create-listing')}
         onMessagesClick={() => navigate('/inbox')}
-        onFavoritesClick={() => { }}
+        onFavoritesClick={() => navigate('/favorites')}
         onProfileClick={handleAccountClick}
         placeholder="Search marketplace items"
         searchButtonText="Search"

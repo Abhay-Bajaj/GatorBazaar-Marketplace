@@ -58,6 +58,7 @@ export default function HomePage() {
                                         onProfileClick={handleAccountClick}
                                         onSellClick={() => navigate('/create-listing')}
                                         onMessagesClick={() => navigate('/inbox')}
+                                        onFavoritesClick={() => navigate('/favorites')}
                                     />
                         </header>
             <section>

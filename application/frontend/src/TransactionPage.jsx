@@ -185,6 +185,8 @@ export default function TransactionPage() {
             onSearch={handleSearch}
             onProfileClick={() => setLoginModalOpen(true)}
             onSellClick={() => navigate('/create-listing')}
+            onMessagesClick={() => navigate('/inbox')}
+            onFavoritesClick={() => navigate('/favorites')}
                           />
       <section className="banner transaction-page">
         <div className="banner-content">

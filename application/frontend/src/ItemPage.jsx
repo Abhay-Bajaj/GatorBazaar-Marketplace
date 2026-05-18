@@ -130,6 +130,7 @@ export default function ItemPage() {
         onMessagesClick={() => navigate("/inbox")}
         onProfileClick={handleAccountClick}
         onFavoritesClick={() => navigate("/favorites")}
+        onSellClick={() => navigate('/create-listing')}
       />
 
     <section className="banner item-detail">

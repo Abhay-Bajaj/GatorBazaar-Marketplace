@@ -123,7 +123,7 @@ export default function AccountPage() {
                 onSearch={handleSearch}
                 onSellClick={() => navigate('/create-listing')}
                 onMessagesClick={() => navigate('/inbox')}
-                onFavoritesClick={() => { }}
+                onFavoritesClick={() => navigate('/favorites')}
                 placeholder="Search marketplace items"
                 searchButtonText="Search"
             />
