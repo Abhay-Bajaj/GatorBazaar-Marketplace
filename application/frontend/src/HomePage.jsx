@@ -1,5 +1,5 @@
 import { useState, useEffect} from "react"
-import './homePage.css'
+import './HomePage.css'
 import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import CreateListing from "./CreateListing"
