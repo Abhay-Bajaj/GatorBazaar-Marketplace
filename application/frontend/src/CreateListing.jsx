@@ -45,6 +45,8 @@ export default function CreateListing() {
             setCategories(data)
         } catch (err) {
             console.error(err)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -132,7 +134,6 @@ export default function CreateListing() {
                     onSellClick={() => navigate('/create-listing')}
                     onFavoritesClick={() => navigate('/favorites')}
                   />
-            {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
             </nav>
             <div className="create-listing__container">
                 <h2>Create New Listing</h2>
@@ -220,14 +221,14 @@ export default function CreateListing() {
                     {form.images.length > 0 && (
                         <div className="image-preview-container">
                             {form.images.map((image, index) => (
-                                <div className="image-preview">
+                                <div className="image-preview" key={index}>
                                     <img
                                         src={URL.createObjectURL(image)}
                                         alt={`Preview-${index}`}
                                     />
 
                                     <button
-                                        type="button-image"
+                                        type="button"
                                         onClick={() => {
                                             setForm(prev => ({
                                                 ...prev,
@@ -243,7 +244,7 @@ export default function CreateListing() {
                     )}
                 </div>
             </div>
+            {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
         </div>
-    </div>
     )
 }

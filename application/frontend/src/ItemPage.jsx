@@ -267,8 +267,7 @@ export default function ItemPage() {
             )}
           </div>
         </div>
-      </div>
-    </section>
+      </section>
       {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
     </div>
   );
