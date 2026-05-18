@@ -86,21 +86,7 @@ function MemberProfile() {
 
   return (
     <div className="member-page">
-
-      <NavigationSearchBar
-        query={query}
-        onQueryChange={setQuery}
-        onSearch={handleSearch}
-        onSellClick={() => navigate('/create-listing')}
-        onMessagesClick={() => navigate('/inbox')}
-        onFavoritesClick={() => navigate('/favorite')}
-        onProfileClick={() => setLoginModalOpen(true)}
-        placeholder="Search marketplace items"
-        searchButtonText="Search"
-      />
     <section className="banner">
-
-
       <div className="member-profile">
         <img
           src={member.image}
@@ -125,7 +111,7 @@ function MemberProfile() {
 function App() {
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const isTeamMembers = location.pathname.startsWith('/teamMembers')
+  const isTeamMembers = location.pathname.startsWith('/teamMembers') || location.pathname.startsWith('/team/')
 
   return (
     <>

@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useState, useEffect} from "react"
 import './homePage.css'
 import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import CreateListing from "./CreateListing"
 import { Link, useNavigate } from "react-router-dom"
 import { mockItems } from './data/mockItems'
+import { HomePageSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders"
 
 const categories = [
     "Clothes", 
@@ -16,8 +17,14 @@ const categories = [
 
 export default function HomePage() {
     const [query, setQuery] = useState("")
-    const navigate = useNavigate()
+    const navigate = useNavigate() 
     const [loginModalOpen, setLoginModalOpen] = useState(false)
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const timer = setTimeout(() => setLoading(false), 1000)
+        return () => clearTimeout(timer)
+    }, [])
 
     function handleSearch(e) {
         e.preventDefault()
@@ -29,6 +36,13 @@ export default function HomePage() {
     }
     // Recently added items || Replace mockItems with db
     const recentItems = mockItems.slice(0, 5)
+
+    if (loading) {
+        return <>
+            <NavBarSkeleton />
+            <HomePageSkeleton />
+        </>
+    }
     
     return (
         <div className="homepage">
@@ -54,7 +68,6 @@ export default function HomePage() {
                     ))}
                 </div>
             </section>
-
             <section>
                 <h3>Recently Added</h3>
                 <div className="recent-items">
@@ -63,7 +76,6 @@ export default function HomePage() {
                     ))}
                 </div>
             </section>
-            
             <section> 
                 {/* Placeholder, implement with db*/} 
                 <h3> Recently Viewed</h3>
@@ -73,12 +85,9 @@ export default function HomePage() {
                     ))}
                 </div>
             </section>
-
             {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+            
         </div>
-        
-
-        
     )
 }
     

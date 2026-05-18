@@ -7,6 +7,7 @@ import ListingsGrid from './components/ListingsGrid'
 import LoginModal from './components/LoginModal'
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
 import './searchPage.css'
+import { SearchPageSkeleton, NavBarSkeleton } from './components/SkeletonLoaders'
 
 function categoriesFromParams(searchParams) {
   const cats = searchParams.getAll('category')
@@ -190,6 +191,12 @@ export default function SearchPage() {
 
   const urlQuery = searchParams.get('q') ?? ''
 
+  if (loading) {
+    return <>
+      <NavBarSkeleton />
+      <SearchPageSkeleton />
+    </>
+  }
   return (
     <div className="search-page">
       <NavigationSearchBar

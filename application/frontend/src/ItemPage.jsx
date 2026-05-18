@@ -5,6 +5,7 @@ import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
 import "./itemPage.css";
+import { ItemPageSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders";
 
 export default function ItemPage() {
   const { id } = useParams();
@@ -73,14 +74,10 @@ export default function ItemPage() {
   }, [id]);
 
   if (loading) {
-    return (
-      <section className="banner item-detail">
-        <div className="search-loading">
-          <span className="search-spinner" />
-          Loading item…
-        </div>
-      </section>
-    );
+    return <>
+      <NavBarSkeleton />
+      <ItemPageSkeleton />
+    </>
   }
 
   if (error) {

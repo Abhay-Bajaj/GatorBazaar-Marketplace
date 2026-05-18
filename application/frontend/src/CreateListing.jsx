@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useState, useEffect, use } from "react"
 import { useNavigate } from "react-router-dom"
 import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import './createListing.css'
+import { CreateListingSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders"
 
 export default function CreateListing() {
     const navigate = useNavigate()
@@ -16,7 +17,13 @@ export default function CreateListing() {
     })
     const [query, setQuery] = useState("")
     const [loginModalOpen, setLoginModalOpen] = useState(false)
+    const [loading, setLoading] = useState(true)
     const MAX_IMAGES = 9
+
+    useEffect(() => {
+        const timer = setTimeout(() => setLoading(false), 1000)
+        return () => clearTimeout(timer)
+    }, [])
 
     function handleSearch(e) {
         e.preventDefault()
@@ -55,8 +62,14 @@ export default function CreateListing() {
         navigate("/") // go back home after posting
     }
 
+    if (loading) {
+        return <>
+            <NavBarSkeleton />
+            <CreateListingSkeleton />
+        </>
+    }
 
-    return (
+    return ( 
         <div className="create-listing">
             <nav className="nav-bar">
             <NavigationSearchBar
@@ -150,6 +163,7 @@ export default function CreateListing() {
                     </button>
 
                 </form>
+            {/* Image Preview */}
             {form.images.length > 0 && (
                         <div className="image-preview-container">
                             {form.images.map((image,index) => (
