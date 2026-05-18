@@ -1,5 +1,6 @@
 .account-content {
     display: flex;
+    flex-direction: column;
     gap: 2rem;
     margin-top: 1.5rem;
 }
@@ -9,6 +10,7 @@
     background: #f9f9f9;
     padding: 1.5rem;
     border-radius: 10px;
+    min-width: 0;
 }
 
 .settings-stack {
@@ -31,10 +33,9 @@
 }
 
 .settings-card h3 {
-    width: 180px;
-    flex-shrink: 0;
-    margin: 0;
-    text-align: left;
+    width: auto;
+    margin: 0 0 1rem;
+    text-align: center;
 }
 
 .settings-form {
@@ -42,6 +43,7 @@
     flex-direction: column;
     gap: 0.45rem;
     margin-top: 0.4rem;
+    width: 320px;
 }
 
 .form-group {
@@ -97,6 +99,7 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    width: 80%;
 }
 
 
@@ -140,4 +143,195 @@
     background: #f9f9f9;
     padding: 1.5rem;
     border-radius: 12px;
+}
+
+.password-submit-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.form-error,
+.form-success {
+    width: 100%;
+    max-width: 320px;
+
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
+
+    text-align: center;
+
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+
+    box-sizing: border-box;
+}
+
+.form-error {
+    color: #ff4d4f;
+}
+
+.form-success {
+    color: #28a745;
+}
+
+.account-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.account-tabs button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.account-tabs button.active {
+    background: #2f7d32;
+    color: white;
+}
+
+.account-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.account-tabs button {
+    background: linear-gradient(135deg, #17352f, #23463d);
+    color: #f5f5f5;
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+
+    padding: 10px 18px;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.account-tabs button:hover {
+    background: linear-gradient(135deg, #21483f, #2d5a4f);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.account-tabs button.active {
+    background: linear-gradient(135deg, #2f7d32, #469b4a);
+    color: white;
+
+    box-shadow:
+        0 0 0 2px rgba(70, 155, 74, 0.25),
+        0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.account-main-row {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.account-main-row .account-section {
+    flex: 1;
+    min-width: 0;
+}
+
+.account-listings-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    column-gap: 28px;
+    row-gap: 36px;
+
+    width: 100%;
+    justify-items: center;
+}
+
+.account-listings-row .gb-listing-card {
+    width: 100%;
+    max-width: 220px;
+
+    transform: scale(0.72);
+    transform-origin: top center;
+}
+
+.account-listings-row .gb-card-image {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.account-listings-row .gb-card-footer {
+    padding: 0.4rem;
+}
+
+.account-listings-row .gb-card-title {
+    font-size: 0.78rem;
+}
+
+.account-listings-row .gb-card-price {
+    font-size: 0.74rem;
+}
+
+.account-tab-header {
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #17352f;
+}
+
+.account-tab-panel {
+    background: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 12px;
+
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.14);
+
+    min-height: 500px;
+}
+
+.account-tab-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.account-tab-button {
+    background: linear-gradient(135deg, #17352f, #23463d);
+    color: white;
+
+    border: none;
+    border-radius: 10px;
+
+    padding: 10px 18px;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.account-tab-button:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.18);
 }

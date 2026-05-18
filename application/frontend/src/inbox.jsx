@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
-import { checkLoggedIn } from "./api/authAPI";
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
+
 import {
   getConversations,
   sendMessage,
@@ -10,41 +12,41 @@ import {
 } from "./api/messagesAPI";
 
 export default function Inbox() {
+  const { isSignedIn, loadingAuth } = useAuthStatus()
   const navigate = useNavigate();
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isSignedIn, setIsSignedIn] = useState(false);
   const [query, setQuery] = useState("");
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
   const [sending, setSending] = useState(false);
 
+
   useEffect(() => {
+    if(loadingAuth) return
     async function load() {
       setLoading(true);
       setError(null);
-
-      const auth = await checkLoggedIn();
-      if (!auth.authenticated) {
-        setIsSignedIn(false);
+      console.log("is signed in", isSignedIn);
+      if (!isSignedIn) {
         setConversations([]);
         setSelectedConversation(null);
         setLoading(false);
         return;
       }
-
-      setIsSignedIn(true);
-
+      console.log("is signed in2", isSignedIn);
       try {
         const { unauthorized, conversations: data } = await getConversations();
         if (unauthorized) {
-          setIsSignedIn(false);
+          console.log("not authorzied on fetch");
           setConversations([]);
           setSelectedConversation(null);
           return;
         }
+        console.log("convo data", data);
         setConversations(data);
         setSelectedConversation(data[0] || null);
       } catch (err) {
@@ -58,7 +60,7 @@ export default function Inbox() {
     }
 
     load();
-  }, []);
+  }, [isSignedIn, loadingAuth]);
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConversation || sending) return;
@@ -71,7 +73,6 @@ export default function Inbox() {
       );
 
       if (created.unauthorized) {
-        setIsSignedIn(false);
         setLoginModalOpen(true);
         return;
       }
@@ -126,7 +127,7 @@ export default function Inbox() {
         onSearch={handleSearch}
         onSellClick={() => navigate('/create-listing')}
         onMessagesClick={() => navigate('/inbox')}
-        onProfileClick={() => setLoginModalOpen(true)}
+        onProfileClick={handleAccountClick}
         onFavoritesClick={() => navigate("/favorites")}
       />
 
@@ -254,16 +255,7 @@ export default function Inbox() {
           </div>
         </div>
       )}
-      {loginModalOpen && (
-        <LoginModal
-          onClose={() => {
-            setLoginModalOpen(false);
-            checkLoggedIn().then((auth) => {
-              setIsSignedIn(auth.authenticated === true);
-            });
-          }}
-        />
-      )}
+      {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
     </section>
   );
 }
