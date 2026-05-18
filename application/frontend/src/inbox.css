@@ -1,6 +1,11 @@
 /* ══════════════════════════════════════════
    Inbox Page
 ══════════════════════════════════════════ */
+
+.inbox {
+  min-height: 70vh;
+}
+
 .banner-inbox {
   margin: 50px;
   background-color: #ffffff;
@@ -14,7 +19,7 @@
   align-items: center;
   gap: 6px;
   margin-bottom: 16px;
-  font-weight: 600; 
+  font-weight: 600;
   text-decoration: none;
   color: #1c2a2e;
   background: transparent;
@@ -183,11 +188,11 @@
   max-width: 70%;
 }
 
-.message.buyer {
+.message.own {
   align-self: flex-end;
 }
 
-.message.seller {
+.message.other {
   align-self: flex-start;
 }
 
@@ -199,12 +204,12 @@
   font-size: 0.95rem;
 }
 
-.message.buyer .message-text {
+.message.own .message-text {
   background: #37524c;
   color: #f6f3ee;
 }
 
-.message.seller .message-text {
+.message.other .message-text {
   background: #e2ddd6;
   color: #1a1f1d;
 }
@@ -216,8 +221,12 @@
   padding: 0 14px;
 }
 
-.message.buyer .message-time {
+.message.own .message-time {
   text-align: right;
+}
+
+.message.other .message-time {
+  text-align: left;
 }
 
 .message-input-area {
@@ -342,4 +351,114 @@
   font-weight: 500;
   letter-spacing: 0.3px;
   margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .inbox-grid {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .inbox-messages {
+    max-height: 300px;
+  }
+
+  .message {
+    max-width: 85%;
+  }
+}
+
+@media (max-width: 640px) {
+  .chat-header {
+    padding: 12px;
+  }
+
+  .message {
+    max-width: 100%;
+  }
+
+  .messages-container {
+    padding: 12px;
+  }
+}
+
+.proposal-btn,
+.view-proposal-btn {
+  padding: 10px 18px;
+  background-color: #37524c;
+  color: #f6f3ee;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.proposal-btn:hover,
+.view-proposal-btn:hover {
+  background-color: #1c2a2e;
+}
+
+.proposal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.45);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.proposal-modal-box {
+  position: relative;
+  width: min(440px, 92vw);
+  background: white;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.proposal-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.proposal-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.proposal-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.proposal-form-field input {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.proposal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.proposal-submit-button,
+.proposal-actions button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }

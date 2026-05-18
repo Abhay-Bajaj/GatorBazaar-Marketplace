@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
+import ProposalModal from "./components/ProposalModal";
 import "./inbox.css";
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
@@ -22,6 +23,7 @@ export default function Inbox() {
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [proposalModalOpen, setProposalModalOpen] = useState(false);
   const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
   const [sending, setSending] = useState(false);
 
@@ -49,7 +51,6 @@ export default function Inbox() {
         }
         console.log("convo data", data);
         setConversations(data);
-        setSelectedConversation(data[0] || null);
       } catch (err) {
         console.error(err);
         setError("Could not load conversations. Is the backend running?");
@@ -99,19 +100,35 @@ export default function Inbox() {
     } finally {
       setSending(false);
     }
-  };
+  }
+
 
   const handleSelectedConversation = async (conversation) => {
-    setSelectedConversation(conversation);
-    setConversations((prev) =>
-      prev.map((conv) =>
-        conv.id === conversation.id ? { ...conv, read: true } : conv,
-      ),
-    );
+    let transaction = null;
     try {
+      const transactionRes = await fetch(
+        `/api/transactions/conversation/${conversation.id}`,
+        { credentials: 'include' }
+      );
+      if (transactionRes.ok) {
+        transaction = await transactionRes.json()
+      };
+      console.log(transaction)
+      const selected = {
+        ...conversation,
+        transaction
+      };
+
+      setSelectedConversation(selected);
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv.id === conversation.id ? { ...conv, read: true } : conv,
+        ),
+      );
       await markConversationRead(conversation.id);
     } catch (err) {
       console.error(err);
+      setError(err.message);
     }
   };
 
@@ -120,9 +137,77 @@ export default function Inbox() {
     navigate(`/search?q=${encodeURIComponent(query.trim())}`);
   };
 
+  const handleSendProposal = async ({ amount, exchange_location, exchange_time }) => {
+    try {
+      const res = await fetch('/api/transactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          listing_id: selectedConversation.itemId,
+          buyer_user_id: selectedConversation.buyerId,
+          seller_user_id: selectedConversation.sellerId,
+          conversation_id: selectedConversation.id,
+          amount,
+          exchange_location,
+          exchange_time
+        })
+      })
+
+      if (!res.ok) throw new Error(`Server error (${res.status})`)
+
+      await handleSelectedConversation(selectedConversation)
+      setProposalModalOpen(false)
+    } catch (err) {
+      console.error(err)
+      setError(err.message)
+    }
+  }
+
+  const handleUpdateProposal = async (transactionId, updates) => {
+    try {
+      const res = await fetch(`/api/transactions/${transactionId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(updates)
+      })
+
+      if (!res.ok) throw new Error(`Server error (${res.status})`)
+
+      await handleSelectedConversation(selectedConversation)
+      setProposalModalOpen(false)
+    } catch (err) {
+      console.error(err)
+      setError(err.message)
+    }
+  }
+  function getProposalButtonText(status) {
+    switch (status) {
+      case 'Proposed':
+        return 'View Proposal'
+
+      case 'Accepted':
+        return 'Complete Transaction'
+
+      case 'Completed':
+        return 'Transaction Complete'
+
+      case 'Rejected':
+        return 'Proposal Rejected'
+
+      default:
+        return 'View Transaction'
+    }
+  }
   return (
-    <>
-    <NavigationSearchBar
+
+    <section className="banner inbox">
+      <NavigationSearchBar
         query={query}
         onQueryChange={setQuery}
         onSearch={handleSearch}
@@ -159,7 +244,7 @@ export default function Inbox() {
                 {conversations.map((conversation) => (
                   <div
                     key={conversation.id}
-                    className={`conversation-card ${selectedConversation?.id === conversation.id ? "active" : ""}`}
+                    className={`conversation-card ${selectedConversation?.id === conversation.id ? 'active' : ''}`}
                     onClick={() => handleSelectedConversation(conversation)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSelectedConversation(conversation)}
                     role="button"
@@ -172,14 +257,10 @@ export default function Inbox() {
                     />
                     <div className="conversation-info">
                       <div className="conversation-name-row">
-                        <p className="conversation-item-name">
-                          {conversation.itemName}
-                        </p>
+                        <p className="conversation-item-name">{conversation.itemName}</p>
                         {!conversation.read && <span className="unread-dot" />}
                       </div>
-                      <p className="conversation-last-message">
-                        {conversation.lastMessage}
-                      </p>
+                      <p className="conversation-last-message">{conversation.lastMessage}</p>
                     </div>
                   </div>
                 ))}
@@ -216,16 +297,43 @@ export default function Inbox() {
                     <p>{selectedConversation.sellerName}</p>
                     <p className="chat-price">{selectedConversation.price}</p>
                   </div>
+                  {selectedConversation?.transaction && (
+                    <button
+                      className="proposal-btn"
+                      onClick={() => {
+                        if (selectedConversation.transaction.status === 'Accepted') {
+                          navigate(
+                            `/complete-transaction/${selectedConversation.transaction.transaction_id}`
+                          )
+                        } else {
+                          setProposalModalOpen(true)
+                        }
+                      }}
+                    >
+                      {getProposalButtonText(
+                        selectedConversation.transaction.status
+                      )}
+                    </button>
+                  )}
+                  {!selectedConversation?.transaction && (
+                    <button
+                      className="view-proposal-btn"
+                      onClick={() => setProposalModalOpen(true)}
+                    >
+                      Send Proposal
+                    </button>
+                  )}
                 </div>
 
                 <div className="messages-container">
-                  {selectedConversation.messages.map((message) => (
+                  {selectedConversation.messages.map(message => (
                     <div
                       key={message.id}
-                      className={`message ${message.sender}`}
-                    >
+                      className={`message ${message.sender}`}                 >
                       <p className="message-text">{message.text}</p>
-                      <p className="message-time">{message.timestamp}</p>
+                      <p className="message-time">
+                        {message.timestamp}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -257,7 +365,18 @@ export default function Inbox() {
           </div>
         </div>
       )}
+
+      {proposalModalOpen && (
+        <ProposalModal
+          transaction={selectedConversation?.transaction}
+          onClose={() => setProposalModalOpen(false)}
+          onSubmit={handleSendProposal}
+          onUpdate={handleUpdateProposal}
+        />
+      )}
+
       {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+
     </section>
     </>
   );
