@@ -100,7 +100,7 @@ export default function ItemPage() {
 
       setDeleteSuccess(true)
       setTimeout(() => {
-        navigate('/account')
+        navigate('/dashboard')
       }, 1500)
     } catch (err) {
       setDeleteError(err.message)
