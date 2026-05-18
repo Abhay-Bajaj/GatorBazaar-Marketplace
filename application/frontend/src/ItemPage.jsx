@@ -4,10 +4,15 @@ import { mockItems } from "./data/mockItems";
 import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
-import { checkLoggedIn } from './api/authAPI'
+import "./itemPage.css";
+import { ItemPageSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders";
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
 import { startConversation } from './api/messagesAPI'
 
+
 export default function ItemPage() {
+  const { isSignedIn } = useAuthStatus()
   const { id } = useParams();
   const navigate = useNavigate();
   const [item, setItem] = useState(null);
@@ -18,9 +23,9 @@ export default function ItemPage() {
   const [messageDraft, setMessageDraft] = useState("Is this available?");
   const [sendingMessage, setSendingMessage] = useState(false);
   const [messageError, setMessageError] = useState(null);
-  const [isSignedIn, setIsSignedIn] = useState(false);
   const [query, setQuery] = useState("");
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   async function handleToggleFavorite() {
@@ -52,7 +57,6 @@ export default function ItemPage() {
       const result = await startConversation(listingId, messageDraft.trim())
 
       if (result.unauthorized) {
-        setIsSignedIn(false)
         setLoginModalOpen(true)
         return
       }
@@ -69,14 +73,6 @@ export default function ItemPage() {
     e.preventDefault();
     navigate(`/search?q=${encodeURIComponent(query.trim())}`);
   };
-
-  useEffect(() => {
-    async function loadAuth() {
-      const auth = await checkLoggedIn()
-      setIsSignedIn(auth.authenticated === true)
-    }
-    loadAuth()
-  }, [])
 
   useEffect(() => {
     async function load() {
@@ -108,14 +104,10 @@ export default function ItemPage() {
     item?.seller_fullname || item?.seller_username || 'Seller'
 
   if (loading) {
-    return (
-      <section className="banner item-detail">
-        <div className="search-loading">
-          <span className="search-spinner" />
-          Loading item…
-        </div>
-      </section>
-    );
+    return <>
+      <NavBarSkeleton />
+      <ItemPageSkeleton />
+    </>
   }
 
   if (error) {
@@ -136,8 +128,9 @@ export default function ItemPage() {
         onQueryChange={setQuery}
         onSearch={handleSearch}
         onMessagesClick={() => navigate("/inbox")}
-        onProfileClick={() => setLoginModalOpen(true)}
+        onProfileClick={handleAccountClick}
         onFavoritesClick={() => navigate("/favorites")}
+        onSellClick={() => navigate('/create-listing')}
       />
 
     <section className="banner item-detail">
@@ -274,12 +267,7 @@ export default function ItemPage() {
         </div>
       </div>
     </section>
-      {loginModalOpen && (
-        <LoginModal onClose={() => {
-          setLoginModalOpen(false)
-          checkLoggedIn().then((auth) => setIsSignedIn(auth.authenticated === true))
-        }} />
-      )}
+      {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
     </div>
   );
 }

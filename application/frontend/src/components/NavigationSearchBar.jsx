@@ -17,7 +17,7 @@ export default function NavigationSearchBar({
     <header className="gb-header">
       <div className="gb-header-inner">
         <Link to="/">
-        <span className="gb-logo">{logoText}</span>
+        <span className="gb-logo" style={{display: 'flex', alignItems: 'center'}}><img src="/images/Icon.png" alt="GatorBazaar" style={{width: '50px', height: '50px', marginRight: '10px', borderRadius: '50%' }} />{logoText}</span>
         </Link>
         <form className="gb-search-form" onSubmit={onSearch} role="search">
           <input

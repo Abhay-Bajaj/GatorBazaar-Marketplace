@@ -6,6 +6,10 @@ import FiltersSidebar from './components/FiltersSidebar'
 import ListingsGrid from './components/ListingsGrid'
 import LoginModal from './components/LoginModal'
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
+import './searchPage.css'
+import { SearchPageSkeleton, NavBarSkeleton } from './components/SkeletonLoaders'
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
 
 function categoriesFromParams(searchParams) {
   const cats = searchParams.getAll('category')
@@ -36,11 +40,15 @@ function useDebouncedPrices(priceMin, priceMax, delayMs) {
 }
 
 export default function SearchPage() {
+  const { isSignedIn } = useAuthStatus()
+  
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
 
   const [query, setQuery] = useState(searchParams.get('q') ?? '')
   const [loginModalOpen, setLoginModalOpen] = useState(false)
+
+  const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
 
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(false)
@@ -189,6 +197,12 @@ export default function SearchPage() {
 
   const urlQuery = searchParams.get('q') ?? ''
 
+  if (loading) {
+    return <>
+      <NavBarSkeleton />
+      <SearchPageSkeleton />
+    </>
+  }
   return (
     <div className="search-page">
       <NavigationSearchBar
@@ -196,7 +210,7 @@ export default function SearchPage() {
         onQueryChange={setQuery}
         onSearch={handleSearch}
         onMessagesClick={() => navigate('/inbox')}
-        onProfileClick={() => setLoginModalOpen(true)}
+        onProfileClick={handleAccountClick}
         onFavoritesClick={() => navigate('/favorites')}
         onSellClick={() => navigate('/create-listing')}
       />

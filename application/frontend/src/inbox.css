@@ -1,8 +1,17 @@
 /* ══════════════════════════════════════════
    Inbox Page
 ══════════════════════════════════════════ */
+
 .inbox {
   min-height: 70vh;
+}
+
+.banner-inbox {
+  margin: 50px;
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 15px;
+  animation: card-rise 0.4s ease both;
 }
 
 .back-button {

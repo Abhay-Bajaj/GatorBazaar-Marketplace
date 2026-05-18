@@ -197,12 +197,14 @@ export default function TransactionPage() {
   return (
     <div className="transaction-page">
       <NavigationSearchBar
-        query={query}
-        onQueryChange={setQuery}
-        onSearch={handleSearch}
-        onProfileClick={() => setLoginModalOpen(true)}
-        onSellClick={() => navigate('/create-listing')}
-      />
+            query={query}
+            onQueryChange={setQuery}
+            onSearch={handleSearch}
+            onProfileClick={() => setLoginModalOpen(true)}
+            onSellClick={() => navigate('/create-listing')}
+            onMessagesClick={() => navigate('/inbox')}
+            onFavoritesClick={() => navigate('/favorites')}
+                          />
       <section className="banner transaction-page">
         <div className="banner-content">
           <div className="transaction-header-row">
