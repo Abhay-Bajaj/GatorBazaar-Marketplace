@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const { getUser } = require('../controllers/userController')
+const { getUser, getLoggedUser } = require('../controllers/userController')
 
-router.get('/', getUser)
+router.get('/loggedUser', getLoggedUser)
+router.get('/:id', getUser)
 
 module.exports = router;

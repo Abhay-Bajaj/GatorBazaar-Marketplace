@@ -26,11 +26,23 @@ async function getUserByEmail(email) {
   return rows[0];
 }
 
-async function getUserById() {
-  const [rows] = await pool.query(
-    `SELECT * FROM registered_users WHERE user_id = 1`
+async function getUserById(userId) {
+  const [rows] = await pool.execute(
+    'SELECT * FROM registered_users WHERE user_id = ?',
+    [userId]
   );
   if (!rows.length) return null
+  return rows[0]
+}
+
+async function changeUserPassword(userId, hashedPassword) {
+  const [rows] = await pool.execute(
+    `UPDATE registered_users
+    SET password_hash = ?
+    WHERE user_id = ?`,
+    [hashedPassword, userId]
+  );
+  if(!rows.length) return null
   return rows[0]
 }
 
@@ -38,5 +50,6 @@ module.exports = {
   getUserById,
   getUserByUsername,
   getUserByEmail,
-  createUser
+  createUser,
+  changeUserPassword
 }
