@@ -216,6 +216,7 @@ export default function Inbox() {
         onProfileClick={handleAccountClick}
         onFavoritesClick={() => navigate("/favorites")}
       />
+      
     <section className="banner-inbox">
 
       <button className="back-button" type="button" onClick={() => navigate(-1)}>
@@ -378,6 +379,6 @@ export default function Inbox() {
       {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
 
     </section>
-    </>
+    </section>
   );
 }
