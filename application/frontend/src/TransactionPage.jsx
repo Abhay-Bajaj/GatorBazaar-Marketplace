@@ -153,8 +153,8 @@ export default function TransactionPage() {
     return (
       <section className="banner transaction-page">
         <p className="search-error">⚠ {error || 'Transaction not found'}</p>
-        <Link to="/transactions" className="search-btn">
-          Back to Transactions
+        <Link to="/inbox" className="search-btn">
+          Back to Inbox
         </Link>
       </section>
     )
