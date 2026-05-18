@@ -70,7 +70,8 @@ app.use('/api/listings', listingRoute)
 app.use('/api/favorites', favoritesRoute)
 app.use('/api/conversations', conversationRoute)
 app.use('/api/categories', categoryRoute)
-
+// serves uploaded files(images) publicly
+app.use('/uploads', express.static('uploads'))
 //  SERVE REACT BUILD 
 app.use(express.static(path.join(__dirname, '../frontend/dist')))
 
