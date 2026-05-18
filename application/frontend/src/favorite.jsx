@@ -32,7 +32,13 @@ export default function Favorite() {
         const res = await fetch(`/api/favorites`);
         if (!res.ok) throw new Error();
         const data = await res.json();
-        setFavorites(data);
+        setFavorites(
+          data.map((item) => ({
+            ...item,
+            id: item.listing_id,
+            image: item.image_url,
+          }))
+        )
       } catch {
         setFavorites(mockFavorites);
       } finally {
