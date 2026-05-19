@@ -14,7 +14,7 @@
 
 .site-nav {
   position: relative;
-  padding: 28px 240px;
+  padding: 28px 100px;
   background: linear-gradient(135deg, #1c2a2e, #203b3a 55%, #37524c);
   color: #f6f3ee;
   border-radius: 18px;
@@ -265,6 +265,15 @@
 }
 
 /* ── VP nav elements ── */
+
+.vp-nav-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+}
+
 .vp-nav-link {
   display: inline-block;
   margin-top: 14px;
@@ -306,7 +315,6 @@
 /* Dashboard link/icon shown inside the nav body on all pages */
 .site-nav-dashboard-link {
   display: inline-block;
-  margin-top: 12px;
 }
 
 .site-nav-dashboard-icon {
