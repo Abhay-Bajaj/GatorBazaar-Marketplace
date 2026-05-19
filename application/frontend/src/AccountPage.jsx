@@ -130,7 +130,7 @@ export default function AccountPage() {
     const date_joined = new Date(user.joinedDate).toLocaleDateString();
 
     return (
-        <div className="account-page">
+        <>
             <NavigationSearchBar
                 query={query}
                 onQueryChange={setQuery}
@@ -141,7 +141,7 @@ export default function AccountPage() {
                 placeholder="Search marketplace items"
                 searchButtonText="Search"
             />
-
+        <div className="account-page">
             <div className="account-content">
                 <div className="account-main-row">
                     <div className="account-section">
@@ -305,6 +305,7 @@ export default function AccountPage() {
                 </div>
             </div>
         </div>
+        </>
     );
 }
 

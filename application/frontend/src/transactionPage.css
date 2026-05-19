@@ -47,7 +47,7 @@
   background: #2b7a44;
 }
 
-.status-pending {
+.status-accepted {
   background: #c67c0f;
 }
 
@@ -117,7 +117,7 @@
   flex-wrap: wrap;
 }
 
-.transaction-meta-row > div {
+.transaction-meta-row>div {
   min-width: 170px;
 }
 
@@ -138,6 +138,13 @@
   align-items: center;
   gap: 10px;
   text-align: center;
+}
+
+.profile-pic.confirmed {
+  border: 3px solid #22c55e;
+  border-radius: 50%;
+  padding: 12px;
+  background: rgba(34, 197, 94, 0.08);
 }
 
 .participant-role {
@@ -300,6 +307,28 @@
 }
 
 .complete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  padding: 14px 26px;
+  color: #37524c;
+  background: #f6f3ee;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #f6f3ee;
+}
+
+.cancel-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }

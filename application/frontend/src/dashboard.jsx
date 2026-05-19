@@ -6,6 +6,7 @@ import LoginModal from './components/LoginModal'
 import './dashboard.css'
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
+import { DashboardSkeleton, NavBarSkeleton } from './components/SkeletonLoaders'
 
 
 export default function Dashboard() {
@@ -14,9 +15,11 @@ export default function Dashboard() {
   const [query, setQuery] = useState('')
   const [loginModalOpen, setLoginModalOpen] = useState(false)
   const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
+  const [loading, setLoading] = useState(true)
 
   const [activeListings, setActiveListings] = useState([])
   const [soldListings, setSoldListings] = useState([])
+
   
 
 
@@ -57,11 +60,20 @@ export default function Dashboard() {
 
       } catch (err) {
         console.error(err)
+      } finally {
+        setLoading(false)
       }
     }
 
     fetchListings()
   }, [])
+
+  if (loading) {
+    return <>
+      <NavBarSkeleton />
+      <DashboardSkeleton />
+    </>
+  }
 
   return (
     <div className="search-page">
