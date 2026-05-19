@@ -10,7 +10,6 @@ function formatPrice(price) {
 }
 
 function mapMessage(row, userId) {
-      console.log(row.sender_id, userId)
 
   return {
     id: row.message_id,

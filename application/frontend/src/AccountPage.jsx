@@ -39,11 +39,10 @@ export default function AccountPage() {
                 const userData = await userRes.json()
                 const favoritesData = await favoritesRes.json()
                 const listingsData = await listingsRes.json()
-                console.log("listing data", listingsData)
+
                 setUser(userData.userInfo)
                 setRecentFavorites(favoritesData)
                 setBoughtListings(listingsData.listings)
-                console.log("bought listings", boughtListings)
 
             } catch (err) {
                 console.error('Failed to fetch account data:', err)

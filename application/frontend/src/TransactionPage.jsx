@@ -25,7 +25,7 @@ function StarRating({ rating, onRatingChange, disabled = false }) {
 
 export default function TransactionPage() {
   const { transaction_id } = useParams()
-  // console.log(transaction_id)
+
   const navigate = useNavigate()
   const [transaction, setTransaction] = useState(null)
   const [loading, setLoading] = useState(true)

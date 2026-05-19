@@ -6,7 +6,7 @@ import LoginForm from './LoginForm'
 import RegisterForm from './RegisterForm'
 import ForgotLoginForm from './ForgotLoginForm'
 
-export default function LoginModal({ onClose, isOpen = true }) {
+export default function LoginModal({ onClose, isOpen = true, onLoginSuccess }) {
   const [mode, setMode] = useState('login')
 
   useEffect(() => {
@@ -53,6 +53,7 @@ export default function LoginModal({ onClose, isOpen = true }) {
           <LoginForm
             onSwitchToRegister={() => setMode('register')}
             onSwitchToForgot={() => setMode('forgot')}
+            onLoginSuccess={onLoginSuccess}
           />
         )}
 

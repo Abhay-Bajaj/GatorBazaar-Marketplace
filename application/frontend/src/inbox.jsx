@@ -34,23 +34,22 @@ export default function Inbox() {
     async function load() {
       setLoading(true);
       setError(null);
-      console.log("is signed in", isSignedIn);
+
       if (!isSignedIn) {
         setConversations([]);
         setSelectedConversation(null);
         setLoading(false);
         return;
       }
-      console.log("is signed in2", isSignedIn);
+
       try {
         const { unauthorized, conversations: data } = await getConversations();
         if (unauthorized) {
-          console.log("not authorzied on fetch");
           setConversations([]);
           setSelectedConversation(null);
           return;
         }
-        console.log("convo data", data);
+
         setConversations(data);
       } catch (err) {
         console.error(err);
@@ -114,7 +113,7 @@ export default function Inbox() {
       if (transactionRes.ok) {
         transaction = await transactionRes.json()
       };
-      console.log(transaction)
+
       const selected = {
         ...conversation,
         transaction
