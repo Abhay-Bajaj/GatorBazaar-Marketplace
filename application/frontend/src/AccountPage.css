@@ -335,3 +335,36 @@
     box-shadow:
         0 4px 12px rgba(0, 0, 0, 0.18);
 }
+
+.account-tabs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.logout-button {
+    margin-left: auto;
+
+    background: #b23b3b;
+    color: white;
+
+    border: none;
+    border-radius: 10px;
+
+    padding: 10px 18px;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.logout-button:hover {
+    background: #922f2f;
+}

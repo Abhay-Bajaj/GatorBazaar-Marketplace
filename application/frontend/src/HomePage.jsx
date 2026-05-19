@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
-import "./HomePage.css";
-import NavigationSearchBar from "./components/NavigationSearchBar";
-import LoginModal from "./components/LoginModal";
-import CreateListing from "./CreateListing";
-import { Link, useNavigate } from "react-router-dom";
-import { mockItems } from "./data/mockItems";
-import { HomePageSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders";
-import useAuthStatus from "./hooks/useAuthStatus";
-import useAccountNavigation from "./hooks/useAccountNavigation";
-import ListingCard from "./components/ListingCard";
+import { useState, useEffect} from "react"
+import './HomePage.css'
+import NavigationSearchBar from "./components/NavigationSearchBar"
+import LoginModal from "./components/LoginModal"
+import CreateListing from "./CreateListing"
+import { Link, useNavigate } from "react-router-dom"
+import ListingCard from "./components/ListingCard"
+import { mockItems } from './data/mockItems'
+import { HomePageSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders"
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
 
 const categories = [
   "Clothes",
@@ -20,12 +20,12 @@ const categories = [
 ];
 
 export default function HomePage() {
-  const { isSignedIn } = useAuthStatus();
-  const [query, setQuery] = useState("");
-  const navigate = useNavigate();
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [favorites, setFavorites] = useState([]);
+    const { isSignedIn } = useAuthStatus()
+    const [query, setQuery] = useState("")
+    const navigate = useNavigate() 
+    const [loginModalOpen, setLoginModalOpen] = useState(false)
+    const [recentListings, setRecentListings] = useState([])
+    const [loading, setLoading] = useState(true)
 
   const handleToggleFavorite = (itemId) => {
     setFavorites((prev) =>
@@ -47,15 +47,92 @@ export default function HomePage() {
     navigate(`/search?q=${query}`);
   }
 
-  function handleCategoryClick(category) {
-    navigate(`/search?category=${category}`);
-  }
-  // Recently added items || Replace mockItems with db
-  const recentItems = mockItems.slice(0, 5);
+    function handleCategoryClick(category) {
+        navigate(`/search?category=${category}`)
+    }
 
-  const recentViewed = mockItems.slice(0, 5);
+    useEffect(() => {
+        async function fetchListings() {
+            try {
+                const response = await fetch(
+                    'http://localhost:3000/api/items/new',
+                {
+                    credentials: 'include',
+                }
+                )
 
-  if (loading) {
+                const data = await response.json()
+
+                if (!response.ok){
+                    console.error(data.error)
+                    return
+                }
+
+                setRecentListings(data)
+
+            } catch (err) {
+                console.error(err)
+            }
+        }
+
+        fetchListings()
+    }, [])
+
+    if (loading) {
+        return <>
+            <NavBarSkeleton />
+            <HomePageSkeleton />
+        </>
+    }
+    
+    return (
+        <div className="homepage">
+                        <header className="nav-bar">
+                        <NavigationSearchBar
+                                        query={query}
+                                        onQueryChange={setQuery}
+                                        onSearch={handleSearch}
+                                        onProfileClick={handleAccountClick}
+                                        onSellClick={() => navigate('/create-listing')}
+                                        onMessagesClick={() => navigate('/inbox')}
+                                        onFavoritesClick={() => navigate('/favorites')}
+                                    />
+                        </header>
+            <section>
+                <div className="category-list">
+                    {categories.map((category) => (
+                        <button
+                            key={category}
+                            onClick={() => handleCategoryClick(category)}>
+                            {category}
+                        </button>
+                    ))}
+                </div>
+            </section>
+            <section>
+                <h3>Recently Added</h3>
+                <div className="recent-items">
+                    {recentListings.map((item) => (
+                        <ItemCard key={item.listing_id} item={item} />
+                    ))}
+                </div>
+            </section>
+            <section> 
+                {/* Placeholder, implement with db*/} 
+                <h3> Recently Viewed</h3>
+                <div className="recent-items"> 
+                    {recentListings.map((item) => (
+                        <ItemCard key={item.listing_id} item={item} />
+                    ))}
+                </div>
+            </section>
+            {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+            
+        </div>
+    )
+}
+    
+function ItemCard({ item }) {
     return (
       <>
         <NavBarSkeleton />

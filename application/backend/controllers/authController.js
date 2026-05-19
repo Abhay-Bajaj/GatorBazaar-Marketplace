@@ -26,8 +26,6 @@ async function register(req, res) {
 
         const userId = await userModel.createUser(fullname, username, email, hashedPassword);
 
-        req.session.userId = userId;
-
         res.status(201).json({ message: "User registered", userId });
 
     } catch (err) {
@@ -72,6 +70,22 @@ async function login(req, res) {
         console.error(err);
         res.status(500).json({ error: "Server error" });
     }
+}
+
+async function logout(req, res) {
+    req.session.destroy((err) => {
+        if(err) {
+            return res.status(500).json({
+                error: 'Failed to logout'
+            })
+        }
+        
+        res.clearCookie('connect.sid')
+
+        res.json({
+            message: 'Logged out successfully'
+        })
+    })
 }
 
 async function checkLoggedUser(req, res) {
@@ -150,6 +164,7 @@ async function changePassword(req, res) {
 module.exports = {
     register,
     login,
+    logout,
     checkLoggedUser,
     changePassword
 }

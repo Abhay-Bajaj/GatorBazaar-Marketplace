@@ -16,7 +16,7 @@ export default function AccountPage() {
     const [passwordError, setPasswordError] = useState('')
     const [passwordSuccess, setPasswordSuccess] = useState('')
     const [recentFavorites, setRecentFavorites] = useState([])
-    const [userListings, setUserListings] = useState([])
+    const [boughtListings, setBoughtListings] = useState([])
     const [activeTab, setActiveTab] = useState('purchased')
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export default function AccountPage() {
                         credentials: 'include'
                     }),
 
-                    fetch('/api/items/my-listings', {
+                    fetch('/api/items/bought-listings', {
                         credentials: 'include'
                     })
                 ])
@@ -39,14 +39,11 @@ export default function AccountPage() {
                 const userData = await userRes.json()
                 const favoritesData = await favoritesRes.json()
                 const listingsData = await listingsRes.json()
-
+                console.log("listing data", listingsData)
                 setUser(userData.userInfo)
                 setRecentFavorites(favoritesData)
-                setUserListings(listingsData.soldListings)
-
-                console.log("user", user)
-                console.log("listings", userListings)
-                console.log("favs", recentFavorites)
+                setBoughtListings(listingsData.listings)
+                console.log("bought listings", boughtListings)
 
             } catch (err) {
                 console.error('Failed to fetch account data:', err)
@@ -80,7 +77,7 @@ export default function AccountPage() {
         }
 
         try {
-            const res = await fetch('http://localhost:3000/auth/changePassword', {
+            const res = await fetch('/auth/changePassword', {
                 method: 'PUT',
                 credentials: 'include',
                 headers: {
@@ -108,6 +105,23 @@ export default function AccountPage() {
         } catch (err) {
             console.error(err)
             setPasswordError('Server error')
+        }
+    }
+
+    async function handleLogout() {
+        try {
+            const res = await fetch('/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            })
+
+            if (!res.ok) {
+                throw new Error('Logout failed')
+            }
+
+            navigate('/')
+        } catch (err) {
+            console.log(err)
         }
     }
 
@@ -153,27 +167,38 @@ export default function AccountPage() {
                         </div>
                     </div>
                     <div className="account-section">
-                        <div className="account-tabs">
+                        <div className='account-tabs-header'>
+                            <div className="account-tabs">
 
-                            <button
-                                className={activeTab === 'purchased' ? 'active' : ''}
-                                onClick={() => setActiveTab('purchased')}
-                            >
-                                Purchased
-                            </button>
+                                <button
+                                    className={activeTab === 'purchased' ? 'active' : ''}
+                                    onClick={() => setActiveTab('purchased')}
+                                >
+                                    Purchased
+                                </button>
 
-                            <button
-                                className={activeTab === 'favorites' ? 'active' : ''}
-                                onClick={() => setActiveTab('favorites')}
-                            >
-                                Favorites
-                            </button>
+                                <button
+                                    className={activeTab === 'favorites' ? 'active' : ''}
+                                    onClick={() => setActiveTab('favorites')}
+                                >
+                                    Favorites
+                                </button>
 
+                                <button
+                                    className={activeTab === 'settings' ? 'active' : ''}
+                                    onClick={() => setActiveTab('settings')}
+                                >
+                                    Settings
+                                </button>
+
+
+                            </div>
                             <button
-                                className={activeTab === 'settings' ? 'active' : ''}
-                                onClick={() => setActiveTab('settings')}
+                                className="logout-button"
+                                type="button"
+                                onClick={handleLogout}
                             >
-                                Settings
+                                Sign Out
                             </button>
                         </div>
 
@@ -244,7 +269,6 @@ export default function AccountPage() {
                                             title={item.title}
                                             price={item.price}
                                             image={item.image_url || 'placeholder'}
-                                            //category_name={item.category_name}
                                             isFavorited={true}
                                         />
                                     ))}
@@ -264,14 +288,13 @@ export default function AccountPage() {
                             <div className="account-tab-panel">
                                 <h2 className="account-tab-header">Recent Purchases</h2>
                                 <div className="account-listings-row">
-                                    {userListings.slice(0, 4).map((item) => (
+                                    {boughtListings.slice(0, 4).map((item) => (
                                         <ListingCard
                                             key={item.listing_id}
                                             id={item.listing_id}
                                             title={item.title}
                                             price={item.price}
                                             image={item.image_url || 'placeholder'}
-                                            //category_name={item.category_name}
                                             isOwner={true}
                                         />
                                     ))}

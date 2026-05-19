@@ -7,14 +7,15 @@ export default function RegisterForm({ onSwitchToLogin }) {
         email: '',
         password: '',
         confirmPassword: '',
+        agreedToTerms: false,
     })
 
     function handleChange(e) {
-        const { name, value } = e.target
+        const { name, value, type, checked } = e.target
 
         setForm((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: type === 'checkbox' ? checked : value,
         }))
     }
 
@@ -36,7 +37,8 @@ export default function RegisterForm({ onSwitchToLogin }) {
         usernameValid &&
         emailValid &&
         passwordValid &&
-        passwordsMatch
+        passwordsMatch &&
+        form.agreedToTerms
 
     function getInputClass(value, isValid) {
         if (!value) return 'login-input'
@@ -51,7 +53,7 @@ export default function RegisterForm({ onSwitchToLogin }) {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/auth/register", {
+            const response = await fetch("/auth/register", {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -72,7 +74,7 @@ export default function RegisterForm({ onSwitchToLogin }) {
                 return;
             }
 
-            onclose();
+            onSwitchToLogin();
 
         } catch (err) {
             console.error(err);
@@ -145,6 +147,15 @@ export default function RegisterForm({ onSwitchToLogin }) {
                     {passwordsMatch ? '✓' : '✗'} Passwords must match
                 </p>
             )}
+            <label className="terms-checkbox">
+                <input
+                    type="checkbox"
+                    name="agreedToTerms"
+                    checked={form.agreedToTerms}
+                    onChange={handleChange}
+                />{' '}
+                I agree to the <a href="#" onClick={(e) => { e.preventDefault(); }} role="link" aria-disabled="true">terms</a>
+            </label>
             <p1 className="required-note"><span className="required">*</span> Required fields</p1>
             <button className="login-btn" type="submit" disabled={!formValid}>
                 Sign Up

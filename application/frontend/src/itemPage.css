@@ -25,6 +25,118 @@
   margin-bottom: 5px;
 }
 
+.owner-actions {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+.delete-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.delete-modal {
+  background: white;
+  padding: 24px;
+  border-radius: 14px;
+  width: min(90%, 380px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.delete-modal h3 {
+  margin-top: 0;
+}
+
+.delete-modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.delete-success-modal {
+  background: white;
+  padding: 28px;
+  border-radius: 14px;
+  width: min(90%, 360px);
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeInScale 0.2s ease;
+}
+
+.delete-success-modal h3 {
+  margin-top: 0;
+  color: #2f6b45;
+}
+
+.delete-success-modal p {
+  margin-bottom: 0;
+  color: #555;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.cancel-delete-button {
+  padding: 10px 16px;
+  border: 1px solid #d0d0d0;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.confirm-delete-button {
+  padding: 10px 16px;
+  border: none;
+  background: #b83232;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.delete-listing-button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background-color: #b83232;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.delete-listing-button:hover {
+  background-color: #922727;
+  transform: translateY(-1px);
+}
+
+.delete-listing-button:disabled {
+  background-color: #b9aaa7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.delete-error {
+  margin: 0;
+  color: #b83232;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .item-images-container {
   display: flex;
   flex-direction: column;

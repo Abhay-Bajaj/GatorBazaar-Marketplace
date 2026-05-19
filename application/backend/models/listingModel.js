@@ -7,6 +7,7 @@ async function getListingById(id, userId = null) {
         l.title,
         l.description,
         l.price,
+        l.active,
         c.category_name,
         (
             SELECT li.image_url
@@ -102,8 +103,67 @@ async function createListing(userId, title, description, price, category, tag, i
 
 }
 
+async function getBoughtListings(userId) {
+    const [rows] = await pool.execute(
+        `
+        SELECT
+            l.listing_id,
+            l.title,
+            l.price,
+            bl.purchase_date,
+
+            (
+                SELECT li.image_url
+                FROM listing_images li
+                WHERE li.listing_id = l.listing_id
+                LIMIT 1
+            ) AS image_url
+
+        FROM bought_listings bl
+
+        JOIN listings l
+            ON bl.listing_id = l.listing_id
+
+        WHERE bl.buyer_id = ?
+
+        ORDER BY bl.purchase_date DESC
+        `,
+        [userId]
+    )
+
+    return rows
+}
+
+async function removeListing(listingId, userId) {
+  const [result] = await pool.query (
+    `
+    DELETE FROM listings 
+    WHERE listing_id = ?
+    AND user_id = ?
+    `,
+    [listingId, userId]
+  );
+  return result.affectedRows > 0
+}
+
+async function getNewestListings() {
+
+  const [rows] = await pool.execute(
+    `SELECT * 
+    FROM listings
+    ORDER BY listing_id DESC
+    LIMIT 5`
+  )
+
+  return rows;
+
+}
+
 module.exports = {
   getListingById,
   getListingsByUser,
-  createListing
+  createListing,
+  getBoughtListings,
+  removeListing,
+  getNewestListings
 }
