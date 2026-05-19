@@ -92,11 +92,42 @@
   position: absolute;
   top: 4px;
   right: 4px;
-  background: rgba(0, 0, 0, 0.6);
-  color: rgb(255, 0, 0);
+  background: rgb(255, 255, 255);
+  color: rgb(236, 58, 58);
   border: none;
   border-radius: 50%;
   width: 20px;
   height: 20px;
   cursor: pointer;
+}
+
+.image-add-title {
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s, background-color 0.3s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+  gap: 6px;
+}
+
+.image-add-title:hover  {
+  font-size: 24px;
+  color: #888;
+}
+
+.image-add-icon {
+  font-size: 32px;
+  color: #ccc;
+  line-height: 1;
+}
+
+.image-add-label {
+  font-size: 14px;
+  color: #888;
 }
