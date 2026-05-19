@@ -102,6 +102,7 @@ async function createListing(userId, title, description, price, category, tag, i
 
 }
 
+
 async function removeListing(listingId, userId) {
   const [result] = await pool.query (
     `
@@ -114,9 +115,23 @@ async function removeListing(listingId, userId) {
   return result.affectedRows > 0
 }
 
+async function getNewestListings() {
+
+  const [rows] = await pool.execute(
+    `SELECT * 
+    FROM listings
+    ORDER BY listing_id DESC
+    LIMIT 5`
+  )
+
+  return rows;
+
+}
+
 module.exports = {
   getListingById,
   getListingsByUser,
   removeListing,
+  getNewestListings,
   createListing
 }

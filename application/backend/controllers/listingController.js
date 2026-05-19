@@ -1,4 +1,5 @@
-const { getListingById, getListingsByUser, removeListing, createListing } = require('../models/listingModel')
+
+const { getListingById, getListingsByUser, getNewestListings, removeListing, createListing } = require('../models/listingModel')
 
 async function getListing(req, res) {
   try {
@@ -50,6 +51,19 @@ async function getMyListings(req, res) {
     res.status(500).json({
       error: "Server error"
     });
+  }
+}
+
+async function getNewListings(req, res) {
+  try {
+
+    const listings = await getNewestListings()
+
+    res.json(listings)
+
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: err.message })
   }
 }
 
@@ -144,4 +158,5 @@ module.exports = {
   getMyListings,
   deleteListing,
   postListing,
+  getNewListings,
 }
