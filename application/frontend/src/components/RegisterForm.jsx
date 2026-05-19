@@ -53,7 +53,7 @@ export default function RegisterForm({ onSwitchToLogin }) {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/auth/register", {
+            const response = await fetch("/auth/register", {
                 method: "POST",
                 credentials: "include",
                 headers: {
