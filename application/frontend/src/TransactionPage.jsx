@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
-import CreateListing from "./CreateListing"
-import { mockTransactions } from "./data/mockTransactions"
+import useAuthStatus from "./hooks/useAuthStatus"
+import useAccountNavigation from "./hooks/useAccountNavigation"
 import "./TransactionPage.css"
 
 
@@ -24,6 +24,7 @@ function StarRating({ rating, onRatingChange, disabled = false }) {
 }
 
 export default function TransactionPage() {
+  const {isSignedIn} = useAuthStatus()
   const { transaction_id } = useParams()
   // console.log(transaction_id)
   const navigate = useNavigate()
@@ -37,6 +38,7 @@ export default function TransactionPage() {
   const [reviews, setReviews] = useState([])
   const [query, setQuery] = useState('')
   const [loginModalOpen, setLoginModalOpen] = useState(false)
+  const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
 
   useEffect(() => {
     fetchTransaction()
@@ -200,7 +202,7 @@ export default function TransactionPage() {
             query={query}
             onQueryChange={setQuery}
             onSearch={handleSearch}
-            onProfileClick={() => setLoginModalOpen(true)}
+            onProfileClick={handleAccountClick}
             onSellClick={() => navigate('/create-listing')}
             onMessagesClick={() => navigate('/inbox')}
             onFavoritesClick={() => navigate('/favorites')}
