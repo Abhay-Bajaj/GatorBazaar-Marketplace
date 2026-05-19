@@ -7,7 +7,7 @@ import ListingsGrid from './components/ListingsGrid'
 import LoginModal from './components/LoginModal'
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
 import './searchPage.css'
-import { SearchPageSkeleton, NavBarSkeleton } from './components/SkeletonLoaders'
+// skeletons are rendered locally inside components to avoid full-page remounts
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
 
@@ -197,12 +197,8 @@ export default function SearchPage() {
 
   const urlQuery = searchParams.get('q') ?? ''
 
-  if (loading) {
-    return <>
-      <NavBarSkeleton />
-      <SearchPageSkeleton />
-    </>
-  }
+  // Always render the page shell. Show loading state inside the listings grid
+  // to avoid unmounting the entire page (prevents skeleton flicker when filters change).
   return (
     <div className="search-page">
       <NavigationSearchBar

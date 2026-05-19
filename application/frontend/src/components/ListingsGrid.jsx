@@ -3,11 +3,16 @@ import ListingCard from './ListingCard'
 export default function ListingsGrid({ listings, loading, error, onToggleFavorite }) {
   if (loading) {
     return (
-      <div className="gb-grid-status">
-        <div className="search-loading">
-          <span className="search-spinner" />
-          Searching…
-        </div>
+      <div className="gb-listings-grid">
+        {[...Array(12)].map((_, i) => (
+          <div key={i} className="gb-listing-card skeleton-card">
+            <div className="skeleton skeleton-card-image-search" />
+            <div className="gb-card-footer" style={{ flexDirection: 'column', gap: 8 }}>
+              <div className="skeleton skeleton-text-sm" style={{ width: '80%' }} />
+              <div className="skeleton skeleton-text-sm" style={{ width: '40%' }} />
+            </div>
+          </div>
+        ))}
       </div>
     )
   }

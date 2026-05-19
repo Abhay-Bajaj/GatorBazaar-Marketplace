@@ -6,7 +6,7 @@ import ProposalModal from "./components/ProposalModal";
 import "./inbox.css";
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
-import { InboxSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders";
+import { InboxSkeleton } from "./components/SkeletonLoaders";
 
 import {
   getConversations,
@@ -205,12 +205,7 @@ export default function Inbox() {
     }
   }
 
-  if (loading) {
-    return <>
-      <NavBarSkeleton />
-      <InboxSkeleton />
-    </>
-  }
+  
   return (
     <>
       <NavigationSearchBar
@@ -222,154 +217,150 @@ export default function Inbox() {
         onProfileClick={handleAccountClick}
         onFavoritesClick={() => navigate("/favorites")}
       />
-    <section className="banner-inbox">
+      {loading ? (
+        <InboxSkeleton />
+      ) : (
+        <section className="banner-inbox">
 
-      <button className="back-button" type="button" onClick={() => navigate(-1)}>
-        ← Back
-      </button>
+          <button className="back-button" type="button" onClick={() => navigate(-1)}>
+            ← Back
+          </button>
 
-      {loading && (
-        <div className="search-loading">
-          <span className="search-spinner" />
-          Loading messages…
-        </div>
-      )}
+          {error && <p className="search-error">⚠ {error}</p>}
 
-      {error && <p className="search-error">⚠ {error}</p>}
-
-      {!loading && (
-        <div className="inbox-grid">
-          <div className="inbox-messages">
-            <h2>Messages</h2>
-            {!isSignedIn || conversations.length === 0 ? (
-              <div className="inbox-no-messages">
-                <p>{isSignedIn ? "No messages" : "Sign in to view messages"}</p>
-              </div>
-            ) : (
-              <div className="conversations-list">
-                {conversations.map((conversation) => (
-                  <div
-                    key={conversation.id}
-                    className={`conversation-card ${selectedConversation?.id === conversation.id ? 'active' : ''}`}
-                    onClick={() => handleSelectedConversation(conversation)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSelectedConversation(conversation)}
-                    role="button"
-                    tabIndex={0}
-                  >
-                    <img
-                      src={conversation.itemImage}
-                      alt={conversation.itemName}
-                      className="conversation-item-image"
-                    />
-                    <div className="conversation-info">
-                      <div className="conversation-name-row">
-                        <p className="conversation-item-name">{conversation.itemName}</p>
-                        {!conversation.read && <span className="unread-dot" />}
-                      </div>
-                      <p className="conversation-last-message">{conversation.lastMessage}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="inbox-chat">
-            {!isSignedIn ? (
-              <div className="inbox-signin-state">
-                <p>Please register/sign-in to view messages</p>
-                <button
-                  className="inbox-signin-button"
-                  type="button"
-                  onClick={() => setLoginModalOpen(true)}
-                >
-                  Register/Sign-in
-                </button>
-              </div>
-            ) : conversations.length === 0 ? (
-              <div className="inbox-no-conversations-state">
-                <p>Message sellers from a listing page to start chatting</p>
-              </div>
-            ) : selectedConversation ? (
-              <>
-                <div className="chat-header">
-                  <img
-                    src={selectedConversation.itemImage}
-                    alt={selectedConversation.itemName}
-                    className="chat-item-image"
-                  />
-                  <div className="chat-header-info">
-                    <h3>{selectedConversation.itemName}</h3>
-                    <p>{selectedConversation.sellerName}</p>
-                    <p className="chat-price">{selectedConversation.price}</p>
-                  </div>
-                  {selectedConversation?.transaction && (
-                    <button
-                      className="proposal-btn"
-                      onClick={() => {
-                        if (selectedConversation.transaction.status === 'Accepted') {
-                          navigate(
-                            `/complete-transaction/${selectedConversation.transaction.transaction_id}`
-                          )
-                        } else {
-                          setProposalModalOpen(true)
-                        }
-                      }}
-                    >
-                      {getProposalButtonText(
-                        selectedConversation.transaction.status
-                      )}
-                    </button>
-                  )}
-                  {!selectedConversation?.transaction && (
-                    <button
-                      className="view-proposal-btn"
-                      onClick={() => setProposalModalOpen(true)}
-                    >
-                      Send Proposal
-                    </button>
-                  )}
+          <div className="inbox-grid">
+            <div className="inbox-messages">
+              <h2>Messages</h2>
+              {!isSignedIn || conversations.length === 0 ? (
+                <div className="inbox-no-messages">
+                  <p>{isSignedIn ? "No messages" : "Sign in to view messages"}</p>
                 </div>
-
-                <div className="messages-container">
-                  {selectedConversation.messages.map(message => (
+              ) : (
+                <div className="conversations-list">
+                  {conversations.map((conversation) => (
                     <div
-                      key={message.id}
-                      className={`message ${message.sender}`}                 >
-                      <p className="message-text">{message.text}</p>
-                      <p className="message-time">
-                        {message.timestamp}
-                      </p>
+                      key={conversation.id}
+                      className={`conversation-card ${selectedConversation?.id === conversation.id ? 'active' : ''}`}
+                      onClick={() => handleSelectedConversation(conversation)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSelectedConversation(conversation)}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <img
+                        src={conversation.itemImage}
+                        alt={conversation.itemName}
+                        className="conversation-item-image"
+                      />
+                      <div className="conversation-info">
+                        <div className="conversation-name-row">
+                          <p className="conversation-item-name">{conversation.itemName}</p>
+                          {!conversation.read && <span className="unread-dot" />}
+                        </div>
+                        <p className="conversation-last-message">{conversation.lastMessage}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
+              )}
+            </div>
 
-                <div className="message-input-area">
-                  <input
-                    type="text"
-                    placeholder="Type your message..."
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                    className="message-input"
-                  />
+            <div className="inbox-chat">
+              {!isSignedIn ? (
+                <div className="inbox-signin-state">
+                  <p>Please register/sign-in to view messages</p>
                   <button
+                    className="inbox-signin-button"
                     type="button"
-                    onClick={handleSendMessage}
-                    className="message-send-button"
-                    disabled={sending}
+                    onClick={() => setLoginModalOpen(true)}
                   >
-                    {sending ? "Sending…" : "Send"}
+                    Register/Sign-in
                   </button>
                 </div>
-              </>
-            ) : (
-              <div className="inbox-empty-state">
-                <p>Select a chat to view messages</p>
-              </div>
-            )}
+              ) : conversations.length === 0 ? (
+                <div className="inbox-no-conversations-state">
+                  <p>Message sellers from a listing page to start chatting</p>
+                </div>
+              ) : selectedConversation ? (
+                <>
+                  <div className="chat-header">
+                    <img
+                      src={selectedConversation.itemImage}
+                      alt={selectedConversation.itemName}
+                      className="chat-item-image"
+                    />
+                    <div className="chat-header-info">
+                      <h3>{selectedConversation.itemName}</h3>
+                      <p>{selectedConversation.sellerName}</p>
+                      <p className="chat-price">{selectedConversation.price}</p>
+                    </div>
+                    {selectedConversation?.transaction && (
+                      <button
+                        className="proposal-btn"
+                        onClick={() => {
+                          if (selectedConversation.transaction.status === 'Accepted') {
+                            navigate(
+                              `/complete-transaction/${selectedConversation.transaction.transaction_id}`
+                            )
+                          } else {
+                            setProposalModalOpen(true)
+                          }
+                        }}
+                      >
+                        {getProposalButtonText(
+                          selectedConversation.transaction.status
+                        )}
+                      </button>
+                    )}
+                    {!selectedConversation?.transaction && (
+                      <button
+                        className="view-proposal-btn"
+                        onClick={() => setProposalModalOpen(true)}
+                      >
+                        Send Proposal
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="messages-container">
+                    {selectedConversation.messages.map(message => (
+                      <div
+                        key={message.id}
+                        className={`message ${message.sender}`}                 >
+                        <p className="message-text">{message.text}</p>
+                        <p className="message-time">
+                          {message.timestamp}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="message-input-area">
+                    <input
+                      type="text"
+                      placeholder="Type your message..."
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                      className="message-input"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSendMessage}
+                      className="message-send-button"
+                      disabled={sending}
+                    >
+                      {sending ? "Sending…" : "Send"}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="inbox-empty-state">
+                  <p>Select a chat to view messages</p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        </section>
       )}
 
       {proposalModalOpen && (
@@ -380,8 +371,6 @@ export default function Inbox() {
           onUpdate={handleUpdateProposal}
         />
       )}
-
-    </section>
     {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
     </>
   );
