@@ -50,9 +50,6 @@ export default function CreateListing() {
         }
     }
 
-
-
-
     function handleSearch(e) {
         e.preventDefault()
         navigate(`/search?q=${query}`)
