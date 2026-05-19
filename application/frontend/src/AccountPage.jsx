@@ -77,7 +77,7 @@ export default function AccountPage() {
         }
 
         try {
-            const res = await fetch('http://localhost:3000/auth/changePassword', {
+            const res = await fetch('/auth/changePassword', {
                 method: 'PUT',
                 credentials: 'include',
                 headers: {
@@ -110,7 +110,7 @@ export default function AccountPage() {
 
     async function handleLogout() {
         try {
-            const res = await fetch('http://localhost:3000/auth/logout', {
+            const res = await fetch('/auth/logout', {
                 method: 'POST',
                 credentials: 'include'
             })

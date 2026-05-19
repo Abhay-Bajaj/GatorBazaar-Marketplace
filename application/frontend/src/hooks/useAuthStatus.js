@@ -8,7 +8,7 @@ export default function useAuthStatus() {
     useEffect(() => {
         async function checkAuth() {
             try {
-                const res = await fetch("http://localhost:3000/auth/checkLoggedUser", {
+                const res = await fetch("/auth/checkLoggedUser", {
                     credentials: 'include'
                 })
 

@@ -26,8 +26,6 @@ async function register(req, res) {
 
         const userId = await userModel.createUser(fullname, username, email, hashedPassword);
 
-        req.session.userId = userId;
-
         res.status(201).json({ message: "User registered", userId });
 
     } catch (err) {
