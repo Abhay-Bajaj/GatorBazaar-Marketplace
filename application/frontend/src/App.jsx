@@ -15,6 +15,7 @@ import NavigationSearchBar from './components/NavigationSearchBar'
 import { useMemo, useState } from 'react'
 import LoginModal from './components/LoginModal'
 import Footer from './components/Footer'
+import useAuthStatus from "./hooks/useAuthStatus"
 
 function TeamMembers() {
   const navigate = useNavigate()
@@ -31,25 +32,25 @@ function TeamMembers() {
 
   return (
     <div className="team-members-page">
-    <section className="banner">
-      <header className="banner-header">
-        <h2>Team Members</h2>
-      </header>
+      <section className="banner">
+        <header className="banner-header">
+          <h2>Team Members</h2>
+        </header>
 
-      <div className="team-members">
-        {teamMembers.map((member) => (
-          <Link key={member.slug} to={`/team/${member.slug}`} className="member">
-            <img
-              src={member.image}
-              alt={member.name}
-              className="member-photo"
-            />
-            <h3>{member.name}</h3>
-          </Link>
-        ))}
-      </div>
-    </section>
-    {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+        <div className="team-members">
+          {teamMembers.map((member) => (
+            <Link key={member.slug} to={`/team/${member.slug}`} className="member">
+              <img
+                src={member.image}
+                alt={member.name}
+                className="member-photo"
+              />
+              <h3>{member.name}</h3>
+            </Link>
+          ))}
+        </div>
+      </section>
+      {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
     </div>
   )
 }
@@ -86,24 +87,24 @@ function MemberProfile() {
 
   return (
     <div className="member-page">
-    <section className="banner">
-      <div className="member-profile">
-        <img
-          src={member.image}
-          alt={member.name}
-          className="profile-picture"
-        />
+      <section className="banner">
+        <div className="member-profile">
+          <img
+            src={member.image}
+            alt={member.name}
+            className="profile-picture"
+          />
 
-        <div className="member-info">
-          <h2>{member.name}</h2>
-          <h3>{member.role}</h3>
-          {member.bio.map((paragraph, index) => (
-            <p key={`${member.slug}-${index}`}>{paragraph}</p>
-          ))}
+          <div className="member-info">
+            <h2>{member.name}</h2>
+            <h3>{member.role}</h3>
+            {member.bio.map((paragraph, index) => (
+              <p key={`${member.slug}-${index}`}>{paragraph}</p>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
-    {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+      </section>
+      {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
     </div>
   )
 }
@@ -112,61 +113,79 @@ function App() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const isTeamMembers = location.pathname.startsWith('/teamMembers') || location.pathname.startsWith('/team/')
+  const { isSignedIn } = useAuthStatus()
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
 
   return (
     <>
-    <div className="page">
-      <nav className="site-nav">
-        <div className="site-nav-inner">
-          <Link to="/">
-           
-          </Link>
-          <div className="site-nav-body">
-            <h1>
-              SFSU Software Engineering Project CSC 648-848, Spring 2026.
-              <br />
-              For Demonstration Only
-            </h1>
+      <div className="page">
+        <nav className="site-nav">
+          <div className="site-nav-inner">
+            <Link to="/">
 
-            <p>Section 01, Team 07</p>
+            </Link>
+            <div className="site-nav-body">
+              <h1>
+                SFSU Software Engineering Project CSC 648-848, Spring 2026.
+                <br />
+                For Demonstration Only
+              </h1>
+
+              <p>Section 01, Team 07</p>
 
               {!isTeamMembers && (
                 <p className="vp-nav-subtitle">Browse and Search our Item Catalog</p>
               )}
-
-              <Link to="/" className="site-nav-dashboard-link" aria-label="Home">
-                <img
-                  className="site-nav-brand-icon site-nav-dashboard-icon"
-                  src="/images/Icon.png"
-                  alt="Home Logo"
-                  width={68}
-                  height={68}
-                  decoding="async"
-                />
-              </Link>
+              <div className="vp-nav-links">
+                <Link to="/" className="site-nav-dashboard-link" aria-label="Home">
+                  <img
+                    className="site-nav-brand-icon site-nav-dashboard-icon"
+                    src="/images/Icon.png"
+                    alt="Home Logo"
+                    width={68}
+                    height={68}
+                    decoding="async"
+                  />
+                </Link>
+                <Link
+                  className="vp-nav-link"
+                  to={isSignedIn ? "/dashboard" : "/#"}
+                  onClick={(e) => {
+                    if (!isSignedIn) {
+                      e.preventDefault()
+                      setLoginModalOpen(true)
+                    }
+                  }}
+                >
+                  📊 Dashboard
+                </Link>
+              </div>
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav >
 
-      <main>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/create-listing" element={<CreateListing />} />
-          <Route path="/team/:slug" element={<MemberProfile />} />
-          <Route path="/teamMembers" element={<TeamMembers />} />
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/items/:id" element={<ItemPage />} />
-          <Route path="/complete-transaction/:transaction_id" element={<TransactionPage />} />
-          <Route path="/inbox" element={<Inbox />} />
-          <Route path="/favorites" element={<Favorite />} />
-          <Route path="/account" element={<AccountPage />} />
-        </Routes>
-      </main>
-    </div>
-    <footer>
-      <Footer />
-    </footer>
+        <main>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/create-listing" element={<CreateListing />} />
+            <Route path="/team/:slug" element={<MemberProfile />} />
+            <Route path="/teamMembers" element={<TeamMembers />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/items/:id" element={<ItemPage />} />
+            <Route path="/complete-transaction/:transaction_id" element={<TransactionPage />} />
+            <Route path="/inbox" element={<Inbox />} />
+            <Route path="/favorites" element={<Favorite />} />
+            <Route path="/account" element={<AccountPage />} />
+          </Routes>
+        </main>
+      </div >
+      <footer>
+        <Footer />
+      </footer>
+      {loginModalOpen && (
+        <LoginModal onClose={() => setLoginModalOpen(false)} />
+      )}
     </>
   )
 }
