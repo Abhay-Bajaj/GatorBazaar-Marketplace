@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export default function useAuthStatus() {
+export default function useAuthStatus(refreshTrigger) {
 
     const [isSignedIn, setIsSignedIn] = useState(false)
     const [loadingAuth, setLoadingAuth] = useState(true)
@@ -23,7 +23,7 @@ export default function useAuthStatus() {
         }
 
         checkAuth()
-    }, [])
+    }, [refreshTrigger])
 
     return {
         isSignedIn,
