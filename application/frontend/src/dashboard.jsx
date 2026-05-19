@@ -9,7 +9,7 @@ import useAccountNavigation from "./hooks/useAccountNavigation"
 
 
 export default function Dashboard() {
-  const {isSignedIn} = useAuthStatus()
+  const { isSignedIn } = useAuthStatus()
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [loginModalOpen, setLoginModalOpen] = useState(false)
@@ -17,7 +17,9 @@ export default function Dashboard() {
 
   const [activeListings, setActiveListings] = useState([])
   const [soldListings, setSoldListings] = useState([])
-  
+  const [pendingListings, setPendingListings] = useState([])
+  const [rejectedListings, setRejectedListings] = useState([])
+
 
 
   function handleSearch(event) {
@@ -39,7 +41,7 @@ export default function Dashboard() {
     async function fetchListings() {
       try {
         const response = await fetch(
-          'http://localhost:3000/api/items/my-listings',
+          '/api/items/my-listings',
           {
             credentials: 'include',
           }
@@ -47,14 +49,18 @@ export default function Dashboard() {
 
         const data = await response.json()
 
-        if (!response.ok){
+        if (!response.ok) {
           console.error(data.error)
           return
         }
-
-        setActiveListings(data.currentListings)
+        const currentListings = data.currentListings || []
+        const pendingListings = currentListings.filter(listing => listing.approval_status === 'Pending')
+        const rejectedListings = currentListings.filter(listing => listing.approval_status === 'Rejected')
+        const activeListings = currentListings.filter(listing => listing.approval_status === 'Approved')
+        setActiveListings(activeListings)
         setSoldListings(data.soldListings)
-
+        setPendingListings(pendingListings)
+        setRejectedListings(rejectedListings)
       } catch (err) {
         console.error(err)
       }
@@ -80,20 +86,65 @@ export default function Dashboard() {
       <section className="dashboard-banner">
         <h2 className="dashboard-title">Seller Dashboard</h2>
         <p className="dashboard-subtitle">
-          Track your active listings and recently sold items in one place.
+          Track your active listings and recently sold listings in one place.
         </p>
       </section>
+      <div className="unapproved-listings">
+        <section className="dashboard-section">
+          <div className="dashboard-section-header">
+            <h3>Pending Listings</h3>
+            <span>{pendingListings.length} listings</span>
+          </div>
 
+          <div className="dashboard-row">
+            {pendingListings.map((listing) => (
+              <div key={listing.listing_id} className="dashboard-row-card">
+                <ListingCard
+                  id={listing.listing_id}
+                  title={listing.title}
+                  price={listing.price}
+                  image={listing.image_url || 'placeholder'}
+                  category_name={listing.category_name}
+                  isFavorited={false}
+                  onToggleFavorite={handleToggleFavorite} />
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="dashboard-section">
+
+          <div className="dashboard-section-header">
+            <h3>Rejected Listings</h3>
+            <span>{rejectedListings.length} listings</span>
+          </div>
+
+          <div className="dashboard-row">
+            {rejectedListings.map((listing) => (
+              <div key={listing.listing_id} className="dashboard-row-card">
+                <ListingCard
+                  id={listing.listing_id}
+                  title={listing.title}
+                  price={listing.price}
+                  image={listing.image_url || 'placeholder'}
+                  category_name={listing.category_name}
+                  isFavorited={false}
+                  onToggleFavorite={handleToggleFavorite} />
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
       <section className="dashboard-section">
         <div className="dashboard-section-header">
           <h3>Currently Listed</h3>
-          <span>{activeListings.length} items</span>
+          <span>{activeListings.length} listings</span>
         </div>
 
         <div className="dashboard-row">
           {activeListings.map((listing) => (
-            <div key={listing.id} className="dashboard-row-card">
-              <ListingCard 
+            <div key={listing.listing_id} className="dashboard-row-card">
+              <ListingCard
                 id={listing.listing_id}
                 title={listing.title}
                 price={listing.price}
@@ -108,13 +159,13 @@ export default function Dashboard() {
 
       <section className="dashboard-section">
         <div className="dashboard-section-header">
-          <h3>Sold Items</h3>
-          <span>{soldListings.length} items</span>
+          <h3>Sold listings</h3>
+          <span>{soldListings.length} listings</span>
         </div>
 
         <div className="dashboard-row">
           {soldListings.map((listing) => (
-            <article key={listing.id} className="dashboard-sold-card">
+            <article key={listing.listing_id} className="dashboard-sold-card">
               <div className="dashboard-sold-image">
                 <img
                   src={

@@ -43,7 +43,7 @@ async function getListings({
         LEFT JOIN user_favorites uf
           ON uf.listing_id = l.listing_id
           AND uf.user_id = ${userId}
-        WHERE l.active = 1`
+        WHERE l.active = 1 AND l.approval_status = 'Approved'`
 
   const params = []
 

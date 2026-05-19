@@ -22,12 +22,21 @@
   font-size: 0.95rem;
 }
 
+.unapproved-listings {
+  display:flex;
+  flex-wrap: wrap;
+}
+
+.unapproved-listings .dashboard-section {
+  flex: 1;
+}
 .dashboard-section {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 16px;
   border: 1px solid #e2ddd6;
   box-shadow: 0 6px 18px rgba(26, 30, 27, 0.07);
   padding: 18px;
+  min-height: 200px;
 }
 
 .dashboard-section-header {
