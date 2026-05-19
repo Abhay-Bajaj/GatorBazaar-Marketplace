@@ -3,8 +3,9 @@ const router = express.Router()
 const { requireAuth } = require('../middleware/requireAuth')
 const multer = require('multer')
 const upload = require('../middleware/upload')
-const { getListing, getMyListings, postListing, getNewListings, deleteListing} = require('../controllers/listingController')
+const { getListing, getMyListings, postListing, getListingsBought, getNewListings, deleteListing} = require('../controllers/listingController')
 
+router.get("/bought-listings", getListingsBought)
 
 router.get("/my-listings", getMyListings)
 router.get('/new', getNewListings)

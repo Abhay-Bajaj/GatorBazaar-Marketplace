@@ -74,6 +74,22 @@ async function login(req, res) {
     }
 }
 
+async function logout(req, res) {
+    req.session.destroy((err) => {
+        if(err) {
+            return res.status(500).json({
+                error: 'Failed to logout'
+            })
+        }
+        
+        res.clearCookie('connect.sid')
+
+        res.json({
+            message: 'Logged out successfully'
+        })
+    })
+}
+
 async function checkLoggedUser(req, res) {
     try {
         if (!req.session.userId) {
@@ -150,6 +166,7 @@ async function changePassword(req, res) {
 module.exports = {
     register,
     login,
+    logout,
     checkLoggedUser,
     changePassword
 }
