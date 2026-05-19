@@ -8,7 +8,8 @@ import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
 
 export default function CreateListing() {
-    const {isSignedIn} = useAuthStatus()
+    const {isSignedIn: authSignedIn} = useAuthStatus()
+    const [isSignedIn, setIsSignedIn] = useState(authSignedIn)
     const navigate = useNavigate()
     const [form, setForm] = useState({
         title: "",
@@ -50,9 +51,6 @@ export default function CreateListing() {
         }
     }
 
-
-
-
     function handleSearch(e) {
         e.preventDefault()
         navigate(`/search?q=${query}`)
@@ -77,8 +75,18 @@ export default function CreateListing() {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
+        if(!isSignedIn) {
+            setLoginModalOpen(true)
+            return
+        }
+
         if (!form.title || !form.price || !form.category) {
             alert('Please fill in all required fields')
+            return
+        }
+
+        if (form.images.length === 0) {
+            alert('Please upload at least one image')
             return
         }
 
@@ -111,7 +119,6 @@ export default function CreateListing() {
             navigate(`/items/${data.listingId}`)
         } catch (err) {
             console.error(err)
-            alert(err.message)
         }
     }
 
@@ -203,7 +210,7 @@ export default function CreateListing() {
 
                         {/* Image */}
                         <div className="form__section">
-                            <label>Image</label>
+                            <label>Image <span className="required">*</span></label>
                             <input
                                 type="file"
                                 multiple
@@ -244,7 +251,14 @@ export default function CreateListing() {
                     )}
                 </div>
             </div>
-            {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+            {loginModalOpen && 
+                <LoginModal 
+                    onClose={() => setLoginModalOpen(false)} 
+                    onLoginSuccess={() => {
+                        setIsSignedIn(true)
+                        setLoginModalOpen(false)
+                    }}
+                />}
         </div>
     )
 }

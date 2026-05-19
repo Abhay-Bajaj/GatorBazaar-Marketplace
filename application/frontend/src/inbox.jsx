@@ -6,6 +6,7 @@ import ProposalModal from "./components/ProposalModal";
 import "./inbox.css";
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
+import { InboxSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders";
 
 import {
   getConversations,
@@ -33,23 +34,22 @@ export default function Inbox() {
     async function load() {
       setLoading(true);
       setError(null);
-      console.log("is signed in", isSignedIn);
+
       if (!isSignedIn) {
         setConversations([]);
         setSelectedConversation(null);
         setLoading(false);
         return;
       }
-      console.log("is signed in2", isSignedIn);
+
       try {
         const { unauthorized, conversations: data } = await getConversations();
         if (unauthorized) {
-          console.log("not authorzied on fetch");
           setConversations([]);
           setSelectedConversation(null);
           return;
         }
-        console.log("convo data", data);
+
         setConversations(data);
       } catch (err) {
         console.error(err);
@@ -113,7 +113,7 @@ export default function Inbox() {
       if (transactionRes.ok) {
         transaction = await transactionRes.json()
       };
-      console.log(transaction)
+
       const selected = {
         ...conversation,
         transaction
@@ -204,9 +204,15 @@ export default function Inbox() {
         return 'View Transaction'
     }
   }
-  return (
 
-    <section className="banner inbox">
+  if (loading) {
+    return <>
+      <NavBarSkeleton />
+      <InboxSkeleton />
+    </>
+  }
+  return (
+    <>
       <NavigationSearchBar
         query={query}
         onQueryChange={setQuery}
@@ -216,7 +222,6 @@ export default function Inbox() {
         onProfileClick={handleAccountClick}
         onFavoritesClick={() => navigate("/favorites")}
       />
-      
     <section className="banner-inbox">
 
       <button className="back-button" type="button" onClick={() => navigate(-1)}>
@@ -376,9 +381,8 @@ export default function Inbox() {
         />
       )}
 
-      {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
-
     </section>
-    </section>
+    {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
+    </>
   );
 }

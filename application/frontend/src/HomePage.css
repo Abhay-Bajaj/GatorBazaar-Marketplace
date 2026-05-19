@@ -22,8 +22,7 @@
     max-width: 330px;
     margin: 0 auto;
     height: 50px;
-    border: 1px solid black;
-    background: white;
+    background: #f8faf9;
     cursor: pointer;
     font-size: 16px;
     border-radius: 15px;

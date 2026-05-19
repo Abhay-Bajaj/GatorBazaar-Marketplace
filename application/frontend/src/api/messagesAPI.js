@@ -9,7 +9,7 @@ export async function getConversations() {
     throw new Error('Failed to load conversations')
   }
   const conversations = await response.json()
-  console.log("current conversations", conversations)
+
   return { unauthorized: false, conversations }
 }
 

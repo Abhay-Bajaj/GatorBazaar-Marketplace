@@ -55,7 +55,7 @@ async function getConversationTransaction(req, res) {
         if (!transaction) {
             return res.json(null)
         }
-        console.log(transaction.buyer_user_id, transaction.seller_user_id, user_id)
+
         if (
             Number(transaction.buyer_user_id) !== Number(user_id) &&
             Number(transaction.seller_user_id) !== Number(user_id)
@@ -208,7 +208,7 @@ async function updateTransaction(req, res) {
         const { action, amount, exchange_location, exchange_time } = req.body
 
         let updates = {}
-        console.log(action)
+
         if (action === 'Accepted') {
             updates.status = 'Accepted'
         } else if (action === 'Rejected') {

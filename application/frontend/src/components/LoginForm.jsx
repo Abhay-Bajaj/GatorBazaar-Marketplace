@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from "react-router-dom";
+import useAuthStatus from "../hooks/useAuthStatus"
 
-export default function LoginForm({ onSwitchToRegister, onSwitchToForgot }) {
+export default function LoginForm({ onSwitchToRegister, onSwitchToForgot, onLoginSuccess }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -37,7 +38,11 @@ async function handleSubmit(e) {
       return;
     }
 
-    navigate("/dashboard");
+    if (onLoginSuccess) {
+      onLoginSuccess()
+    } else {
+      navigate('/dashboard')
+    }
 
   } catch (err) {
     console.error("LOGIN ERROR:", err);

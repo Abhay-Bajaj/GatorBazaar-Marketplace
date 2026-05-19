@@ -288,3 +288,35 @@ export function NavBarSkeleton() {
     </header>
   )
 }
+
+// ── Dashboard Page ─────────────────────────────────────────────────────────
+
+export function DashboardSkeleton() {
+  return (
+    <div className="search-page">
+      {/* Banner */}
+      <section className="dashboard-banner">
+        <div className="skeleton skeleton-text-lg" style={{ width: 250, marginBottom: 10,  padding: '18px 20px', marginTop: 5 }} />
+        <div className="skeleton skeleton-text-sm" style={{ width: 380, height: 20, marginTop: 18 }} />
+      </section>
+
+      {/* Active Listings */}
+      <section className="dashboard-section">
+        <div className="dashboard-section-header">
+          <div className="skeleton skeleton-text-md" style={{ width: 140 }} />
+          <div className="skeleton skeleton-text-xs" style={{ width: 50 }} />
+        </div>
+        <div className="skeleton" style={{ height: 120, borderRadius: 12, width: '100%' }} />
+      </section>
+
+      {/* Sold Items */}
+      <section className="dashboard-section">
+        <div className="dashboard-section-header">
+          <div className="skeleton skeleton-text-md" style={{ width: 100 }} />
+          <div className="skeleton skeleton-text-xs" style={{ width: 50 }} />
+        </div>
+        <div className="skeleton" style={{ height: 120, borderRadius: 12, width: '100%' }} />
+      </section>
+    </div>
+  )
+}
