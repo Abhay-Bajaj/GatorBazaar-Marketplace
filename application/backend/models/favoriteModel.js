@@ -38,7 +38,7 @@ async function getFavoritesList(userId) {
       ON uf.listing_id = l.listing_id
     JOIN Categories c
       ON l.category = c.category_id
-    WHERE uf.user_id = ?
+    WHERE uf.user_id = ? AND l.approval_status = 'Approved'
     ORDER BY uf.created_at DESC`,
     [userId]
   );

@@ -32,8 +32,13 @@ async function getListingById(id, userId = null) {
     LEFT JOIN user_favorites uf
       ON uf.listing_id = l.listing_id
       AND uf.user_id = ?
-    WHERE l.listing_id = ?`,
-    [userId, userId, id]
+    WHERE l.listing_id = ?
+      AND (
+        l.approval_status = 'Approved' 
+        OR l.user_id = ?
+      )
+    `,
+    [userId, userId, id, userId]
   )
 
   if (!rows.length) return null
@@ -45,7 +50,7 @@ async function getListingById(id, userId = null) {
     `
     SELECT image_url
     FROM listing_images
-    WHERE listing_id = ?
+    WHERE listing_id = ? 
     ORDER BY image_id ASC
     `,
     [id]
@@ -151,6 +156,7 @@ async function getNewestListings() {
   const [rows] = await pool.execute(
     `SELECT * 
     FROM listings
+    WHERE active = 1 AND approval_status = 'Approved'
     ORDER BY listing_id DESC
     LIMIT 5`
   )
