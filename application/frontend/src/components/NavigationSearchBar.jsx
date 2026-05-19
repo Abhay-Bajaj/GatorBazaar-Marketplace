@@ -25,6 +25,7 @@ export default function NavigationSearchBar({
             type="text"
             placeholder={placeholder}
             value={query}
+            maxLength={40}
             onChange={(e) => onQueryChange(e.target.value)}
             aria-label={searchInputAriaLabel}
             autoFocus={autoFocus}

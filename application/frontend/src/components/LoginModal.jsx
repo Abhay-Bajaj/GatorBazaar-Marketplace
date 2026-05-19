@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import LogoSection from './LogoSection'
 import Title from './Title'
 import LoginForm from './LoginForm'
@@ -19,7 +20,7 @@ export default function LoginModal({ onClose, isOpen = true }) {
 
   if (!isOpen) return null
 
-  return (
+  const modal = (
     <div
       className="login-modal-overlay"
       role="dialog"
@@ -65,4 +66,6 @@ export default function LoginModal({ onClose, isOpen = true }) {
       </div>
     </div>
   )
+
+  return createPortal(modal, document.body)
 }
