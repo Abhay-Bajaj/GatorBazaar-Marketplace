@@ -55,7 +55,7 @@ export default function HomePage() {
         async function fetchListings() {
             try {
                 const response = await fetch(
-                    'http://localhost:3000/api/items/new',
+                    '/api/items/new',
                 {
                     credentials: 'include',
                 }
