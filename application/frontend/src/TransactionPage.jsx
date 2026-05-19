@@ -4,6 +4,7 @@ import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
+import MapModal from './components/MapModal'
 import "./TransactionPage.css"
 
 
@@ -24,7 +25,7 @@ function StarRating({ rating, onRatingChange, disabled = false }) {
 }
 
 export default function TransactionPage() {
-  const {isSignedIn} = useAuthStatus()
+  const { isSignedIn } = useAuthStatus()
   const { transaction_id } = useParams()
 
   const navigate = useNavigate()
@@ -38,6 +39,7 @@ export default function TransactionPage() {
   const [reviews, setReviews] = useState([])
   const [query, setQuery] = useState('')
   const [loginModalOpen, setLoginModalOpen] = useState(false)
+  const [mapOpen, setMapOpen] = useState(false)
   const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
 
   useEffect(() => {
@@ -134,10 +136,10 @@ export default function TransactionPage() {
     }
   }
   function handleSearch(e) {
-    e.preventDefault()
-    if (query.trim()) {
-      navigate(`/search?q=${encodeURIComponent(query.trim())}`)
-    }
+    event.preventDefault()
+    const params = new URLSearchParams()
+    if (query.trim()) params.set('q', query.trim())
+    navigate(`/search?${params.toString()}`)
   }
 
   if (loading) {
@@ -196,17 +198,22 @@ export default function TransactionPage() {
       : transaction.status === 'Completed'
         ? 'Transaction Complete'
         : 'Complete Transaction'
+  const hasMapPin =
+    transaction.exchange_map_x !== null &&
+    transaction.exchange_map_x !== undefined &&
+    transaction.exchange_map_y !== null &&
+    transaction.exchange_map_y !== undefined
   return (
     <div className="transaction-page">
       <NavigationSearchBar
-            query={query}
-            onQueryChange={setQuery}
-            onSearch={handleSearch}
-            onProfileClick={handleAccountClick}
-            onSellClick={() => navigate('/create-listing')}
-            onMessagesClick={() => navigate('/inbox')}
-            onFavoritesClick={() => navigate('/favorites')}
-                          />
+        query={query}
+        onQueryChange={setQuery}
+        onSearch={handleSearch}
+        onProfileClick={handleAccountClick}
+        onSellClick={() => navigate('/create-listing')}
+        onMessagesClick={() => navigate('/inbox')}
+        onFavoritesClick={() => navigate('/favorites')}
+      />
       <section className="banner transaction-page">
         <div className="banner-content">
           <div className="transaction-header-row">
@@ -243,6 +250,16 @@ export default function TransactionPage() {
                   <div>
                     <p className="summary-label">Location</p>
                     <p>{transaction.exchange_location}</p>
+
+                    {hasMapPin && (
+                      <button
+                        type="button"
+                        className="view-map-btn"
+                        onClick={() => setMapOpen(true)}
+                      >
+                        View Map Pin
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -321,6 +338,16 @@ export default function TransactionPage() {
 
                   <div className="transaction-location">
                     <p><strong>Confirmed location:</strong> {transaction.exchange_location}</p>
+
+                    {hasMapPin && (
+                      <button
+                        type="button"
+                        className="view-map-btn"
+                        onClick={() => setMapOpen(true)}
+                      >
+                        View pickup location on map
+                      </button>
+                    )}
                   </div>
 
                   <div className="rating-section">
@@ -398,6 +425,16 @@ export default function TransactionPage() {
         </div>
       </section>
       <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
+      {mapOpen && (
+        <MapModal
+          initialPin={{
+            x: Number(transaction.exchange_map_x),
+            y: Number(transaction.exchange_map_y)
+          }}
+          readOnly={true}
+          onClose={() => setMapOpen(false)}
+        />
+      )}
     </div>
   )
 }

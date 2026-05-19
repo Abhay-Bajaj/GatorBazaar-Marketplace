@@ -323,6 +323,20 @@
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
+.view-map-btn {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #37524c;
+  color: #f6f3ee;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.view-map-btn:hover {
+  background-color: #263a35;
+}
 .cancel-btn:hover:not(:disabled) {
   transform: translateY(-1px);
   background: #f6f3ee;

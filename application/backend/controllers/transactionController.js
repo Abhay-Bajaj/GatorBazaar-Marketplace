@@ -124,6 +124,8 @@ async function createTransaction(req, res) {
             conversation_id,
             amount,
             exchange_location,
+            exchange_map_x,
+            exchange_map_y,
             exchange_time
         } = req.body
 
@@ -168,6 +170,8 @@ async function createTransaction(req, res) {
             conversation_id,
             numericAmount,
             exchange_location.trim(),
+            exchange_map_x,
+            exchange_map_y,
             exchange_time,
             user_id
         )

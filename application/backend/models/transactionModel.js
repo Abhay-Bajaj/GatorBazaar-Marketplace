@@ -16,6 +16,8 @@ async function getTransactionById(transaction_id) {
             t.amount,
             t.status,
             t.exchange_location,
+            t.exchange_map_x,
+            t.exchange_map_y,
             t.exchange_time
         FROM transactions t
         JOIN listings l
@@ -51,6 +53,8 @@ async function getConversationTransaction(conversation_id) {
             t.amount,
             t.status,
             t.exchange_location,
+            t.exchange_map_x,
+            t.exchange_map_y,
             t.exchange_time
         FROM transactions t
         WHERE t.conversation_id = ?
@@ -92,15 +96,39 @@ async function createTransaction(
     conversation_id,
     amount,
     exchange_location,
+    exchange_map_x, 
+    exchange_map_y, 
     exchange_time,
     proposed_by_user_id
 ) {
     const [transaction] = await pool.query(
         `
-        INSERT INTO transactions (listing_id, buyer_user_id, seller_user_id, conversation_id, amount, exchange_location, exchange_time, proposed_by_user_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO transactions (
+            listing_id,
+            buyer_user_id,
+            seller_user_id, 
+            conversation_id, 
+            amount, 
+            exchange_location, 
+            exchange_map_x, 
+            exchange_map_y, 
+            exchange_time, 
+            proposed_by_user_id
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
-        [listing_id, buyer_user_id, seller_user_id, conversation_id, amount, exchange_location, exchange_time, proposed_by_user_id]
+        [
+            listing_id, 
+            buyer_user_id, 
+            seller_user_id, 
+            conversation_id, 
+            amount, 
+            exchange_location, 
+            exchange_map_x, 
+            exchange_map_y, 
+            exchange_time, 
+            proposed_by_user_id
+        ]
     )
     return transaction.insertId
 }
