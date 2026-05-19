@@ -78,7 +78,6 @@ const [rows] = await pool.execute(
   FROM listings l
 
   WHERE l.user_id = ?
-    AND l.approval_status = 'Approved'
 
   ORDER BY l.created_at DESC
   `,

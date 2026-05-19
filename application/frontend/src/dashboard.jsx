@@ -55,7 +55,7 @@ export default function Dashboard() {
           console.error(data.error)
           return
         }
-        console.log("current", data)
+        
         const currentListings = data.currentListings || []
         const pendingListings = currentListings.filter(listing => listing.approval_status === 'Pending')
         const rejectedListings = currentListings.filter(listing => listing.approval_status === 'Rejected')
