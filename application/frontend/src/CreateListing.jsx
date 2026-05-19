@@ -82,6 +82,11 @@ export default function CreateListing() {
             return
         }
 
+        if (form.images.length === 0) {
+        alert('Please upload at least one image')
+        return
+    }
+
         try {
             const formData = new FormData()
 
@@ -203,7 +208,7 @@ export default function CreateListing() {
 
                         {/* Image */}
                         <div className="form__section">
-                            <label>Image</label>
+                            <label>Image <span className="required">*</span></label>
                             <input
                                 type="file"
                                 multiple
