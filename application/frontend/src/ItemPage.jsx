@@ -26,7 +26,11 @@ export default function ItemPage() {
   const [query, setQuery] = useState("");
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState(null)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteSuccess, setDeleteSuccess] = useState(false)
 
   async function handleToggleFavorite() {
     if (!item) return
@@ -74,6 +78,37 @@ export default function ItemPage() {
     navigate(`/search?q=${encodeURIComponent(query.trim())}`);
   };
 
+  async function confirmDeleteListing() {
+    if (!item) return
+
+    setDeleting(true)
+    setDeleteError(null)
+
+    try {
+      const listingId = item.listing_id ?? item.id
+
+      const res = await fetch(`/api/items/${listingId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to delete listing')
+      }
+
+      setDeleteSuccess(true)
+      setTimeout(() => {
+        navigate('/dashboard')
+      }, 1500)
+    } catch (err) {
+      setDeleteError(err.message)
+    } finally {
+      setDeleting(false)
+      setShowDeleteModal(false)
+    }
+  }
   useEffect(() => {
     async function load() {
       try {
@@ -196,6 +231,17 @@ export default function ItemPage() {
               ${Number(item.price || 0).toFixed(2)}
             </p>
             <p className="item-detail-description">{item.description}</p>
+            {!!item.isOwner && (
+              <div className="owner-actions">
+                <button
+                  className="delete-listing-button"
+                  type="button"
+                  onClick={() => setShowDeleteModal(true)}
+                >
+                  Delete Listing
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="item-seller-info">
@@ -268,6 +314,46 @@ export default function ItemPage() {
           </div>
         </div>
       </section>
+      {deleteSuccess && (
+        <div className="delete-modal-overlay">
+          <div className="delete-success-modal">
+            <h3>Listing Deleted</h3>
+            <p>Your listing was successfully deleted.</p>
+          </div>
+        </div>
+      )}
+      {showDeleteModal && (
+        <div className="delete-modal-overlay">
+          <div className="delete-modal">
+            <h3>Delete Listing?</h3>
+
+            <p>
+              This action cannot be undone.
+            </p>
+            {deleteError && (
+              <p className="delete-error">{deleteError}</p>
+            )}
+            <div className="delete-modal-actions">
+              <button
+                type="button"
+                className="cancel-delete-button"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="confirm-delete-button"
+                onClick={confirmDeleteListing}
+                disabled={deleting}
+              >
+                {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
     </div>
   );

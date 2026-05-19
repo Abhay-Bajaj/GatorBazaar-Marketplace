@@ -1,4 +1,5 @@
-const { getListingById, getListingsByUser, getNewestListings, createListing } = require('../models/listingModel')
+
+const { getListingById, getListingsByUser, getNewestListings, removeListing, createListing } = require('../models/listingModel')
 
 async function getListing(req, res) {
   try {
@@ -6,8 +7,8 @@ async function getListing(req, res) {
     const userId = req.session.userId || null
     const listing = await getListingById(req.params.id, userId)
 
-    if(!listing) {
-        return res.status(404).json({ message: 'Item not found'})
+    if (!listing) {
+      return res.status(404).json({ message: 'Item not found' })
     }
 
     res.json(listing)
@@ -26,7 +27,7 @@ async function getMyListings(req, res) {
         error: "Not authenticated"
       });
     }
-    
+
     const listings = await getListingsByUser(
       req.session.userId
     );
@@ -123,9 +124,39 @@ async function postListing(req, res) {
   }
 }
 
+async function deleteListing(req, res) {
+  try {
+    const id = req.params.id
+    const userId = req.session.userId
+
+    if (!id) {
+      return res.status(400).json({ error: 'Listing id required' })
+    }
+
+    const deleted = await removeListing(id, userId)
+
+    if (!deleted) {
+      return res.status(404).json({
+        error: 'Listing not found or not authorized',
+      })
+    }
+
+    return res.json({
+      message: 'Listing deleted successfully',
+    })
+  } catch (err) {
+    console.error('deleteListing error:', err)
+
+    res.status(500).json({
+      error: 'Server error',
+    })
+  }
+}
+
 module.exports = {
   getListing,
   getMyListings,
+  deleteListing,
+  postListing,
   getNewListings,
-  postListing
 }
