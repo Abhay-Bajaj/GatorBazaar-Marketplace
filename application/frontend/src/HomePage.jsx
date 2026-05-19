@@ -134,76 +134,18 @@ export default function HomePage() {
     
 function ItemCard({ item }) {
     return (
-      <>
-        <NavBarSkeleton />
-        <HomePageSkeleton />
-      </>
-    );
-  }
-
-  return (
-    <div className="homepage">
-      <header className="nav-bar">
-        <NavigationSearchBar
-          query={query}
-          onQueryChange={setQuery}
-          onSearch={handleSearch}
-          onProfileClick={handleAccountClick}
-          onSellClick={() => navigate("/create-listing")}
-          onMessagesClick={() => navigate("/inbox")}
-          onFavoritesClick={() => navigate("/favorites")}
+      <Link to={`/items/${item.listing_id}`} className="item-card">
+        <img
+          className="item-card-image"
+          src={item.image_url || '/images/item-placeholder.png'}
+          alt={item.title}
         />
-      </header>
-      <section>
-        <div className="category-list">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => handleCategoryClick(category)}
-            >
-              {category}
-            </button>
-          ))}
+        <div className="item-card-body">
+          <span className="item-card-category">{item.category_name}</span>
+          <h3 className="item-card-title">{item.title}</h3>
+          <p className="item-card-description">{item.description}</p>
+          <p className="item-card-price">${Number(item.price || 0).toFixed(2)}</p>
         </div>
-      </section>
-      <section>
-        <h3>Recently Added</h3>
-        <div className="recent-items">
-          {recentItems.map((item) => (
-            <ListingCard
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              price={item.price}
-              image={item.image_url}
-              category_name={item.category_name}
-              isFavorited={favorites.map(String).includes(String(item.id))}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          ))}
-        </div>
-      </section>
-      <section>
-        {/* Placeholder, implement with db*/}
-        <h3> Recently Viewed</h3>
-        <div className="recent-items">
-          {recentViewed.map((item) => (
-            <ListingCard
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              price={item.price}
-              image={item.image_url}
-              category_name={item.category_name}
-              isFavorited={favorites.map(String).includes(String(item.id))}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          ))}
-        </div>
-      </section>
-      {loginModalOpen && (
-        <LoginModal onClose={() => setLoginModalOpen(false)} />
-      )}
-    </div>
-  );
-}
+      </Link>
+    )
+  }
