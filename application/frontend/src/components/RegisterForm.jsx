@@ -74,7 +74,7 @@ export default function RegisterForm({ onSwitchToLogin }) {
                 return;
             }
 
-            onclose();
+            onSwitchToLogin();
 
         } catch (err) {
             console.error(err);
