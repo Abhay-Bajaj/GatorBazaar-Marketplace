@@ -5,7 +5,7 @@ import NavigationSearchBar from "./components/NavigationSearchBar";
 import LoginModal from "./components/LoginModal";
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
 import "./itemPage.css";
-import { ItemPageSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders";
+import { ItemPageSkeleton } from "./components/SkeletonLoaders";
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
 import { startConversation } from './api/messagesAPI'
@@ -138,11 +138,9 @@ export default function ItemPage() {
 
   const sellerDisplayName =
     item?.seller_fullname || item?.seller_username || 'Seller'
+
   if (loading) {
-    return <>
-      <NavBarSkeleton />
-      <ItemPageSkeleton />
-    </>
+    return <ItemPageSkeleton />
   }
 
   if (error) {

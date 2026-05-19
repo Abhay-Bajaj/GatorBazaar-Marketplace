@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import './createListing.css'
-import { CreateListingSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders"
+import { CreateListingSkeleton } from "./components/SkeletonLoaders"
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
 
@@ -72,6 +72,11 @@ export default function CreateListing() {
         setForm(prev => ({ ...prev, images: [...prev.images, ...files] }))
     }
 
+    const handleLoginSuccess = () => {
+        setIsSignedIn(true)
+        setLoginModalOpen(false)
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -122,14 +127,7 @@ export default function CreateListing() {
         }
     }
 
-    if (loading) {
-        return <>
-            <NavBarSkeleton />
-            <CreateListingSkeleton />
-        </>
-    }
-
-    return ( 
+    return (
         <div className="create-listing">
             <nav className="nav-bar">
                 <NavigationSearchBar
@@ -142,10 +140,14 @@ export default function CreateListing() {
                     onFavoritesClick={() => navigate('/favorites')}
                   />
             </nav>
-            <div className="create-listing__container">
-                <h2>Create New Listing</h2>
-                <div className="create-listing__layout">
-                    <form onSubmit={handleSubmit} className="form">
+
+            {loading ? (
+                <CreateListingSkeleton />
+            ) : (
+                <div className="create-listing__container">
+                    <h2>Create New Listing</h2>
+                    <div className="create-listing__layout">
+                        <form onSubmit={handleSubmit} className="form">
                         {/* Title */}
                         <div className="form__section">
                             <label>Title <span className="required">*</span></label>
@@ -251,14 +253,13 @@ export default function CreateListing() {
                     )}
                 </div>
             </div>
-            {loginModalOpen && 
-                <LoginModal 
-                    onClose={() => setLoginModalOpen(false)} 
-                    onLoginSuccess={() => {
-                        setIsSignedIn(true)
-                        setLoginModalOpen(false)
-                    }}
-                />}
+            )}
+            {loginModalOpen && (
+                <LoginModal
+                    onClose={() => setLoginModalOpen(false)}
+                    onLoginSuccess={handleLoginSuccess}
+                />
+            )}
         </div>
     )
 }

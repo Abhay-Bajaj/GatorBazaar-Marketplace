@@ -7,9 +7,10 @@ import ListingsGrid from './components/ListingsGrid'
 import LoginModal from './components/LoginModal'
 import { addFavorite, removeFavorite } from './api/favoritesAPI'
 import './searchPage.css'
-import { SearchPageSkeleton, NavBarSkeleton } from './components/SkeletonLoaders'
+// skeletons are rendered locally inside components to avoid full-page remounts
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
+import { mockItems } from './data/mockItems'
 
 function categoriesFromParams(searchParams) {
   const cats = searchParams.getAll('category')
@@ -25,7 +26,7 @@ function toListingFormat(items) {
     image: item.image_url || 'placeholder',
     isFavorited: item.isFavorited,
     isOwner: item.isOwner,
-    category_name: item.category_name ?? '',
+    category_name: item.category_name ?? item.category ?? '',
     rating: item.rating ?? null,
   }))
 }
@@ -41,7 +42,6 @@ function useDebouncedPrices(priceMin, priceMax, delayMs) {
 
 export default function SearchPage() {
   const { isSignedIn } = useAuthStatus()
-  
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
 
@@ -70,47 +70,51 @@ export default function SearchPage() {
   useEffect(() => {
     let cancelled = false
 
-    async function fetchResults() {
-      setLoading(true)
-      setError(null)
+    // Temporary: use mockItems for local testing of search results and skeletons.
+    // This simulates a short network delay and applies basic filters from URL params.
+    setLoading(true)
+    setError(null)
 
-      const params = new URLSearchParams()
-
-      const keyword = searchParams.get('q') ?? ''
-      if (keyword.trim()) params.set('keyword', keyword.trim())
-
-      searchParams.getAll('category').forEach((c) => params.append('category', c))
-
-      const sort = searchParams.get('sort') ?? ''
-      if (sort) params.set('sort', sort)
-
-      if (debouncedPrices.priceMin !== '') params.set('priceMin', debouncedPrices.priceMin)
-      if (debouncedPrices.priceMax !== '') params.set('priceMax', debouncedPrices.priceMax)
+    const t = setTimeout(() => {
+      if (cancelled) return
 
       try {
-        const res = await fetch(`/api/search?${params.toString()}`)
-        const data = await res.json()
+        const keyword = (searchParams.get('q') ?? '').toLowerCase().trim()
+        const categories = searchParams.getAll('category')
+        const sort = searchParams.get('sort') ?? ''
 
-        if (!res.ok) throw new Error(data.error || `Server error (${res.status})`)
+        const priceMin = debouncedPrices.priceMin !== '' ? Number(debouncedPrices.priceMin) : null
+        const priceMax = debouncedPrices.priceMax !== '' ? Number(debouncedPrices.priceMax) : null
 
-        const items = Array.isArray(data) ? data : (data.items ?? [])
-        if (!cancelled) {
-          setListings(toListingFormat(items))
+        let items = mockItems.slice()
+
+        if (keyword) {
+          items = items.filter((it) => it.title.toLowerCase().includes(keyword) || (it.description || '').toLowerCase().includes(keyword))
         }
+
+        if (categories.length > 0 && !(categories.length === 1 && categories[0] === 'All Listings')) {
+          items = items.filter((it) => categories.includes(it.category))
+        }
+
+        if (priceMin !== null) items = items.filter((it) => Number(it.price || 0) >= priceMin)
+        if (priceMax !== null) items = items.filter((it) => Number(it.price || 0) <= priceMax)
+
+        if (sort === 'price_low') items.sort((a, b) => (a.price || 0) - (b.price || 0))
+        if (sort === 'price_high') items.sort((a, b) => (b.price || 0) - (a.price || 0))
+
+        setListings(toListingFormat(items))
       } catch (err) {
         console.error(err)
-        if (!cancelled) {
-          setError(err.message || 'Search failed')
-          setListings([])
-        }
+        setError('Search failed (mock)')
+        setListings([])
       } finally {
         if (!cancelled) setLoading(false)
       }
-    }
+    }, 700)
 
-    fetchResults()
     return () => {
       cancelled = true
+      clearTimeout(t)
     }
   }, [searchParams, debouncedPrices])
 
@@ -197,12 +201,8 @@ export default function SearchPage() {
 
   const urlQuery = searchParams.get('q') ?? ''
 
-  if (loading) {
-    return <>
-      <NavBarSkeleton />
-      <SearchPageSkeleton />
-    </>
-  }
+  // Always render the page shell. Show loading state inside the listings grid
+  // to avoid unmounting the entire page (prevents skeleton flicker when filters change).
   return (
     <div className="search-page">
       <NavigationSearchBar

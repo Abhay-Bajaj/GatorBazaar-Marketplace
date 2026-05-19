@@ -6,7 +6,7 @@ import CreateListing from "./CreateListing"
 import { Link, useNavigate } from "react-router-dom"
 import ListingCard from "./components/ListingCard"
 import { mockItems } from './data/mockItems'
-import { HomePageSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders"
+import { HomePageSkeleton } from "./components/SkeletonLoaders"
 import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
 
@@ -78,56 +78,55 @@ export default function HomePage() {
         fetchListings()
     }, [])
 
-    if (loading) {
-        return <>
-            <NavBarSkeleton />
-            <HomePageSkeleton />
-        </>
-    }
-    
     return (
         <div className="homepage">
-                        <header className="nav-bar">
-                        <NavigationSearchBar
-                                        query={query}
-                                        onQueryChange={setQuery}
-                                        onSearch={handleSearch}
-                                        onProfileClick={handleAccountClick}
-                                        onSellClick={() => navigate('/create-listing')}
-                                        onMessagesClick={() => navigate('/inbox')}
-                                        onFavoritesClick={() => navigate('/favorites')}
-                                    />
-                        </header>
-            <section>
-                <div className="category-list">
-                    {categories.map((category) => (
-                        <button
-                            key={category}
-                            onClick={() => handleCategoryClick(category)}>
-                            {category}
-                        </button>
-                    ))}
-                </div>
-            </section>
-            <section>
-                <h3>Recently Added</h3>
-                <div className="recent-items">
-                    {recentListings.map((item) => (
-                        <ItemCard key={item.listing_id} item={item} />
-                    ))}
-                </div>
-            </section>
-            <section> 
-                {/* Placeholder, implement with db*/} 
-                <h3> Recently Viewed</h3>
-                <div className="recent-items"> 
-                    {recentListings.map((item) => (
-                        <ItemCard key={item.listing_id} item={item} />
-                    ))}
-                </div>
-            </section>
+            <header className="nav-bar">
+                <NavigationSearchBar
+                    query={query}
+                    onQueryChange={setQuery}
+                    onSearch={handleSearch}
+                    onProfileClick={handleAccountClick}
+                    onSellClick={() => navigate('/create-listing')}
+                    onMessagesClick={() => navigate('/inbox')}
+                    onFavoritesClick={() => navigate('/favorites')}
+                />
+            </header>
+
+            {loading ? (
+                <HomePageSkeleton />
+            ) : (
+                <>
+                    <section>
+                        <div className="category-list">
+                            {categories.map((category) => (
+                                <button
+                                    key={category}
+                                    onClick={() => handleCategoryClick(category)}>
+                                    {category}
+                                </button>
+                            ))}
+                        </div>
+                    </section>
+                    <section>
+                        <h3>Recently Added</h3>
+                        <div className="recent-items">
+                            {recentListings.map((item) => (
+                                <ItemCard key={item.listing_id} item={item} />
+                            ))}
+                        </div>
+                    </section>
+                    <section>
+                        <h3> Recently Viewed</h3>
+                        <div className="recent-items">
+                            {recentListings.map((item) => (
+                                <ItemCard key={item.listing_id} item={item} />
+                            ))}
+                        </div>
+                    </section>
+                </>
+            )}
+
             {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
-            
         </div>
     )
 }
