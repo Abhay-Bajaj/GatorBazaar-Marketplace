@@ -205,12 +205,13 @@ export default function CreateListing() {
 
                         {/* Image */}
                         <div className="form__section">
-                            <label>Image <span className="required">*</span></label>
                             <input
+                                id="image-upload"
                                 type="file"
                                 multiple
                                 accept="image/*"
                                 onChange={handleImageChange}
+                                style={{ display: 'none' }}
                             />
                         </div>
 
@@ -220,7 +221,6 @@ export default function CreateListing() {
                         </button>
 
                     </form>
-                    {form.images.length > 0 && (
                         <div className="image-preview-container">
                             {form.images.map((image, index) => (
                                 <div className="image-preview" key={index}>
@@ -228,7 +228,6 @@ export default function CreateListing() {
                                         src={URL.createObjectURL(image)}
                                         alt={`Preview-${index}`}
                                     />
-
                                     <button
                                         type="button"
                                         onClick={() => {
@@ -242,8 +241,19 @@ export default function CreateListing() {
                                     </button>
                                 </div>
                             ))}
+                        {form.images.length < MAX_IMAGES && (
+                            <div className="image-add-title"
+                                onClick={() => document.getElementById('image-upload').click()}
+                                role='button'
+                                tabIndex={0}
+                                onKeyDown={(e) => e.key === 'Enter' && document.getElementById('image-upload').click()}
+                                aria-label="Add imaage"
+                                >
+                                <span className="image-add-icon">+</span>
+                                <span className="image-add-label"> Add Image<span className="required">*</span> </span>
+                            </div>
+                        )}    
                         </div>
-                    )}
                 </div>
             </div>
             {loginModalOpen && <LoginModal onClose={() => setLoginModalOpen(false)} />}
