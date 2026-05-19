@@ -4,6 +4,7 @@ import NavigationSearchBar from "./components/NavigationSearchBar"
 import LoginModal from "./components/LoginModal"
 import CreateListing from "./CreateListing"
 import { Link, useNavigate } from "react-router-dom"
+import ListingCard from "./components/ListingCard"
 import { mockItems } from './data/mockItems'
 import { HomePageSkeleton, NavBarSkeleton } from "./components/SkeletonLoaders"
 import useAuthStatus from "./hooks/useAuthStatus"
@@ -22,6 +23,7 @@ export default function HomePage() {
     const [query, setQuery] = useState("")
     const navigate = useNavigate() 
     const [loginModalOpen, setLoginModalOpen] = useState(false)
+    const [recentListings, setRecentListings] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -38,8 +40,33 @@ export default function HomePage() {
     function handleCategoryClick(category) {
         navigate(`/search?category=${category}`)
     }
-    // Recently added items || Replace mockItems with db
-    const recentItems = mockItems.slice(0, 5)
+
+    useEffect(() => {
+        async function fetchListings() {
+            try {
+                const response = await fetch(
+                    'http://localhost:3000/api/items/new',
+                {
+                    credentials: 'include',
+                }
+                )
+
+                const data = await response.json()
+
+                if (!response.ok){
+                    console.error(data.error)
+                    return
+                }
+
+                setRecentListings(data)
+
+            } catch (err) {
+                console.error(err)
+            }
+        }
+
+        fetchListings()
+    }, [])
 
     if (loading) {
         return <>
@@ -75,7 +102,7 @@ export default function HomePage() {
             <section>
                 <h3>Recently Added</h3>
                 <div className="recent-items">
-                    {recentItems.map((item) => (
+                    {recentListings.map((item) => (
                         <ItemCard key={item.listing_id} item={item} />
                     ))}
                 </div>
@@ -84,7 +111,7 @@ export default function HomePage() {
                 {/* Placeholder, implement with db*/} 
                 <h3> Recently Viewed</h3>
                 <div className="recent-items"> 
-                    {recentItems.map((item) => (
+                    {recentListings.map((item) => (
                         <ItemCard key={item.listing_id} item={item} />
                     ))}
                 </div>

@@ -134,9 +134,36 @@ async function getBoughtListings(userId) {
     return rows
 }
 
+async function removeListing(listingId, userId) {
+  const [result] = await pool.query (
+    `
+    DELETE FROM listings 
+    WHERE listing_id = ?
+    AND user_id = ?
+    `,
+    [listingId, userId]
+  );
+  return result.affectedRows > 0
+}
+
+async function getNewestListings() {
+
+  const [rows] = await pool.execute(
+    `SELECT * 
+    FROM listings
+    ORDER BY listing_id DESC
+    LIMIT 5`
+  )
+
+  return rows;
+
+}
+
 module.exports = {
   getListingById,
   getListingsByUser,
   createListing,
-  getBoughtListings
+  getBoughtListings,
+  removeListing,
+  getNewestListings
 }
