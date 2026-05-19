@@ -1,4 +1,4 @@
-const SIDEBAR_CATEGORIES = ['All Listings', 'Clothes', 'Text Books', 'Furniture', 'Electronics', 'School Supplies', 'Room Search']
+const SIDEBAR_CATEGORIES = ['All Listings', 'Clothes', 'Text Books', 'Furniture', 'Electronics', 'Class Materials', 'Room Search']
 
 export default function FiltersSidebar({ filters, onChange }) {
   return (

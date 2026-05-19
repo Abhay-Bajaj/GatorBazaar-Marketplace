@@ -15,7 +15,7 @@ const categories = [
   "Text Books",
   "Furniture",
   "Electronics",
-  "School Supplies",
+  "Class Materials",
   "Room Search",
 ];
 
