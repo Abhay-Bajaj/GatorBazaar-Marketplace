@@ -137,7 +137,7 @@ export default function Inbox() {
     navigate(`/search?q=${encodeURIComponent(query.trim())}`);
   };
 
-  const handleSendProposal = async ({ amount, exchange_location, exchange_time }) => {
+  const handleSendProposal = async ({ amount, exchange_location, exchange_map_x, exchange_map_y, exchange_time }) => {
     try {
       const res = await fetch('/api/transactions', {
         method: 'POST',
@@ -152,6 +152,8 @@ export default function Inbox() {
           conversation_id: selectedConversation.id,
           amount,
           exchange_location,
+          exchange_map_x,
+          exchange_map_y,
           exchange_time
         })
       })

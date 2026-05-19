@@ -1348,6 +1348,183 @@
 }
 
 /*
+  Map Modal
+*/
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.map-modal {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  width: min(900px, 90vw);
+}
+
+.campus-map-wrapper {
+  position: relative;
+  cursor: crosshair;
+}
+
+.campus-map {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+}
+
+.map-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-size: 2rem;
+  pointer-events: none;
+}
+
+.proposal-location-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.proposal-location-row input {
+  flex: 1;
+}
+
+.campus-map-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.campus-map-modal-box {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  width: min(900px, 92vw);
+}
+
+.campus-map-wrapper {
+  position: relative;
+  cursor: crosshair;
+}
+
+.campus-map-image {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+}
+
+.campus-map-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-size: 2rem;
+  pointer-events: none;
+}
+
+.campus-map-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.map-viewport {
+  position: relative;
+  width: 100%;
+  height: 500px;
+}
+
+.map-scroll-area {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.map-zoom-controls {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.map-zoom-layer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-origin: center center;
+}
+
+.map-zoom-layer img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.map-pin {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    font-size: 24px;
+}
+
+.map-zoom-controls button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    color: #000000;
+    font-size: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px;
+}
+
+.modal-actions button {
+  color: #f6f3ee;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 50%;
+  background-color: #37524c;
+}
+.modal-actions button:hover {
+  background-color:  #1c2a2e;
+}
+.modal-actions button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/*
    Footer
  */
 

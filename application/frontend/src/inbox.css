@@ -457,8 +457,35 @@
 
 .proposal-submit-button,
 .proposal-actions button {
+  color: #f6f3ee;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+  white-space: nowrap;
   padding: 10px 14px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  background-color: #37524c;
+}
+
+.proposal-submit-button:hover {
+  background-color:  #1c2a2e;
+}
+
+.proposal-actions button:hover {
+  background-color: #1c2a2e;
+}
+
+.proposal-location-row button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+
+}
+
+.view-map-pin-btn {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
 }

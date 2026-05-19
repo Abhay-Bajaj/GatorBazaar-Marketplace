@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import MapModal from './MapModal'
 
 function toDateTimeLocal(value) {
     if (!value) return ''
@@ -16,6 +17,9 @@ export default function ProposalModal({
 }) {
     // proposalMode can be 'view' or 'counter', determining whether the user is viewing an existing proposal or creating a new one
     const [proposalMode, setProposalMode] = useState(transaction ? 'view' : 'new')
+    const [mapOpen, setMapOpen] = useState(false)
+    const [mapPin, setMapPin] = useState(null)
+
     const status = transaction?.status
     const isEditable =
         !transaction ||
@@ -77,7 +81,10 @@ export default function ProposalModal({
             await onSubmit({
                 amount,
                 exchange_location: exchangeLocation,
-                exchange_time: exchangeTime
+                exchange_map_x: mapPin?.x ?? null,
+                exchange_map_y: mapPin?.y ?? null,
+                exchange_time: exchangeTime,
+
             })
             return
         }
@@ -85,7 +92,10 @@ export default function ProposalModal({
             action: 'Proposed',
             amount,
             exchange_location: exchangeLocation,
-            exchange_time: exchangeTime
+            exchange_map_x: mapPin?.x ?? transaction.exchange_map_x,
+            exchange_map_y: mapPin?.y ?? transaction.exchange_map_y,
+            exchange_time: exchangeTime,
+
         })
     }
     return (
@@ -124,14 +134,34 @@ export default function ProposalModal({
 
                         <label className="proposal-form-field">
                             <span>Exchange location</span>
-                            <input
-                                type="text"
-                                value={exchangeLocation}
-                                disabled={!isEditable}
-                                onChange={(event) => setExchangeLocation(event.target.value)}
-                                required
-                            />
+
+                            <div className="proposal-location-row">
+                                <input
+                                    type="text"
+                                    value={exchangeLocation}
+                                    disabled={!isEditable}
+                                    onChange={(event) => setExchangeLocation(event.target.value)}
+                                    required
+                                />
+
+                                <button
+                                    type="button"
+                                    disabled={!isEditable}
+                                    onClick={() => setMapOpen(true)}
+                                >
+                                    Open Map
+                                </button>
+                            </div>
                         </label>
+                        {transaction?.exchange_map_x && transaction?.exchange_map_y && (
+                            <button
+                                className="view-map-pin-btn"
+                                type="button"
+                                onClick={() => setMapOpen(true)}
+                            >
+                                View Map Pin
+                            </button>
+                        )}
 
                         <label className="proposal-form-field">
                             <span>Exchange time</span>
@@ -200,13 +230,41 @@ export default function ProposalModal({
 
                         <label className="proposal-form-field">
                             <span>Exchange location</span>
-                            <input
-                                type="text"
-                                value={exchangeLocation}
-                                onChange={(event) => setExchangeLocation(event.target.value)}
-                                required
-                            />
+
+                            <div className="proposal-location-row">
+                                <select
+                                    value={exchangeLocation}
+                                    onChange={(e) => setExchangeLocation(e.target.value)}
+                                    required
+                                >
+                                    <option value="">Choose a campus location</option>
+                                    <option value="Cesar Chavez Student Center">Cesar Chavez Student Center</option>
+                                    <option value="J. Paul Leonard Library">J. Paul Leonard Library</option>
+                                    <option value="Mashouf Wellness Center">Mashouf Wellness Center</option>
+                                    <option value="Burk Hall">Burk Hall</option>
+                                    <option value="Thornton Hall">Thornton Hall</option>
+                                    <option value="Science Building">Science Building</option>
+                                    <option value="Creative Arts Building">Creative Arts Building</option>
+                                    <option value="Gymnasium">Gymnasium</option>
+                                    <option value="Student Services Building">Student Services Building</option>
+                                    <option value="Mashouf Wellness Center">Mashouf Wellness Center</option>
+                                    <option value="Administration Building">Administration Building</option>
+                                    {mapPin && (
+                                        <option value="Campus map pin">
+                                            Campus map pin
+                                        </option>
+                                    )}
+                                </select>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setMapOpen(true)}
+                                >
+                                    Open Map
+                                </button>
+                            </div>
                         </label>
+
 
                         <label className="proposal-form-field">
                             <span>Exchange time</span>
@@ -224,6 +282,30 @@ export default function ProposalModal({
                     </form>
                 )}
             </div>
+            {mapOpen && (
+                <MapModal
+                    initialPin={
+                        transaction?.exchange_map_x && transaction?.exchange_map_y
+                            ? {
+                                x: Number(transaction.exchange_map_x),
+                                y: Number(transaction.exchange_map_y)
+                            }
+                            : null
+                    }
+
+                    readOnly={!isEditable}
+
+                    onClose={() => setMapOpen(false)}
+
+                    onSelect={(pin) => {
+                        setMapPin(pin)
+
+                        setExchangeLocation('Campus map pin')
+
+                        setMapOpen(false)
+                    }}
+                />
+            )}
         </div>
     )
 }
