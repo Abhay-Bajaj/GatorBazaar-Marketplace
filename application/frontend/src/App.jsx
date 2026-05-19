@@ -149,13 +149,7 @@ function App() {
                 </Link>
                 <Link
                   className="vp-nav-link"
-                  to={isSignedIn ? "/dashboard" : "/#"}
-                  onClick={(e) => {
-                    if (!isSignedIn) {
-                      e.preventDefault()
-                      setLoginModalOpen(true)
-                    }
-                  }}
+                  to="/dashboard"
                 >
                   📊 Dashboard
                 </Link>
@@ -183,9 +177,6 @@ function App() {
       <footer>
         <Footer />
       </footer>
-      {loginModalOpen && (
-        <LoginModal onClose={() => setLoginModalOpen(false)} />
-      )}
     </>
   )
 }
