@@ -8,7 +8,7 @@ async function addFavorite(req, res) {
 
         const userId = req.session.userId
         const listingId = req.params.listingId
-        
+
         await favoriteModel.addUserFavorite(userId, listingId)
 
         res.json({ success: true })
@@ -25,7 +25,7 @@ async function removeFavorite(req, res) {
         if (!req.session.userId) {
             return res.json({ loggedIn: false })
         }
-        
+
         const userId = req.session.userId
         const listingId = req.params.listingId
 
@@ -43,6 +43,9 @@ async function removeFavorite(req, res) {
 async function getFavorites(req, res) {
     try {
 
+        if (!req.session.userId) {
+            return res.status(401).json({ error: 'Not authenticated' })
+        }
         const userId = req.session.userId
 
         const favorites = await favoriteModel.getFavoritesList(userId)

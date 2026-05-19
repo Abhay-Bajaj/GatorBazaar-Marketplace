@@ -103,7 +103,6 @@ export default function ItemPage() {
 
   const sellerDisplayName =
     item?.seller_fullname || item?.seller_username || 'Seller'
-
   if (loading) {
     return <>
       <NavBarSkeleton />
@@ -178,7 +177,7 @@ export default function ItemPage() {
             <div className="item-favorite">
               <h2 className="item-detail-title">{item.title}</h2>
 
-              {!item.isOwner && (
+              {!item.isOwner && item.active === 1 && (
                 <button
                   className={`item-favorite-button${isFavorited ? " favorited" : ""}`}
                   type="button"
@@ -210,7 +209,7 @@ export default function ItemPage() {
               <h3>{sellerDisplayName}</h3>
             </div>
 
-            {!item.isOwner && (
+            {!item.isOwner && item.active === 1 && (
               <div className="message-seller">
                 Send a Message to Seller
                 {!isSignedIn ? (

@@ -1,4 +1,4 @@
-const { getListingById, getListingsByUser, createListing } = require('../models/listingModel')
+const { getListingById, getListingsByUser, createListing, getBoughtListings } = require('../models/listingModel')
 
 async function getListing(req, res) {
   try {
@@ -110,8 +110,33 @@ async function postListing(req, res) {
   }
 }
 
+async function getListingsBought(req, res) {
+  try {
+
+    if (!req.session.userId) {
+      return res.status(401).json({
+        error: "Not authenticated"
+      });
+    }
+    
+    const listings = await getBoughtListings(
+      req.session.userId
+    );
+
+    res.json({listings});
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      error: "Server error"
+    });
+  }
+}
+
 module.exports = {
   getListing,
   getMyListings,
   postListing,
+  getListingsBought
 }
