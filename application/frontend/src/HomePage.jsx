@@ -11,12 +11,13 @@ import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
 
 const categories = [
-    "Clothes", 
-    "Text Books", 
-    "Furniture", 
-    "Electronics", 
-    "School Supplies", 
-    "Room Search" ]
+  "Clothes",
+  "Text Books",
+  "Furniture",
+  "Electronics",
+  "School Supplies",
+  "Room Search",
+];
 
 export default function HomePage() {
     const { isSignedIn } = useAuthStatus()
@@ -26,16 +27,25 @@ export default function HomePage() {
     const [recentListings, setRecentListings] = useState([])
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        const timer = setTimeout(() => setLoading(false), 1000)
-        return () => clearTimeout(timer)
-    }, [])
-    const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
+  const handleToggleFavorite = (itemId) => {
+    setFavorites((prev) =>
+        prev.includes(itemId) ? prev.filter((id) => id !== itemId) : [...prev, itemId]
+    )
+}
+ 
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+  const { handleAccountClick } = useAccountNavigation({
+    isSignedIn,
+    setLoginModalOpen,
+  });
 
-    function handleSearch(e) {
-        e.preventDefault()
-        navigate(`/search?q=${query}`)
-    }
+  function handleSearch(e) {
+    e.preventDefault();
+    navigate(`/search?q=${query}`);
+  }
 
     function handleCategoryClick(category) {
         navigate(`/search?category=${category}`)
