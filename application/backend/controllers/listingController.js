@@ -57,7 +57,7 @@ async function getNewListings(req, res) {
   try {
 
     const listings = await getNewestListings()
-
+    
     res.json(listings)
 
   } catch (err) {

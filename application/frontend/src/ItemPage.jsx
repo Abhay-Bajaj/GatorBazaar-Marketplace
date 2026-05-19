@@ -26,7 +26,7 @@ export default function ItemPage() {
   const [query, setQuery] = useState("");
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const { handleAccountClick } = useAccountNavigation({ isSignedIn, setLoginModalOpen })
-  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState(null)
   const [showDeleteModal, setShowDeleteModal] = useState(false)

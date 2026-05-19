@@ -64,13 +64,26 @@ async function getListingById(id, userId = null) {
 
 async function getListingsByUser(userId) {
 
-  const [rows] = await pool.execute(
-    `SELECT *
-    FROM listings
-    WHERE user_id = ?
-    ORDER BY created_at DESC`,
-    [userId]
-  );
+const [rows] = await pool.execute(
+  `SELECT
+    l.*,
+
+    (
+      SELECT li.image_url
+      FROM listing_images li
+      WHERE li.listing_id = l.listing_id
+      LIMIT 1
+    ) AS image_url
+
+  FROM listings l
+
+  WHERE l.user_id = ?
+    AND l.approval_status = 'Approved'
+
+  ORDER BY l.created_at DESC
+  `,
+  [userId]
+);
 
   return rows;
 
@@ -109,8 +122,8 @@ async function createListing(userId, title, description, price, category, tag, i
 }
 
 async function getBoughtListings(userId) {
-    const [rows] = await pool.execute(
-        `
+  const [rows] = await pool.execute(
+    `
         SELECT
             l.listing_id,
             l.title,
@@ -133,14 +146,14 @@ async function getBoughtListings(userId) {
 
         ORDER BY bl.purchase_date DESC
         `,
-        [userId]
-    )
+    [userId]
+  )
 
-    return rows
+  return rows
 }
 
 async function removeListing(listingId, userId) {
-  const [result] = await pool.query (
+  const [result] = await pool.query(
     `
     DELETE FROM listings 
     WHERE listing_id = ?
@@ -154,11 +167,24 @@ async function removeListing(listingId, userId) {
 async function getNewestListings() {
 
   const [rows] = await pool.execute(
-    `SELECT * 
-    FROM listings
-    WHERE active = 1 AND approval_status = 'Approved'
-    ORDER BY listing_id DESC
-    LIMIT 5`
+    `SELECT
+      l.*,
+
+      (
+        SELECT li.image_url
+        FROM listing_images li
+        WHERE li.listing_id = l.listing_id
+        LIMIT 1
+      )  AS image_url
+
+    FROM listings l
+
+    WHERE l.active = 1
+      AND l.approval_status = 'Approved'
+
+    ORDER BY l.listing_id DESC
+    LIMIT 5
+    `
   )
 
   return rows;
