@@ -167,8 +167,8 @@ export default function Dashboard() {
                   <div className="dashboard-sold-image">
                     <img
                       src={
-                        listing.image && listing.image !== 'placeholder'
-                          ? listing.image
+                        listing.image_url && listing.image_url !== 'placeholder'
+                          ? listing.image_url
                           : '/images/item-placeholder.png'
                       }
                       alt={listing.title}
