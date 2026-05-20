@@ -1,3 +1,4 @@
+// Register, login, logout, and password change. Passwords stored as bcrypt hashes.
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 
@@ -56,6 +57,7 @@ async function login(req, res) {
             return res.status(401).json({ error: "Invalid username or password" })
         }
 
+        // New session id on login reduces session fixation risk.
         req.session.regenerate((err) => {
             if (err) {
                 return res.status(500).json({ error: "Session error" });

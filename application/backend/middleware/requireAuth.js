@@ -1,3 +1,4 @@
+// Blocks routes unless the user has a valid session (req.session.userId).
 function requireAuth(req, res, next) {
   if (!req.session.userId) {
     return res.status(401).json({ error: 'Not authenticated' })

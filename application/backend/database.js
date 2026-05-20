@@ -1,3 +1,4 @@
+// Shared MySQL connection pool for all models.
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
@@ -12,6 +13,7 @@ const pool = mysql.createPool({
   port: Number(process.env.DB_PORT) || 3306,
 })
 
+// Used at startup in server.js to confirm DB credentials and network.
 async function verifyDatabase() {
   const connection = await pool.getConnection()
   connection.release()

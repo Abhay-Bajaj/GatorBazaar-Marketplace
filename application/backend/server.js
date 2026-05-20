@@ -1,3 +1,4 @@
+// Express entry point: middleware, API routes, static uploads, and React build.
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
@@ -41,6 +42,7 @@ const categoryRoute = require('./routes/categoryRoute')
 const app = express()
 const PORT = process.env.PORT || 3000;
 
+// Allow frontend origins to send session cookies with API requests.
 app.use(cors({
   origin: [ 
     "http://localhost:5173",
@@ -51,6 +53,7 @@ app.use(cors({
 
 app.use(express.json())
 
+// Login state lives in req.session.userId (set in authController).
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -84,6 +87,7 @@ app.get('/*path', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
 })
 
+// Fail fast if MySQL is unreachable before accepting traffic.
 async function start() {
   try {
     await verifyDatabase()
