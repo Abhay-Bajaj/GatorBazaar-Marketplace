@@ -1,6 +1,6 @@
+// transactions, transaction_reviews, and bought_listings after a completed sale.
 const { pool } = require('../database')
 
-// the compelete transaction page uses this fill out the page.
 async function getTransactionById(transaction_id) {
     const [rows] = await pool.query(
         `
@@ -40,8 +40,7 @@ async function getTransactionById(transaction_id) {
     )
     return rows[0]
 }
-// this will return the information for the view proposal button on
-// on the message window
+// Linked to a chat thread (inbox "view proposal").
 async function getConversationTransaction(conversation_id) {
     const [rows] = await pool.query(
         `

@@ -1,3 +1,4 @@
+// Listings: detail view, seller dashboard, create/delete, home feed, purchase history.
 const { getListingById, getListingsByUser, getNewestListings, removeListing, createListing, getBoughtListings } = require('../models/listingModel')
 
 async function getListing(req, res) {
@@ -31,6 +32,7 @@ async function getMyListings(req, res) {
       req.session.userId
     );
 
+    // active flag splits seller dashboard into current vs sold items.
     const currentListings = listings.filter(
       listing => listing.active
     );
@@ -98,6 +100,7 @@ async function postListing(req, res) {
       })
     }
 
+    // multer saves files to disk; we store public URLs in listing_images.
     const imageUrls = req.files
       ? req.files.map(file => `/uploads/images/${file.filename}`)
       : []

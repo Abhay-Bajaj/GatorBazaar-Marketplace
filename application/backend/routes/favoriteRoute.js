@@ -1,3 +1,4 @@
+// /api/favorites — add, remove, list saved listings.
 const express = require("express");
 const router = express.Router();
 const favoriteController = require("../controllers/favoriteController");
