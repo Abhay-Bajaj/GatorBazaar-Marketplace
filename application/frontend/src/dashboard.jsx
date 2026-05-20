@@ -31,14 +31,6 @@ export default function Dashboard() {
     navigate(`/search?${params.toString()}`)
   }
 
-  function handleToggleFavorite(id) {
-    setActiveListings((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, isFavorited: !item.isFavorited } : item
-      )
-    )
-  }
-
   useEffect(() => {
     async function fetchListings() {
       try {
@@ -55,7 +47,6 @@ export default function Dashboard() {
           console.error(data.error)
           return
         }
-        
         const currentListings = data.currentListings || []
         const pendingListings = currentListings.filter(listing => listing.approval_status === 'Pending')
         const rejectedListings = currentListings.filter(listing => listing.approval_status === 'Rejected')
@@ -114,9 +105,8 @@ export default function Dashboard() {
                       title={listing.title}
                       price={listing.price}
                       image={listing.image_url || 'placeholder'}
-                      category_name={listing.category_name}
-                      isFavorited={false}
-                      onToggleFavorite={handleToggleFavorite} />
+                      isOwner={true}
+                      category_name={listing.category_name}/>
                   </div>
                 ))}
               </div>
@@ -137,9 +127,8 @@ export default function Dashboard() {
                       title={listing.title}
                       price={listing.price}
                       image={listing.image_url || 'placeholder'}
-                      category_name={listing.category_name}
-                      isFavorited={false}
-                      onToggleFavorite={handleToggleFavorite} />
+                      isOwner={true}
+                      category_name={listing.category_name} />
                   </div>
                 ))}
               </div>
@@ -159,9 +148,8 @@ export default function Dashboard() {
                     title={listing.title}
                     price={listing.price}
                     image={listing.image_url || 'placeholder'}
-                    category_name={listing.category_name}
-                    isFavorited={false}
-                    onToggleFavorite={handleToggleFavorite} />
+                    isOwner={true}
+                    category_name={listing.category_name} />
                 </div>
               ))}
             </div>
