@@ -1,3 +1,4 @@
+// /api/transactions — proposals from chat, status updates, reviews.
 const express = require('express')
 const router = express.Router()
 const {
@@ -10,7 +11,7 @@ const {
 } = require('../controllers/transactionController')
 
 
-router.get('/conversation/:conversation_id', getConversationTransaction)
+router.get('/conversation/:conversation_id', getConversationTransaction) // inbox "view proposal"
 router.get('/:transaction_id/reviews', getTransactionReviews)
 router.get('/:transaction_id', getTransactionById)
 

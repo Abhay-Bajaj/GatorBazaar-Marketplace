@@ -1,3 +1,4 @@
+// registered_users table — passwords are already hashed in authController.
 const { pool } = require('../database')
 
 async function createUser(fullname, username, email, hashedPassword) {

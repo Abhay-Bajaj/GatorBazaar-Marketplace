@@ -1,3 +1,4 @@
+// Meetup proposals, accept/reject, and reviews tied to a conversation + listing.
 const transactionModel = require('../models/transactionModel')
 
 async function getTransactionById(req, res) {
@@ -13,7 +14,6 @@ async function getTransactionById(req, res) {
 
             return res.status(400).json({ error: 'Invalid transaction id' })
         }
-        // ensure current user is authorized or the transaction exists
         const transaction = await transactionModel.getTransactionById(transaction_id)
 
         if (!transaction) {
@@ -325,6 +325,7 @@ async function createReview(req, res) {
                 Number(review.confirmed) === 1
         )
 
+        // Both parties confirmed → complete deal and record purchase for buyer.
         if (buyerConfirmed && sellerConfirmed) {
             const updatedTransaction = await transactionModel.updateTransaction(transaction_id, {
                 status: 'Completed'

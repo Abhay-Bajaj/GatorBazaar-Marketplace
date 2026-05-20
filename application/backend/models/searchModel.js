@@ -1,3 +1,4 @@
+// Builds dynamic search query; only active approved listings unless owner views own item elsewhere.
 const { pool } = require('../database')
 
 function normalizeCategories(category) {

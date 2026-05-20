@@ -1,3 +1,4 @@
+// CRUD and queries for listings, images, tags, and bought_listings.
 const { pool } = require('../database')
 
 async function getListingById(id, userId = null) {

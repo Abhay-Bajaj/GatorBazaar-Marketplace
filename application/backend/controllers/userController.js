@@ -1,3 +1,4 @@
+// Account page data for the logged-in user.
 const { getUserById } = require('../models/userModel')
 
 async function getUser(req, res) {

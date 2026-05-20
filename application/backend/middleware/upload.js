@@ -1,4 +1,4 @@
-// for handling image uploads for listings
+// Saves listing photos to uploads/images; filenames are unique to avoid collisions.
 const multer = require('multer')
 const path = require('path')
 

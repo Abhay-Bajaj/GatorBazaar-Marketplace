@@ -1,3 +1,4 @@
+// Public search: keyword, category, price range, sort. Favorites flag if session exists.
 const { getListings } = require('../models/searchModel')
 
 async function searchListings(req, res) {

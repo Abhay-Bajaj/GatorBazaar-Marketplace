@@ -1,3 +1,4 @@
+// /api/items — listing detail, dashboard, create with images, delete.
 const express = require('express')
 const router = express.Router()
 const { requireAuth } = require('../middleware/requireAuth')
@@ -13,7 +14,7 @@ router.get('/:id', getListing)
 
 router.post(
   '/',
-  upload.array('images', 9),
+  upload.array('images', 9), // up to 9 images per listing
   postListing
 )
 router.delete(
