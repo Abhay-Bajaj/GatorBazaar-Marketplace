@@ -1,3 +1,4 @@
+// Formats DB rows into JSON the inbox UI expects (own/other, unread, listing preview).
 const conversationModel = require('../models/conversationModel')
 
 function formatTime(dateValue) {
@@ -100,6 +101,7 @@ async function startConversation(req, res) {
       return res.status(400).json({ error: 'You cannot message yourself' })
     }
 
+    // Reuse thread if this buyer already messaged about this listing.
     let conversation = await conversationModel.findConversation(listingId, userId)
     if (!conversation) {
       const conversationId = await conversationModel.createConversation(

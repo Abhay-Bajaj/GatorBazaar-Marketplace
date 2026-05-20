@@ -1,3 +1,4 @@
+// Dropdown / filter options from Categories table.
 const categoryModel = require('../models/categoryModel')
 
 async function getCategories(req, res) {

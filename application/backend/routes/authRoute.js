@@ -1,3 +1,4 @@
+// /auth — no /api prefix; frontend proxies this path in dev.
 const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
