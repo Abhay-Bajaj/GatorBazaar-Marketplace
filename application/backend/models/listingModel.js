@@ -64,8 +64,8 @@ async function getListingById(id, userId = null) {
 
 async function getListingsByUser(userId) {
 
-const [rows] = await pool.execute(
-  `SELECT
+  const [rows] = await pool.execute(
+    `SELECT
     l.*,
 
     (
@@ -81,8 +81,8 @@ const [rows] = await pool.execute(
 
   ORDER BY l.created_at DESC
   `,
-  [userId]
-);
+    [userId]
+  );
 
   return rows;
 
@@ -100,13 +100,16 @@ async function createListing(userId, title, description, price, category, tag, i
     [userId, title, description, price, category]
   )
   const listingId = result.insertId
-  await pool.execute(
-    `
+  if (tag) {
+    await pool.execute(
+      `
     INSERT INTO Tags (tag_name)
     VALUES (?)
     `,
-    [tag]
-  )
+      [tag]
+    )
+  }
+
   for (const imageUrl of imageUrls) {
     await pool.execute(
       `

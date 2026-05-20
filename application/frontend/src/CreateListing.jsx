@@ -28,8 +28,9 @@ export default function CreateListing() {
     const MAX_IMAGES = 9
 
     useEffect(() => {
+        setIsSignedIn(authSignedIn)
         fetchCategories()
-    }, [])
+    }, [authSignedIn])
 
     async function fetchCategories() {
         try {
@@ -79,7 +80,6 @@ export default function CreateListing() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-
         if(!isSignedIn) {
             setLoginModalOpen(true)
             return
