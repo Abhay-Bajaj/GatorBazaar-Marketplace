@@ -1,3 +1,4 @@
+// SQL for conversations + messages tables (buyer/seller per listing).
 const { pool } = require('../database')
 
 async function getListingSellerId(listingId) {
@@ -27,6 +28,7 @@ async function createConversation(listingId, buyerId, sellerId) {
   return result.insertId
 }
 
+// Only participants can read or post in a thread.
 async function getConversationForUser(conversationId, userId) {
   const [rows] = await pool.execute(
     `SELECT conversation_id, listing_id, buyer_id, seller_id
@@ -70,6 +72,7 @@ async function getMessages(conversationId) {
   return rows
 }
 
+// Marks the other person's messages as read when the user opens the thread.
 async function markMessagesRead(conversationId, userId) {
   await pool.execute(
     `UPDATE messages

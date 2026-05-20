@@ -1,3 +1,4 @@
+// Joins user_favorites with listings for the favorites page.
 const { pool } = require('../database')
 
 async function addUserFavorite(userId, listingId) {

@@ -1,3 +1,4 @@
+// Saved listings for logged-in users (user_favorites table).
 const favoriteModel = require("../models/favoriteModel");
 
 async function addFavorite(req, res) {
