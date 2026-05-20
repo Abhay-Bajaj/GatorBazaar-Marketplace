@@ -8,8 +8,7 @@ import useAuthStatus from "./hooks/useAuthStatus"
 import useAccountNavigation from "./hooks/useAccountNavigation"
 
 export default function CreateListing() {
-    const {isSignedIn: authSignedIn} = useAuthStatus()
-    const [isSignedIn, setIsSignedIn] = useState(authSignedIn)
+    const { isSignedIn, loadingAuth} = useAuthStatus()
     const navigate = useNavigate()
     const [form, setForm] = useState({
         title: "",
@@ -28,9 +27,8 @@ export default function CreateListing() {
     const MAX_IMAGES = 9
 
     useEffect(() => {
-        setIsSignedIn(authSignedIn)
         fetchCategories()
-    }, [authSignedIn])
+    }, [])
 
     async function fetchCategories() {
         try {
@@ -74,12 +72,12 @@ export default function CreateListing() {
     }
 
     const handleLoginSuccess = () => {
-        setIsSignedIn(true)
         setLoginModalOpen(false)
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        if (loadingAuth) return
         if(!isSignedIn) {
             setLoginModalOpen(true)
             return
@@ -141,7 +139,7 @@ export default function CreateListing() {
                   />
             </nav>
 
-            {loading ? (
+            {loading || loadingAuth ? (
                 <CreateListingSkeleton />
             ) : (
                 <div className="create-listing__container">
